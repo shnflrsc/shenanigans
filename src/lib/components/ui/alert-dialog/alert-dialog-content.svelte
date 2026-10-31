@@ -24,7 +24,7 @@
 		data-slot="alert-dialog-content"
 		data-size={size}
 		class={cn(
-			'data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none focus-visible:shadow-focus data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm',
+			'group/alert-dialog-content data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-3rem)] max-w-[440px] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg bg-paper-raised p-6 text-ink shadow-md duration-150 outline-none',
 			className
 		)}
 		{...restProps}
