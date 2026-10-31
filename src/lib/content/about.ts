@@ -1,38 +1,44 @@
 /**
  * About me content (FR-23). Part of the site's code, not the database: changing it means a redeploy.
- * Everything in [brackets] is a placeholder until the real text arrives (PLAN.md H9).
  */
 export const about = {
 	catchphrase: 'Jack of all trades,',
 	catchphraseSoft: 'incompetent at none.',
 	bio: [
-		'[How you got into programming, in one or two sentences.]',
-		'[What you’re focusing on getting better at, and why.]',
-		'[What you do away from the keyboard.]'
+		'I started programming as a kid, trying to squeeze more FPS out of Minecraft on a low-end laptop. That led me to modding, and modding led me to Java.',
+		'Besides sharpening my development skills, I’m working on the ones that go with them: communication, networking, sales and marketing.',
+		'Away from the keyboard, I’m learning Spanish, doing calisthenics and practicing portrait drawing.'
 	],
 	facts: [
-		{ label: 'Studying', value: '[Program, year level]' },
+		{ label: 'Studying', value: 'BS Information Technology, 2nd year' },
 		{ label: 'School', value: 'Bulacan State University' },
-		{ label: 'Based in', value: '[City, Country]' },
-		{ label: 'Graduating', value: '[Year]' },
-		{ label: 'Open to', value: '[Internships, freelance, …]' },
-		{ label: 'Languages', value: '[Languages you speak]' }
+		{ label: 'Based in', value: 'Bulacan, Philippines' },
+		{ label: 'Graduating', value: '2029' },
+		{ label: 'Open to', value: 'Internships' },
+		{ label: 'Languages', value: 'English, Filipino, Spanish' }
 	],
+	// Groups with no items are left out, so "Learning now" appears once there is something to list.
 	skills: [
-		{ label: 'Languages', items: ['[Language]', '[Language]', '[Language]'] },
-		{ label: 'Frontend', items: ['[Framework]', '[Library]', '[Tool]'] },
-		{ label: 'Backend & data', items: ['[Service]', '[Database]', '[Library]'] },
-		{ label: 'Tools', items: ['[Tool]', '[Tool]', '[Tool]'] },
-		{ label: 'Learning now', items: ['[Topic]', '[Topic]'] }
+		{ label: 'Languages', items: ['Java', 'Python', 'JavaScript', 'SQL'] },
+		{ label: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'HTML', 'CSS'] },
+		{
+			label: 'Backend & data',
+			items: ['Spring Boot', 'PostgreSQL', 'MySQL', 'JPA/Hibernate', 'REST APIs', 'AWS S3']
+		},
+		{ label: 'Tools', items: ['Git', 'GitHub', 'Docker'] }
 	],
 	highlights: [
 		{
-			when: '[Year]',
-			title: '[Role, project]',
-			detail: '[One line on what it was and why it matters.]'
+			when: '2026',
+			title: 'Lead Developer, Escapture',
+			detail: 'LearnPossible2 AI Hackathon Challenge'
 		},
-		{ when: '[Year]', title: '[Award or certification]', detail: '[Who gave it, and for what.]' },
-		{ when: '[Year] – now', title: '[Degree]', detail: '[School, college]' }
+		{ when: '2026', title: '1st Runner Up', detail: 'RAITE Quiz Bee Challenge' },
+		{
+			when: '2025 – now',
+			title: 'BS Information Technology',
+			detail: 'Bulacan State University'
+		}
 	]
 };
 
