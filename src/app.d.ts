@@ -13,6 +13,8 @@ declare global {
 			user: User | null;
 			/** True when a non-admin account was just signed out during this request. */
 			denied: boolean;
+			/** Set by the rate-limit handle when this request is over its limit (SR-14). */
+			rateLimit: { retryAfter: number } | null;
 		}
 		// interface PageData {}
 		// interface PageState {}
