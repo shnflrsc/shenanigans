@@ -67,12 +67,11 @@ const portraitFiles = import.meta.glob('/src/lib/assets/portrait-og.png', {
 	eager: true
 }) as Record<string, string>;
 const portraitUri: string | null = Object.values(portraitFiles)[0] ?? null;
-const grayscalePhoto = (_width: number, _height: number) => portraitUri;
 
 /** The photo slot: the grayscale portrait, or a muted tile until a portrait exists. */
 const photo = (size: number): Node => {
 	const height = Math.round(size * 1.25);
-	const uri = grayscalePhoto(size, height);
+	const uri = portraitUri;
 	const box = {
 		width: size,
 		height,

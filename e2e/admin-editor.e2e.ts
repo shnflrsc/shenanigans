@@ -10,6 +10,7 @@ const PNG = Buffer.from(
 test.beforeEach(async ({ context }) => {
 	await resetRateLimits();
 	await sql(`delete from posts where slug like 'e2e-%'`);
+	await sql(`delete from tags where slug like 'e2e-%'`);
 	await signInAsAdmin(context);
 });
 test.afterAll(async () => {

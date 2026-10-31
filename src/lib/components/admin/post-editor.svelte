@@ -142,7 +142,7 @@
 
 <LeaveGuard dirty={editor.dirty && !deleting} />
 
-<div class="-mx-4 -my-6 min-[720px]:-mx-12 min-[720px]:-my-8">
+<div class="-mx-4 -my-6 pb-20 min-[720px]:-mx-12 min-[720px]:-my-8 min-[720px]:pb-0">
 	<EditorBar
 		backLabel="Posts"
 		backRoute="/admin/(app)/posts"

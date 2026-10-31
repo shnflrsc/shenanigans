@@ -25,6 +25,9 @@
 		{ label: 'Tags', route: '/admin/(app)/tags', path: '/admin/tags', count: counts.tags }
 	] as const);
 
+	// On phones the editors use their own top bar (back link and save state), so the shell's bar and switcher step aside.
+	const inEditor = $derived(/^\/admin\/(posts|projects)\/[^/]+$/.test(page.url.pathname));
+
 	const current = (path: string) => page.url.pathname.startsWith(path);
 </script>
 
@@ -59,7 +62,7 @@
 	</aside>
 
 	<!-- Phone top bar and section switcher -->
-	<div class="min-[720px]:hidden">
+	<div class={cn('min-[720px]:hidden', inEditor && 'hidden')}>
 		<div class="flex h-14 items-center justify-between border-b border-line bg-paper px-4">
 			<span class="flex items-center gap-2">
 				<span class="text-[15px] font-semibold tracking-[-0.01em]">Shenanigans</span>

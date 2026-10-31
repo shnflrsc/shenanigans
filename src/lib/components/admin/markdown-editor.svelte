@@ -9,6 +9,7 @@
 	import QuoteIcon from '@lucide/svelte/icons/quote';
 	import type { Component } from 'svelte';
 	import { untrack } from 'svelte';
+	import ImageField from './image-field.svelte';
 	import Prose from '#lib/components/site/prose.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 
@@ -16,11 +17,42 @@
 		id: string;
 		label: string;
 		value: string;
-		/** Opens the image uploader; the editor inserts what it returns at the cursor. */
-		onimage?: () => void;
 	};
 
-	let { id, label, value = $bindable(), onimage }: Props = $props();
+	let { id, label, value = $bindable() }: Props = $props();
+
+	// The Image button opens an uploader under the toolbar; the result goes in at the cursor as ![alt](url) (FR-13).
+	let imageOpen = $state(false);
+	let imagePath = $state('');
+	let imageAlt = $state('');
+	let imageUrl = $state('');
+	let imageError = $state('');
+	let cursor = { start: 0, end: 0 };
+
+	function openImage() {
+		cursor = {
+			start: textarea?.selectionStart ?? value.length,
+			end: textarea?.selectionEnd ?? value.length
+		};
+		imagePath = '';
+		imageAlt = '';
+		imageUrl = '';
+		imageError = '';
+		imageOpen = true;
+	}
+
+	function insertImage() {
+		const alt = imageAlt.trim();
+		if (!alt) {
+			imageError = 'Add alt text for the image';
+			return;
+		}
+		// Brackets in alt text would end the markdown early.
+		const safeAlt = alt.replace(/[[\]]/g, '');
+		textarea?.setSelectionRange(cursor.start, cursor.end);
+		insert('\n![' + safeAlt + '](' + imageUrl + ')\n', '', '');
+		imageOpen = false;
+	}
 
 	let textarea = $state<HTMLTextAreaElement | null>(null);
 	let html = $state('');
@@ -84,12 +116,37 @@
 				<tool.icon aria-hidden="true" />
 			</Button>
 		{/each}
-		{#if onimage}
-			<Button variant="ghost" size="sm" onclick={onimage}>
-				<ImageIcon aria-hidden="true" />Image
-			</Button>
-		{/if}
+		<Button
+			variant="ghost"
+			size="sm"
+			aria-expanded={imageOpen}
+			aria-controls="{id}-image-panel"
+			onclick={() => (imageOpen ? (imageOpen = false) : openImage())}
+		>
+			<ImageIcon aria-hidden="true" />Image
+		</Button>
 	</div>
+
+	{#if imageOpen}
+		<div id="{id}-image-panel" class="flex flex-col gap-3 border-b border-line bg-paper-soft p-4">
+			<ImageField
+				id="{id}-image"
+				bind:path={imagePath}
+				bind:alt={imageAlt}
+				altError={imageError}
+				onuploaded={({ url }) => {
+					imageUrl = url;
+					imageError = '';
+				}}
+			/>
+			<div class="flex gap-2">
+				<Button size="sm" disabled={!imagePath || !imageUrl} onclick={insertImage}
+					>Insert image</Button
+				>
+				<Button variant="ghost" size="sm" onclick={() => (imageOpen = false)}>Cancel</Button>
+			</div>
+		</div>
+	{/if}
 
 	<div class="grid min-[900px]:grid-cols-2">
 		<div class="flex flex-col min-[900px]:border-r min-[900px]:border-line">

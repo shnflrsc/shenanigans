@@ -16,4 +16,5 @@
 </svelte:head>
 
 {@render children()}
-<Toaster position="bottom-center" />
+<!-- On phones the admin editors have a sticky action bar, so toasts sit above it. -->
+<Toaster position="bottom-center" mobileOffset={{ bottom: 88 }} />

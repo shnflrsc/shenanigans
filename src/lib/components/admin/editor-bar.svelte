@@ -54,5 +54,12 @@
 		{/if}
 	</p>
 
-	<div class="ml-auto flex items-center gap-2">{@render actions()}</div>
+	<!-- On desktop the actions sit in this bar; on phones they move to a sticky bar at the bottom. -->
+	<div class="ml-auto flex items-center gap-2 max-[719px]:hidden">{@render actions()}</div>
 </header>
+
+<div
+	class="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-line bg-paper p-3 min-[720px]:hidden [&>*]:flex-1"
+>
+	{@render actions()}
+</div>
