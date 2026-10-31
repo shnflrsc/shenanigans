@@ -147,6 +147,18 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 - [ ] **M9-2** BLOCKED: Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
 - [ ] **M9-3** BLOCKED: Domain and launch checklist (section 9). Deps: H6.
 
+### M10 Motion (public site)
+
+Spec: DESIGN.md "Motion (public site)", PRODUCT.md section 6, SOFTWARE.md UR-11. Decisions: all five moments (hover and focus, load, scroll reveal, page transitions, theme cross-fade), energetic, public site only, admin keeps small transitions, no animation library (CSS, Svelte built-ins, browser view transitions). If something needs more than that, Motion (motion.dev) is the fallback; record it first as a spec change request.
+
+- [ ] **M10-1** Motion foundation. Goal: tokens, reduced-motion switch, safe-by-default reveal mechanism. Touches: `src/lib/styles/tokens.css`, `src/routes/layout.css`, `src/app.html`, new `src/lib/motion/` helpers. Covers: UR-11. Design: Motion token table. Deps: M1-1. Accept: `--motion-*`, `--ease-out`, `--stagger`, `--rise-*` exist and are mapped in the Tailwind theme; `@media (prefers-reduced-motion: reduce)` removes all motion; entrances use `data-reveal` and only hide under `html.js` after the page is marked ready; a CSS keyframe reveals anything still hidden after 2.5s; a `reveal` Svelte action marks elements visible. Verify: unit/browser test of the action; Playwright with reduced motion and with JavaScript disabled shows all content at once.
+- [ ] **M10-2** Hover and focus polish. Touches: Button, Tag, cards, links, theme toggle, arrows. Covers: UR-11, UR-2. Design: Motion, Hover and focus. Deps: M10-1. Accept: press 97% with spring release, arrow nudge 3px, card lift 4px, image zoom 4%, link underline grows, focus ring fades in; no layout shift; admin components unchanged. Verify: browser tests on computed transforms; keyboard focus screenshot; admin button has no press scale.
+- [ ] **M10-3** Load entrances. Touches: Hero, hero photo, Home first screen. Covers: UR-11, PR-3. Design: Motion, On load. Deps: M10-1. Accept: headline lines rise and fade 80ms apart, then subtitle and buttons; photo scales 96% to 100% with no opacity change; header does not animate; the hero image is still eager and is not delayed. Verify: Playwright checks start and end state; LCP and CLS measured (CLS 0, LCP not later than before by more than 100ms).
+- [ ] **M10-4** Scroll reveals. Touches: Section children on Home, Projects, Blog, case study and post pages. Covers: UR-11. Design: Motion, On scroll. Deps: M10-1. Accept: children rise 32px and fade over 600ms when 15% visible, staggered 70ms for groups, once only; above-the-fold content never waits; short pages and the footer are never hidden. Verify: Playwright scrolls and asserts reveal once; scrolling back does not replay; full-page screenshots show everything revealed.
+- [ ] **M10-5** Page transitions. Touches: root layout (`onNavigate` with `document.startViewTransition`), `view-transition-name` on header and footer, transition CSS. Covers: UR-11. Design: Motion, Between pages. Deps: M10-1. Accept: header and footer stay, main cross-fades 300ms while rising 12px; no transition when unsupported or when reduced motion is on; back and forward work; focus and scroll position behave as before. Verify: Playwright navigation tests with and without `startViewTransition`; keyboard navigation still lands on the new page heading.
+- [ ] **M10-6** Theme cross-fade. Touches: `src/lib/theme.svelte.ts`, theme CSS. Covers: UR-11, UR-3. Design: Motion, Theme switch. Deps: M10-1. Accept: the toggle cross-fades the whole page over 300ms using a view transition; falls back to instant; the first paint still has no flash and the choice still persists. Verify: existing theme e2e still passes; new test checks the transition runs and the final theme is correct.
+- [ ] **M10-7** Motion QA and docs. Covers: UR-11, SR-10, UR-10. Deps: M10-2 to M10-6. Accept: no CSP violations or console errors; axe clean in both themes; reduced motion, JavaScript off and a failed hydration all show every section; admin screens have no entrance or page transition; phone widths checked; DESIGN.md matches what was built. Verify: Playwright suite for motion (reduced motion, no JS, CLS, CSP), axe, screenshots in light, dark and phone widths.
+
 ## 5. Human-only tasks
 
 | ID | Needed by | What I need from you | Until then |
@@ -237,6 +249,7 @@ Required coverage (task in brackets): allowlist and authorization on every admin
 | UR-8 | M4-3, M8-2 |
 | UR-9 | M4-2 |
 | UR-10 | M8-2, M8-3 |
+| UR-11 | M10-1, M10-2, M10-3, M10-4, M10-5, M10-6, M10-7 |
 | MR-1 | M1-1, M1-3 |
 | MR-2 | M2-2 |
 | MR-3 | M1-1, M1-3 |
@@ -329,6 +342,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D18 The 30 per minute limit for unauthenticated /admin/* requests is applied to requests that carry no Supabase session cookie, because the limiter runs before any auth call (SR-14). Requests with a cookie are validated by auth and refused by requireAdmin.
 - D19 Home empty state: the admin design handoff says "hero with one Get in touch button and a Nothing published yet frame", but PRODUCT.md 4.4 and FR-1 say the hero never has a Get in touch button and FR-29 specifies per-section empty states. Built per FR-1/FR-29 (HomeEmpty board): featured and latest-posts sections each show their own empty card. Launch state hides "All projects"/"All posts" under two items.
 - D21 PR-4 outcome (M7-3): public pages stay server-rendered with a 45s shared cache. Prerendering or ISR is reconsidered only if real traffic shows the database or markdown rendering is a bottleneck.
+- D22 Motion (APPROVED direction, details open): all five moments, energetic, public only, no library. Proposed limits for you to confirm or loosen: durations 150/300/600ms; entrances rise 12 to 32px; stagger 70ms; spring overshoot at most 6% and only on small controls (buttons, tags, theme toggle), never on content; no parallax, spin, looping or pointer-following motion; the hero photo does not fade so the largest paint is never delayed; a 2.5s CSS fallback reveals anything left hidden.
 - D20 404 buttons: the admin handoff says Back home + Read the blog, PRODUCT.md 4.7 and FR-30 say Go home, View projects and Read the blog. Built the three-button version (PRODUCT.md wins on behaviour). The 500 page omits the design's "request reference" placeholder (no technical details, FR-30). `/auth/callback` is a page route (not an endpoint) so its 429 renders the styled error page.
 
 ## 11. Spec change requests

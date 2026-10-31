@@ -113,6 +113,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 - Visual language: the Shenanigans design system (monochrome, soft and elegant; Space Grotesk and Space Mono).
 - Light and dark themes. The site follows the visitor's system setting by default, with a manual toggle to override it. The design system includes dark-theme tokens.
 - Every public page and state is designed in light, dark and phone widths.
+- Motion: the public site is lively. Content arrives with a staggered rise and fade, sections reveal as you scroll, pages and themes cross-fade, and buttons and cards respond to the pointer. It is always quick, never decorative, and switched off for visitors who ask for reduced motion. The admin stays quiet.
 - Portraits and the hero photo are grayscale.
 - Voice: first person, friendly, honest, a little playful, as described in the design system.
 - Not used from the design system: reactions, comments and the newsletter banner.
@@ -151,6 +152,8 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | Tag filters | In the URL (`?tag=`), so they can be shared | |
 | Section labels | None above the Projects and Blog titles | A "Portfolio" and a "Writing" label |
 | Freshness | Public pages refresh within 60 seconds of a change | |
+| Motion | Present and energetic on the public site: hover and focus, load, scroll reveal, page transitions, theme cross-fade; small transitions only in the admin | Calm, no entrances, no bounces or slides |
+| Animation library | None: CSS, Svelte's built-ins and the browser's view transitions | A heavy library such as GSAP |
 
 ## 9. Open questions
 

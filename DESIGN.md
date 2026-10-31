@@ -16,7 +16,7 @@ This is the single source of truth for how Shenanigans looks and reads. Shenanig
 
 Shenanigans is monochrome, soft and elegant: a calm frame so the projects and the writing carry the personality. The name is playful; the interface stays composed.
 
-1. **Content first.** Chrome is quiet. No decorative illustrations, textures, gradients or patterns.
+1. **Content first.** Chrome is quiet. No decorative illustrations, textures, gradients or patterns. Motion is energetic on the public site but only ever moves content into place; it never decorates and never blocks reading.
 2. **Hairlines, not boxes.** Separate with 1px lines and quiet fills before reaching for borders, shadows or color.
 3. **Warm monochrome.** Warm off-whites and warm greys only. No hue, no pure black, no pure white text in dark.
 4. **Soft everywhere.** Every corner is rounded; bigger surfaces get bigger radii.
@@ -120,7 +120,31 @@ All spacing sits on a 4px base; corners grow with the surface; depth is rare and
 - `shadow-md` — raised cards, menus, popovers and card hover. Light: a 1px 5% ring plus 3/6px and 9/24px soft drops. Dark: a 1px white 6% ring plus 4/12px and 12/32px drops at 50%, always paired with `paper-raised` and an inset `edge-highlight`.
 - No other shadows. Never use shadow for depth on sections.
 
-**Motion:** 150–200ms ease on background, border, color and shadow only. Project images zoom 2% on card hover. Accordion chevrons rotate 90°. No bounces, slides or parallax; respect `prefers-reduced-motion` by removing the zoom.
+**Motion (public site).** Present and energetic, never in the way. The public pages move on five occasions: hover and focus, content arriving on load, sections revealing on scroll, moving between pages, and switching theme. The admin keeps only the quiet 150–200ms transitions at the end of this section.
+
+| Token | Value | Use for |
+| --- | --- | --- |
+| `--motion-fast` | 150ms | Hover, focus, press |
+| `--motion-base` | 300ms | Theme switch, page transition, small entrances |
+| `--motion-slow` | 600ms | Load and scroll entrances |
+| `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | Everything that arrives |
+| `--ease-spring` | a `linear()` curve with at most 6% overshoot | Press and release of buttons, tags and the theme toggle only |
+| `--stagger` | 70ms | Gap between siblings that enter together (cards, rows, chips) |
+| `--rise-sm` / `--rise-md` | 12px / 32px | Distance content travels while it fades in |
+
+- **Hover and focus.** Buttons press to 97% and release with `--ease-spring`; an arrow inside a button nudges 3px; cards lift 4px with `shadow-md`; card images zoom 4%; link underlines grow from the left; the focus ring fades in over `--motion-fast`. Pressed and hover states never change layout.
+- **On load.** The hero headline arrives line by line (rise `--rise-md` and fade, 80ms apart), then the subtitle and buttons. The photo scales from 96% to 100% with no opacity change, so the largest paint is never delayed. The header does not animate.
+- **On scroll.** Each section's direct children rise `--rise-md` and fade over `--motion-slow` the first time 15% of them is visible, staggered by `--stagger` when they come as a group (cards, post rows, skill chips, timeline rows). Once only: scrolling back up does not replay it.
+- **Between pages.** The browser's view transitions: the header and footer stay put, the main content cross-fades over `--motion-base` while rising `--rise-sm`. Browsers without view transitions navigate instantly.
+- **Theme switch.** The whole page cross-fades over `--motion-base` (a view transition on the toggle). Browsers without view transitions switch instantly. The first paint still has no flash (UR-3).
+- **Allowed properties:** `opacity`, `transform`, and the colour, border and shadow properties. Nothing that changes layout.
+- **Still banned:** parallax, spin, continuous or looping motion, anything that follows the pointer, movement that makes text hard to read or a control hard to hit, and bounce on content (overshoot is only for the small controls listed above).
+- **Reduced motion.** With `prefers-reduced-motion: reduce` every entrance, lift, zoom, press and transition is removed and content is simply shown. Nothing waits for an animation to become visible.
+- **Without JavaScript, or if it fails.** Content is always visible. Entrances only hide content once the page has marked itself ready, and a CSS fallback reveals anything not yet revealed after 2.5 seconds.
+- **Performance.** Animate only `opacity` and `transform`, with no layout shift (CLS stays 0) and no animation on the first-screen image that would delay it.
+- **Admin.** 150–200ms transitions on background, border, color and shadow, plus the standard enter and exit of dialogs, menus and toasts. No entrances, scroll reveals or page transitions.
+
+Accordion chevrons rotate 90°.
 
 **Focus:** `focus-ring` = a 2px ground-colored gap, then 2px solid `ink` (light `0 0 0 2px #fff, 0 0 0 4px #37352f`; dark `0 0 0 2px #191919, 0 0 0 4px #ebebea`), on `:focus-visible` only.
 
@@ -283,6 +307,9 @@ Tokens ship as CSS custom properties: light on `:root`, dark under `[data-theme=
   --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px;
   --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-xl: 16px; --radius-full: 9999px;
   --stroke-hairline: 1px;
+  --motion-fast: 150ms; --motion-base: 300ms; --motion-slow: 600ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --stagger: 70ms; --rise-sm: 12px; --rise-md: 32px;
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
@@ -310,6 +337,6 @@ Run this before handing back any UI work.
 | Keep one primary button and one raised surface per area | Stack several primary buttons or shadows |
 | Use Space Grotesk for text, Space Mono for numbers, dates and labels | Set paragraphs in mono or add another font |
 | Give headlines at most one soft `ink-subtle` run | Use bold-word emphasis, all caps headlines or emoji |
-| Check light and dark, focus states and contrast | Ship a component tested in one theme only |
+| Check light and dark, focus states, contrast and reduced motion | Ship a component tested in one theme only |
 | Compose new UI from the listed components | Add doodles, dot grids, tilted frames, textures or decorative illustrations |
 | Keep posts at 680px and sections at 1080px | Let text run full width |
