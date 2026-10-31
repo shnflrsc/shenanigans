@@ -64,6 +64,10 @@
 }
 
 @layer base {
+	/* The wrapper SvelteKit adds around the body; an inline style would break the strict CSP. */
+	.app-root {
+		display: contents;
+	}
 	html {
 		background: var(--paper);
 		color: var(--ink);

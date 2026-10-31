@@ -5,6 +5,7 @@ import { createSupabase } from '#lib/server/auth/supabase.js';
 import { resolveSession } from '#lib/server/auth/session.js';
 import { db } from '#lib/server/db/index.js';
 import { createRateLimitHandle } from '#lib/server/rate-limit/handle.js';
+import { headers } from '#lib/server/headers.js';
 import { checkRequest } from '#lib/server/rate-limit/index.js';
 
 /** Counts login-surface requests per client IP before any auth call (SR-14). */
@@ -30,4 +31,4 @@ const authenticate: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(rateLimit, authenticate);
+export const handle: Handle = sequence(headers, rateLimit, authenticate);
