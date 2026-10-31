@@ -1,6 +1,6 @@
 # Shenanigans: Product Requirements Document
 
-Version 0.3 · 2026-10-31 · Owner: Darl
+Version 0.4 · 2026-10-31 · Owner: Darl
 
 ## 1. Purpose
 

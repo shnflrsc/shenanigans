@@ -1,6 +1,6 @@
 # DESIGN.md — Shenanigans
 
-Oct 31, 2026 · @Darl Shanen Floresca
+Oct 31, 2026 · @Darl Shanen Floresca · Motion rules confirmed
 
 ## How to use this file
 

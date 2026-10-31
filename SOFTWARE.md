@@ -1,6 +1,6 @@
 # Shenanigans: Software Requirements Specification
 
-Version 0.3 · 2026-10-31 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
+Version 0.4 · 2026-10-31 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
 
 ## 1. Introduction
 
