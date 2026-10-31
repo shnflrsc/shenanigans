@@ -13,5 +13,6 @@ export const content = {
 	getPublishedPost: (slug: string) => pub.getPublishedPost(db, slug),
 	projectTagCounts: () => pub.projectTagCounts(db),
 	postTagCounts: () => pub.postTagCounts(db),
+	countPublished: () => pub.countPublished(db),
 	listPublishedEntries: () => pub.listPublishedEntries(db)
 };

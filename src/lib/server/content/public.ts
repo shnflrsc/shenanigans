@@ -213,3 +213,18 @@ export async function listPublishedEntries(db: Db) {
 	]);
 	return { projects, posts };
 }
+
+/** How many projects and posts are public, for launch-state rules (hide filters and "view all" under two items). */
+export async function countPublished(db: Db) {
+	const [[projects], [posts]] = await Promise.all([
+		db
+			.select({ n: sql<number>`count(*)::int` })
+			.from(s.projects)
+			.where(eq(s.projects.status, published)),
+		db
+			.select({ n: sql<number>`count(*)::int` })
+			.from(s.posts)
+			.where(eq(s.posts.status, published))
+	]);
+	return { projects: projects.n, posts: posts.n };
+}

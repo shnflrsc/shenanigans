@@ -100,6 +100,15 @@
 	}
 }
 
+/* Makes a card's title link cover the whole card; inner links sit above it with relative z-10. */
+@utility stretched-link {
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+}
+
 /* Type styles from DESIGN.md. Mobile scales hero and title. */
 @utility text-hero {
 	font-size: 40px;

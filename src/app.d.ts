@@ -2,6 +2,9 @@ import type { User } from '@supabase/supabase-js';
 import type { ServerSupabase } from '#lib/server/auth/supabase.js';
 
 declare global {
+	/** Build-time flag: static/resume.pdf exists (vite.config.ts). */
+	const __HAS_RESUME__: boolean;
+
 	namespace App {
 		interface Error {
 			message: string;

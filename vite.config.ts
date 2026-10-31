@@ -1,6 +1,7 @@
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import { defineConfig } from 'vitest/config';
 import { loadEnv } from 'vite';
+import { existsSync } from 'node:fs';
 import { playwright } from '@vitest/browser-playwright';
 import tailwindcss from '@tailwindcss/vite';
 import adapterVercel from '@sveltejs/adapter-vercel';
@@ -14,6 +15,8 @@ export default defineConfig(({ mode }) => {
 		: undefined;
 
 	return {
+		// The résumé button only shows when the file exists, so it never links to a missing file (FR-23).
+		define: { __HAS_RESUME__: JSON.stringify(existsSync('static/resume.pdf')) },
 		plugins: [
 			enhancedImages(),
 			tailwindcss(),
