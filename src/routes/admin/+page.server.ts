@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { PUBLIC_SUPABASE_URL } from '$app/env/public';
 import { assertNotRateLimited } from '#lib/server/rate-limit/guard.js';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -24,6 +25,7 @@ export const actions: Actions = {
 			options: { redirectTo: `${event.url.origin}/auth/callback`, skipBrowserRedirect: true }
 		});
 		if (error || !data.url) return fail(502, { notice: 'error' as const });
-		redirect(303, data.url);
+		// Only the Supabase Auth origin is allowed as an external target.
+		redirect(303, data.url, { external: [new URL(PUBLIC_SUPABASE_URL).origin] });
 	}
 };
