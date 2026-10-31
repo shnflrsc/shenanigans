@@ -1,7 +1,6 @@
 <script lang="ts">
-	import BranchIcon from '@lucide/svelte/icons/git-branch';
-	import BriefcaseIcon from '@lucide/svelte/icons/briefcase';
 	import MailIcon from '@lucide/svelte/icons/mail';
+	import BrandIcon from './brand-icons.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { mailto, site } from '#lib/site.js';
 
@@ -21,12 +20,12 @@
 			</li>
 			<li>
 				<Button variant="ghost" size="sm" href={site.github}
-					><BranchIcon aria-hidden="true" class="text-ink-subtle" />GitHub</Button
+					><BrandIcon brand="github" class="size-4 text-ink-subtle" />GitHub</Button
 				>
 			</li>
 			<li>
 				<Button variant="ghost" size="sm" href={site.linkedin}
-					><BriefcaseIcon aria-hidden="true" class="text-ink-subtle" />LinkedIn</Button
+					><BrandIcon brand="linkedin" class="size-4 text-ink-subtle" />LinkedIn</Button
 				>
 			</li>
 		</ul>
