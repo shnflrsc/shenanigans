@@ -57,10 +57,10 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 ### M0 Cleanup and tooling
 
-- [ ] **M0-1** Initialise git and baseline commit. Touches: repo root. Covers: n/a. Deps: none. Accept: `git status` clean, `.env` ignored. Verify: `git ls-files | grep -c "^.env$"` is 0.
-- [ ] **M0-2** Remove demo: `src/lib/vitest-examples/`, `src/routes/page.svelte.e2e.ts`, demo `+page.svelte` content, `task` table. Touches: those files. Deps: M0-1. Accept: check passes with an empty home route. Verify: `bun run check`.
-- [ ] **M0-3** Fix scripts to bun (`test`, `test:e2e`, `playwright.config.ts` webServer command), add `typecheck` alias none needed. Touches: package.json, playwright.config.ts. Deps: M0-2. Accept: `bun run build` and `bunx playwright test` start without npm. Verify: run both.
-- [ ] **M0-4** Add Zod, set up `src/lib/server/env.ts` pattern with Zod-validated env (extend `src/env.ts`). Covers: SR-5, SR-7. Deps: M0-2. Accept: missing env fails fast with a clear message. Verify: unit test on the env parser.
+- [x] **M0-1** Initialise git and baseline commit. Touches: repo root. Covers: n/a. Deps: none. Accept: `git status` clean, `.env` ignored. Verify: `git ls-files | grep -c "^.env$"` is 0. (done 2026-10-31)
+- [x] **M0-2** Remove demo: `src/lib/vitest-examples/`, `src/routes/page.svelte.e2e.ts`, demo `+page.svelte` content, `task` table. Touches: those files. Deps: M0-1. Accept: check passes with an empty home route. Verify: `bun run check`. (done 2026-10-31)
+- [x] **M0-3** Fix scripts to bun (`test`, `test:e2e`, `playwright.config.ts` webServer command), add `typecheck` alias none needed. Touches: package.json, playwright.config.ts. Deps: M0-2. Accept: `bun run build` and `bunx playwright test` start without npm. Verify: run both. (done 2026-10-31)
+- [x] **M0-4** Add Zod, set up `src/lib/server/env.ts` pattern with Zod-validated env (extend `src/env.ts`). Covers: SR-5, SR-7. Deps: M0-2. Accept: missing env fails fast with a clear message. Verify: unit test on the env parser. (done 2026-10-31)
 - [ ] **M0-5** Document local dev in README (Supabase local stack, env, commands). Covers: n/a. Deps: M2-1 decision. Accept: a fresh clone can follow it. Verify: read-through.
 
 ### M1 Design foundations
@@ -313,11 +313,13 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D13 Supabase free-tier pausing risk: free projects pause after about a week of inactivity. Before launch check plan, set a keep-alive (scheduled request) or upgrade, and confirm the project is active.
 - D14 Admin mutations use SvelteKit form actions with progressive enhancement; the live preview calls a POST endpoint guarded by `requireAdmin`.
 - D15 Package `#lib` alias is used for imports in app code.
+- D16 Local builds use `@sveltejs/adapter-node` (adapter-vercel needs symlink rights and fails on Windows without developer mode); `adapter-vercel` is used when `VERCEL` is set. `.env` holds placeholder values so env validation passes locally; real values come from H1-H4.
 
 ## 11. Spec change requests
 
-(empty)
+(none yet)
 
 ## 12. Progress log
 
-(empty)
+(entries below, newest last)
+- 2026-10-31 M0-4: Zod env schemas in src/env.ts (SvelteKit 3 defineEnvVars), env.spec.ts; M0-3 scripts to bun, adapter-node locally (D16)

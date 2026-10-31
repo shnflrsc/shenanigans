@@ -8,3 +8,12 @@ bun.lockb
 # Miscellaneous
 /static/
 /drizzle/
+
+# Project documents (hand-written)
+/PLAN.md
+/PLAN.prompt.md
+/PRODUCT.md
+/SOFTWARE.md
+/JOURNEY.md
+/DESIGN.md
+/README.md
