@@ -25,6 +25,25 @@
 	--color-edge-highlight: var(--edge-highlight);
 	--color-image-overlay: var(--image-overlay);
 	--color-scrim: var(--scrim);
+	/* shadcn-svelte names, mapped onto the tokens. Destructive is ink on purpose: the design uses no red. */
+	--color-background: var(--paper);
+	--color-foreground: var(--ink);
+	--color-card: var(--paper);
+	--color-card-foreground: var(--ink);
+	--color-popover: var(--paper-raised);
+	--color-popover-foreground: var(--ink);
+	--color-primary: var(--ink);
+	--color-primary-foreground: var(--on-ink);
+	--color-secondary: var(--paper);
+	--color-secondary-foreground: var(--ink);
+	--color-muted: var(--fill-muted);
+	--color-muted-foreground: var(--ink-muted);
+	--color-accent: var(--fill-hover);
+	--color-accent-foreground: var(--ink);
+	--color-destructive: var(--ink);
+	--color-border: var(--line);
+	--color-input: var(--line-strong);
+	--color-ring: var(--ink);
 	--color-transparent: transparent;
 	--color-current: currentColor;
 
@@ -57,6 +76,9 @@
 		font-size: 16px;
 		line-height: 26px;
 		min-height: 100dvh;
+	}
+	* {
+		border-color: var(--line);
 	}
 	::selection {
 		background: var(--selection);
