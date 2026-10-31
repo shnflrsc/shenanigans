@@ -74,7 +74,9 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/space-grotesk": "^5.3.0",
+		"@fontsource/space-grotesk": "^5.3.0",
 		"@fontsource/space-mono": "^5.3.0",
+		"@resvg/resvg-js": "^2.6.2",
 		"@supabase/ssr": "^0.12.7",
 		"@supabase/supabase-js": "^2.118.0",
 		"hast-util-to-string": "^3.0.1",
@@ -86,6 +88,7 @@
 		"remark-gfm": "^4.0.1",
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.2",
+		"satori": "^0.63.2",
 		"unified": "^11.0.5",
 		"unist-util-visit": "^5.2.0",
 		"zod": "^4.6.7"
