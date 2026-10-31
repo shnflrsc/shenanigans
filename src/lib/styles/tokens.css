@@ -92,6 +92,16 @@
 	--radius-xl: 16px;
 	--radius-full: 9999px;
 	--stroke-hairline: 1px;
+	/* Motion (DESIGN.md): durations, curves, stagger and travel distance. */
+	--motion-fast: 150ms;
+	--motion-base: 300ms;
+	--motion-slow: 600ms;
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	/* A spring with about 6% overshoot, for small controls only. */
+	--ease-spring: linear(0, 0.4 8%, 0.85 18%, 1.05 30%, 1.06 38%, 1.03 50%, 1.005 65%, 1);
+	--stagger: 70ms;
+	--rise-sm: 12px;
+	--rise-md: 32px;
 	/* "Variable" is the family name the @fontsource-variable package registers. */
 	--font-sans: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;

@@ -39,7 +39,7 @@
 			<ArrowLeftIcon class="size-4" aria-hidden="true" />Blog
 		</a>
 
-		<header class="flex flex-col gap-4 border-b border-line pb-8">
+		<header data-enter class="flex flex-col gap-4 border-b border-line pb-8">
 			{#if post.tags.length}
 				<ul class="flex flex-wrap gap-2" aria-label="Tags">
 					{#each post.tags as tag (tag.slug)}

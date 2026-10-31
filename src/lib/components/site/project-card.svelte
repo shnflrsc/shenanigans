@@ -32,7 +32,7 @@
 
 <article
 	class={cn(
-		'group/card relative overflow-hidden rounded-lg border border-line bg-paper transition-[background-color,box-shadow] duration-150 ease-out hover:bg-paper-raised hover:shadow-md',
+		'lift group/card relative overflow-hidden rounded-lg border border-line bg-paper hover:bg-paper-raised hover:shadow-md',
 		featured && 'grid min-[720px]:grid-cols-[1.3fr_1fr]'
 	)}
 >

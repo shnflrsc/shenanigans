@@ -15,7 +15,10 @@
 	let { eyebrow, soft, align = 'start', tag = 'h2', children }: Props = $props();
 </script>
 
-<div class={cn('flex flex-col gap-3', align === 'center' && 'items-center text-center')}>
+<div
+	data-enter={tag === 'h1' ? '' : undefined}
+	class={cn('flex flex-col gap-3', align === 'center' && 'items-center text-center')}
+>
 	{#if eyebrow}
 		<Eyebrow>{eyebrow}</Eyebrow>
 	{/if}

@@ -9,7 +9,10 @@
 	const portrait = Object.values(found)[0]?.default;
 </script>
 
-<figure class="flex flex-1 basis-[300px] flex-col gap-4 min-[720px]:max-w-[300px]">
+<figure
+	data-enter="scale"
+	class="flex flex-1 basis-[300px] flex-col gap-4 min-[720px]:max-w-[300px]"
+>
 	<div class="relative aspect-[4/5] overflow-hidden rounded-lg border border-line bg-fill-muted">
 		{#if portrait}
 			<!-- Above the fold: loaded right away, not lazily (PR-3). -->

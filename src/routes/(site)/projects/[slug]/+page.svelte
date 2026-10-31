@@ -44,7 +44,7 @@
 			<ArrowLeftIcon class="size-4" aria-hidden="true" />Projects
 		</a>
 
-		<header class="flex flex-col gap-4 border-b border-line pb-8">
+		<header data-enter class="flex flex-col gap-4 border-b border-line pb-8">
 			{#if project.tags.length}
 				<ul class="flex flex-wrap gap-2" aria-label="Tags">
 					{#each project.tags as tag (tag.slug)}<li><Tag label={tag.name} /></li>{/each}

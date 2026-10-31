@@ -32,7 +32,7 @@
 
 <svelte:window onkeydown={(event) => event.key === 'Escape' && close()} />
 
-<header class="relative z-30 border-b border-line bg-paper">
+<header class="vt-header relative z-30 border-b border-line bg-paper">
 	<div class="mx-auto flex h-14 max-w-[1080px] items-center gap-6 px-6 min-[1024px]:px-16">
 		<a
 			href={resolve('/(site)')}
