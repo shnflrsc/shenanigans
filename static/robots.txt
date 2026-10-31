@@ -1,3 +1,5 @@
 User-agent: *
 Disallow: /admin
 Disallow: /auth/
+
+Sitemap: https://shenanigans.is-a.dev/sitemap.xml

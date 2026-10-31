@@ -8,6 +8,7 @@
 	import PostCard from '#lib/components/site/post-card.svelte';
 	import ProjectCard from '#lib/components/site/project-card.svelte';
 	import Section from '#lib/components/site/section.svelte';
+	import Seo from '#lib/components/site/seo.svelte';
 	import SectionTitle from '#lib/components/site/section-title.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { site } from '#lib/site.js';
@@ -20,10 +21,7 @@
 	const morePosts = $derived(data.counts.posts >= 2);
 </script>
 
-<svelte:head>
-	<title>{site.name}: {site.owner}’s portfolio and blog</title>
-	<meta name="description" content={site.description} />
-</svelte:head>
+<Seo description={site.description} path="/" />
 
 <Hero />
 <AboutSection />
