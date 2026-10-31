@@ -214,15 +214,17 @@
 		<div class="flex min-w-0 flex-col gap-6">
 			<Field id="title" label="Title" error={err('title')}>
 				{#snippet children({ describedby, invalid })}
-					<input
+					<!-- A textarea that grows with its content, so a long title wraps instead of being cut off. -->
+					<textarea
 						id="title"
-						type="text"
+						rows="1"
 						bind:value={editor.data.title}
 						aria-describedby={describedby}
 						aria-invalid={invalid}
 						placeholder="Project name"
-						class="h-auto w-full border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0"
-					/>
+						onkeydown={(event) => event.key === 'Enter' && event.preventDefault()}
+						class="block field-sizing-content w-full resize-none overflow-hidden border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0"
+					></textarea>
 				{/snippet}
 			</Field>
 

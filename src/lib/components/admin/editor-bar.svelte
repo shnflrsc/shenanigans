@@ -23,7 +23,10 @@
 <header
 	class="sticky top-0 z-30 flex min-h-14 flex-wrap items-center gap-x-4 gap-y-2 border-b border-line bg-paper px-4 py-2 min-[720px]:px-8"
 >
-	<nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-2 text-ui">
+	<nav
+		aria-label="Breadcrumb"
+		class="flex max-w-full min-w-0 flex-1 basis-60 items-center gap-2 text-ui"
+	>
 		<a href={resolve(backRoute)} class="rounded-md text-ink-subtle hover:text-ink">{backLabel}</a>
 		<span aria-hidden="true" class="text-ink-subtle">/</span>
 		<span class="truncate font-semibold">{title || 'Untitled'}</span>

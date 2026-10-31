@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { mailto, site } from '#lib/site.js';
+	import BrandIcon from './brand-icons.svelte';
 	import Frame from './frame.svelte';
 	import Section from './section.svelte';
 </script>
@@ -16,8 +17,12 @@
 		</p>
 		<div class="mt-6 flex flex-wrap justify-center gap-2">
 			<Button href={mailto}>Get in touch</Button>
-			<Button variant="secondary" href={site.github}>GitHub</Button>
-			<Button variant="secondary" href={site.linkedin}>LinkedIn</Button>
+			<Button variant="secondary" href={site.github}
+				><BrandIcon brand="github" class="size-4" />GitHub</Button
+			>
+			<Button variant="secondary" href={site.linkedin}
+				><BrandIcon brand="linkedin" class="size-4" />LinkedIn</Button
+			>
 		</div>
 	</Frame>
 </Section>
