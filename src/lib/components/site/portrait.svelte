@@ -18,7 +18,7 @@
 				alt={`Portrait of ${site.fullName}`}
 				loading="eager"
 				fetchpriority="high"
-				class="size-full object-cover object-[center_30%] grayscale"
+				class="size-full object-cover object-[center_30%] text-transparent grayscale"
 			/>
 		{/if}
 		<div aria-hidden="true" class="absolute inset-0 bg-image-overlay"></div>
