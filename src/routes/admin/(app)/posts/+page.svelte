@@ -44,8 +44,8 @@
 	aria-label="Filter posts by status"
 	class="inline-flex w-fit gap-0.5 rounded-lg border border-line bg-paper-soft p-0.5"
 >
+	<!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs are built from resolve() in tabHref -->
 	{#each tabs as tab (tab.id)}
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- built from resolve() in tabHref -->
 		<a
 			role="tab"
 			aria-selected={data.status === tab.id}
@@ -54,6 +54,7 @@
 			>{tab.label}</a
 		>
 	{/each}
+	<!-- eslint-enable svelte/no-navigation-without-resolve -->
 </div>
 
 {#if loading}
