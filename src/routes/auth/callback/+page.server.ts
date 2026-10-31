@@ -5,12 +5,13 @@ import { resolveSession } from '#lib/server/auth/session.js';
 import { db } from '#lib/server/db/index.js';
 import { assertNotRateLimited } from '#lib/server/rate-limit/guard.js';
 import { recordRejection } from '#lib/server/rate-limit/index.js';
-import type { RequestHandler } from './$types';
+import type { PageServerLoad } from './$types';
 
 // The OAuth callback must work without a session (SR-2 exemption: it is how a session starts).
+// It is a page route, not an endpoint, so a 429 here renders the styled error page.
 const params = z.object({ code: z.string().min(1).max(2048) });
 
-export const GET: RequestHandler = async (event) => {
+export const load: PageServerLoad = async (event) => {
 	assertNotRateLimited(event);
 	const parsed = params.safeParse({ code: event.url.searchParams.get('code') });
 	if (!parsed.success) redirect(303, '/admin?notice=error');

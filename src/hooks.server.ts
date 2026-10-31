@@ -1,5 +1,5 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import type { Handle } from '@sveltejs/kit/hooks';
+import type { Handle, HandleServerError } from '@sveltejs/kit/hooks';
 import { ADMIN_GITHUB_ID, RATE_LIMIT_SECRET } from '$app/env/private';
 import { createSupabase } from '#lib/server/auth/supabase.js';
 import { resolveSession } from '#lib/server/auth/session.js';
@@ -32,3 +32,16 @@ const authenticate: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(headers, rateLimit, authenticate);
+
+/**
+ * Unexpected errors are logged on the server and never shown (FR-30): the visitor gets a generic message
+ * and the 500 page, with no stack, query or database detail.
+ */
+export const handleError: HandleServerError = (input) => {
+	if (input.kind === 'unknown') {
+		const { error, event } = input;
+		console.error(`Unhandled error on ${event.request.method} ${event.url.pathname}`, error);
+		return { message: 'Something went wrong', status: 500 };
+	}
+	// App errors (404 and friends) and framework errors keep their safe defaults.
+};
