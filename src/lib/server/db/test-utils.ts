@@ -16,6 +16,18 @@ export async function withRollback(fn: (tx: TestTx) => Promise<void>) {
 	const db = drizzle(client, { schema });
 	try {
 		await db.transaction(async (tx) => {
+			// Start from empty tables so seeded development data cannot leak into assertions; rolled back below.
+			for (const table of [
+				'post_tags',
+				'project_tags',
+				'posts',
+				'projects',
+				'tags',
+				'admin_allowlist',
+				'rate_limits'
+			]) {
+				await tx.execute(`delete from ${table}`);
+			}
 			await fn(tx);
 			throw new Rollback();
 		});
