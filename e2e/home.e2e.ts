@@ -90,9 +90,9 @@ test.describe('Home with little or no content', () => {
 		await sql(`update projects set status = 'draft', featured = false`);
 		await page.goto('/');
 		await expect(page.getByRole('heading', { name: 'Nothing featured right now' })).toBeVisible();
-		await expect(page.getByRole('link', { name: 'See all projects' })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'See all projects' })).toHaveCount(0);
 		await expect(page.getByRole('heading', { name: 'No posts yet' })).toBeVisible();
-		await expect(page.getByText('The first one is in the works.')).toBeVisible();
+		await expect(page.getByText('The first one is in the works.')).toHaveCount(0);
 		await expect(page.getByRole('link', { name: 'All projects', exact: true })).toHaveCount(0);
 		await expect(page.getByRole('link', { name: 'All posts', exact: true })).toHaveCount(0);
 	});
