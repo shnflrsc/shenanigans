@@ -41,7 +41,7 @@ const WORDS_PER_MINUTE = 200;
 
 /** Read time in whole minutes (at least 1), computed from the markdown body (not stored). */
 export function readTimeMinutes(source: string): number {
-	const text = source.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`~|\-\[\]()!]/g, ' ');
+	const text = source.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`~|\-[\]()!]/g, ' ');
 	const words = text.split(/\s+/).filter(Boolean).length;
 	return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
 }
