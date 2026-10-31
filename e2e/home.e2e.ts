@@ -55,7 +55,7 @@ test.describe('Home', () => {
 		await expect(box.getByRole('link', { name: 'GitHub' })).toBeVisible();
 		await expect(box.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
 		const footer = page.locator('footer');
-		await expect(footer).toContainText(`© ${new Date().getFullYear()} Darl · shenanigans.is-a.dev`);
+		await expect(footer).toContainText(`© ${new Date().getFullYear()} Darl Shanen Floresca`);
 		await expect(footer.getByRole('link')).toHaveText(['Email', 'GitHub', 'LinkedIn']);
 	});
 

@@ -11,7 +11,7 @@
 	<div
 		class="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-4 min-[1024px]:px-16"
 	>
-		<span class="text-caption text-ink-subtle">© {year} {site.owner} · {site.domain}</span>
+		<span class="text-caption text-ink-subtle">© {year} {site.fullName}</span>
 		<ul class="flex items-center gap-1" aria-label="Contact and social links">
 			<li>
 				<Button variant="ghost" size="sm" href={mailto}
