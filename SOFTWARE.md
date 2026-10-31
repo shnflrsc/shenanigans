@@ -1,6 +1,6 @@
 # Shenanigans: Software Requirements Specification
 
-Version 0.2 · 2026-10-31 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
+Version 0.3 · 2026-10-31 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
 
 ## 1. Introduction
 
@@ -26,7 +26,7 @@ A server-rendered SvelteKit application deployed on Vercel, backed by Supabase (
 | Database access | Drizzle ORM |
 | Backend services | Supabase: Postgres, Auth (GitHub provider), Storage |
 | Hosting | Vercel via the SvelteKit Vercel adapter |
-| Preview images | A site preview image (static) and per-post preview images (1200×630) rendered from a template; rendering library not yet chosen (FR-32) |
+| Preview images | A site preview image (static) and per-post preview images (1200×630) rendered from a template; `satori` and `@resvg/resvg-js` (FR-32) |
 | Rate limiting | A `rate_limits` table in Supabase Postgres, accessed through Drizzle (no extra service) |
 | Markdown | unified pipeline: `remark-parse`, `remark-gfm`, `remark-rehype` (raw HTML disabled), `rehype-sanitize`, `rehype-github-alerts`, `rehype-highlight` (class-based, via lowlight), `rehype-stringify` |
 
@@ -57,13 +57,13 @@ A server-rendered SvelteKit application deployed on Vercel, backed by Supabase (
 - FR-23: Home has an "About me" section right after the hero, with: the catchphrase as a large line; a short bio; a quick-facts card (studying, school, based in, graduating year, open to, languages); "Skills and tools" as tag chips grouped as Languages, Frontend, Backend & data, Tools and Learning now; an "Experience and highlights" timeline (year, title, one-line detail); and a "Download résumé" button. This content is part of the site's code, not the database or the dashboard. The résumé is a static file; until the file exists the button is hidden, so it never links to a missing file.
 - FR-24: The Featured section on Home shows only the project flagged featured, with no grid of other projects and no section subtitle. If no project is featured, it shows the empty state in FR-29.
 - FR-25: The header on desktop shows the brand "Shenanigans", links to Home, Projects and Blog, a theme toggle (icon button, no border) and a primary "Get in touch" button that opens an email. At 640px and narrower, the links and the Get in touch button collapse into a menu: the bar shows the brand, the theme toggle and a menu button, and the menu opens a panel with Home, Projects and Blog (tap rows at least 48px tall, current page highlighted) and a full-width Get in touch button. The menu button sets `aria-expanded` and `aria-controls`; the menu closes on Escape and when a link is tapped; closing returns focus to the menu button.
-- FR-26: The footer is a single compact row on every page: "© [current year] Darl · shenanigans.is-a.dev" on the left, and Email, GitHub and LinkedIn as small links with an icon and label on the right. On short pages the footer sits at the bottom of the viewport.
+- FR-26: The footer is a single compact row on every page: "© [current year] Darl Shanen Floresca" on the left (no site address), and Email, GitHub and LinkedIn as small links with an icon and label (the real GitHub and LinkedIn logos) on the right. On short pages the footer sits at the bottom of the viewport.
 - FR-27: A project page has this structure: back link; header (title, summary, tags, author, "Case study", read time); a facts card (Year, My role, Team, links to the live site and source; rows with no value are left out); a 16:10 cover; the markdown body; previous and next project links (in showcase order, FR-17); and a contact box.
 - FR-28: A post page ends with "The project this post is about" (a featured-style project card, shown only when the post is linked to a published project) followed by previous and next post links (older and newer by `published_at`, published posts only). It has no reactions, comments or newsletter.
 - FR-29: The Home, Projects and Blog pages have designed empty states, with the wording in PRODUCT.md section 4.7: no featured project, no posts, no projects (filter chips hidden), no blog posts (filter chips hidden), and the launch state of one project and one post ("More projects are on the way.").
 - FR-30: Unknown, unpublished and deleted URLs return a real HTTP 404 status and show the 404 page. Unexpected server errors show the 500 page (with Try again, Go home and an email link) and never show technical details; the error is logged on the server.
 - FR-31: Every page has a unique title, a description (the post excerpt or project summary; fixed text for Home and the index pages), a canonical URL, Open Graph and Twitter card tags, and a preview image (FR-32). The site has a favicon and a `sitemap.xml` listing only published pages (Home, Projects, Blog and each published project and post), referenced from `robots.txt`. Admin pages are excluded.
-- FR-32: There are two preview image designs at 1200×630: a site preview (hero headline, name, site address, grayscale photo) and a post preview ("Blog", date, read time, post title, small photo and name, site address). Home, the index pages and project pages use the site preview. Each published post gets its own post preview, generated from its title, date and read time. Generated images are cached, post titles are drawn as text (never interpreted as markup), and the image refreshes within the freshness window in PR-6 when a post is edited. The rendering approach is chosen at build time.
+- FR-32: There are two preview image designs at 1200×630: a site preview (hero headline, name, site address, grayscale photo) and a post preview ("Blog", date, read time, post title, small photo and name, site address). Home, the index pages and project pages use the site preview. Each published post gets its own post preview, generated from its title, date and read time. Generated images are cached, post titles are drawn as text (never interpreted as markup), and the image refreshes within the freshness window in PR-6 when a post is edited. Rendering uses `satori` with `@resvg/resvg-js` on request; images are cached per instance, keyed on the post's last edit, with the same short shared cache as pages. The grayscale photo comes from a generated `portrait-og.png` (`bun run og:portrait`).
 
 **Admin**
 - FR-8: `/admin` presents a login screen to unauthenticated visitors. No public page links to it.
@@ -100,12 +100,13 @@ Posts and projects are separate tables.
   - created_at, updated_at
   - Read time is computed from the body when rendering, not stored. The same applies to case studies.
 - `projects`:
-  - id, slug (unique; locked after first publish), title
+  - id, slug (unique; locked after first publish, FR-19), title
   - summary (one or two sentences: what it is and who it is for)
   - body (markdown case study; optional, so a project can be a card only)
   - cover_image (storage path; optional), cover_alt (required when a cover is set)
   - live_url, repo_url (both optional)
   - year, role, team (optional; year and role show as the caption on cards, and all three show in the case-study facts card; team is short text such as "Solo" or "Team of 4")
+  - first_published_at (set the first time the project is published and never cleared; the slug locks from then on, FR-19; posts use `published_at` for this)
   - featured (true/false; at most one true, FR-16)
   - sort_order (number; set through the move-up and move-down controls, FR-17)
   - status (draft or published)
@@ -122,6 +123,7 @@ Posts and projects are separate tables.
   - RLS applies to all three tables like the content tables (SR-4).
 - Markdown is rendered on request: `posts` and `projects` store only the markdown source (no stored HTML column). See PR-5.
 - `rate_limits`: key (hashed IP + limit name), count, window start, blocked until. Internal; see SR-14.
+- `admin_allowlist`: the GitHub numeric id allowed to write through Supabase's API (filled by `bun run db:allow-admin`). Internal; row level security on, no policies. Row level security policies call `public.is_admin()`, which checks the caller's GitHub identity against this table; `user_metadata` is never used because the user can edit it.
 - Schema is defined in Drizzle and migrated with Drizzle's migration tooling.
 
 ### 3.3 External interfaces
@@ -138,7 +140,7 @@ Posts and projects are separate tables.
 - SR-6: Session cookies are managed with `@supabase/ssr`: httpOnly, Secure, SameSite=Lax.
 - SR-7: All form and endpoint input is validated with Zod on the server.
 - SR-8: Rendered markdown is sanitized before output so post content cannot execute scripts. Raw HTML in markdown is disabled, `rehype-sanitize` runs before the alerts and syntax-highlighting plugins, and those plugins must only emit fixed markup, never copy raw user strings into attributes. A test post with script and event-handler payloads must render inert.
-- SR-9: Storage uploads are restricted by file type and size, and writable only by the admin.
+- SR-9: Storage uploads are restricted by file type and size, and writable only by the admin. Allowed: JPEG, PNG, WebP, GIF and AVIF, up to 5 MB, checked from the file's own bytes (not its name or declared type); SVG is refused; object names are random. A cover image is removed from storage when it is replaced or its post or project is deleted (images pasted inside markdown are not tracked).
 - SR-10: Security headers and a Content Security Policy are configured through SvelteKit; SvelteKit's same-origin form protection stays enabled.
 - SR-11: `/admin` is `noindex` and disallowed in `robots.txt`.
 - SR-12: Only the GitHub provider is enabled in Supabase Auth.
@@ -159,7 +161,7 @@ Posts and projects are separate tables.
 - SR-15: Code block headers (UR-9) are added after sanitizing, with fixed markup only. The language label comes from the code fence and is shown only if it matches a short allow-pattern (letters, digits, `+`, `#`, `-`, up to 20 characters); otherwise it is left out. The Copy button works through an event listener added by the site's script, never an inline handler, so the strict CSP (SR-10) holds. The same markup is used in the admin live preview (SR-13).
 
 ### 3.5 Performance requirements
-- PR-1: Public pages are server-rendered with a short shared-cache window (about 60 seconds) so repeat requests do not always hit the database. Any stale-while-revalidate allowance is kept short (see PR-6).
+- PR-1: Public pages are server-rendered with a short shared-cache window (`s-maxage=45` plus `stale-while-revalidate=10`, so a page is at most 55 seconds stale) so repeat requests do not always hit the database. Any stale-while-revalidate allowance is kept short (see PR-6).
 - PR-2: Admin routes are never cached.
 - PR-3: Images are sized and lazy-loaded appropriately, except images above the fold, such as the hero photo, which load right away so the first screen is not delayed. Fonts load with `font-display: swap`.
 - PR-4: Prerendering or incremental regeneration will be reconsidered once there is real content and traffic.
@@ -199,9 +201,9 @@ Posts and projects are separate tables.
 - Rate limiting: confirm the 11th sign-in request in 10 minutes returns 429 with `Retry-After`; confirm the third allowlist rejection blocks that IP for an hour; confirm `X-Forwarded-For` spoofing does not change the counted IP; fire concurrent requests and confirm the count is exact (no lost increments); confirm the table is not readable through the Supabase API.
 
 ## 5. Open issues
-- The public pages and their empty and error states are designed (PRODUCT.md section 4); build from those designs. Not designed yet: the admin screens, the login screen, the rate-limited (429) page, and the wording for denied sign-ins.
-- Résumé file: still to be provided (FR-23).
-- Preview images: choose how post previews are rendered and cached (FR-32).
+- Résumé file: still to be provided (FR-23). The button stays hidden until `static/resume.pdf` exists.
 - RSS feed: still not planned.
-- Recommendations awaiting confirmation, applied above and easy to reverse: the optional `team` field on projects, the optional `project_id` link from a post to a project, About me content kept in code, and project pages using the site preview image.
-- Write the token-based CSS for alerts and `hljs-*` classes (see UR-6 to UR-8); decide later whether monochrome syntax is readable enough or needs extra syntax tokens.
+- On-demand revalidation on Vercel (PR-6): the hook exists (`VERCEL_ISR_BYPASS_TOKEN`), but the ISR route configuration is not enabled until it can be verified on a deployed project. The short cache window already meets the 60 second requirement.
+- To verify after the first deployment: the native image renderer for preview images (FR-32), that a spoofed `X-Forwarded-For` does not change the counted IP (SR-14), and the Vercel adapter build.
+- Settled since 0.2: the admin, login and 429 designs; how post previews are rendered (FR-32); the alert and `hljs-*` styles are monochrome and meet contrast in both themes (UR-6 to UR-8); blog pagination is 10 per page and tag filters live in the URL.
+- Accessibility target: WCAG 2.1 AA at minimum (the design system's palette also meets 2.2 AA).

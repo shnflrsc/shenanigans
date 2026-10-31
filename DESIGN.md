@@ -4,7 +4,7 @@ Oct 31, 2026 · @Darl Shanen Floresca
 
 ## How to use this file
 
-This is the single source of truth for how Shenanigans looks and reads. Shenanigans is a personal portfolio and blog (projects showcase, posts, reactions, comments, an admin editor) built with Astro, Svelte islands and Supabase. Any agent generating UI, styles or copy for it must follow this file.
+This is the single source of truth for how Shenanigans looks and reads. Shenanigans is a personal portfolio and blog (projects showcase, posts, an admin dashboard) built with SvelteKit, shadcn-svelte and Supabase. Reactions, comments and a newsletter are in this system but are not used on Shenanigans. Any agent generating UI, styles or copy for it must follow this file.
 
 - **Precedence:** an explicit instruction from the project owner > this file > existing code > the agent's own taste.
 - **Tokens are law.** Never hard-code a color, size, radius, shadow or font. Use the CSS custom properties named here (for example `var(--ink)`, `var(--space-6)`).
@@ -172,14 +172,14 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 | --- | --- | --- |
 | NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), socials + one small primary button right | Current page = `ink` on `fill-hover` with `aria-current="page"`. Optional sticky. No logo image ships: set the name in type. |
 | SocialLinks | Row of 32px ghost icon buttons, 16px line icons in `ink-subtle`, `ink` on hover | Every link has an accessible label. Generic glyphs only. |
-| Footer | `paper-soft` with top hairline: name + one-line bio left, link columns with mono `caption` headings right, then a hairline row with mono credit and socials | Never a dark band. |
+| Footer | `paper-soft` with top hairline, one compact row: mono `caption` copyright with the full name on the left, ghost links with an icon and label (Email, GitHub, LinkedIn, using the real brand logos) on the right. No brand block, link columns, tagline or site address | Never a dark band. Sits at the bottom of the viewport on short pages. |
 | PostNav | Two outline Frames side by side: mono "Previous" / "Next" caption + `card-title` | A missing side leaves its slot empty. |
 
 ### Typography and layout
 
 | Component | Anatomy | Rules |
 | --- | --- | --- |
-| HeroTitle | Optional 72px round grayscale avatar, status line with a 6px `ink` dot, optional Eyebrow, `hero` headline, `lead` subtitle (max 560px), up to two buttons | Centered by default, `align="start"` for left. One per page. |
+| HeroTitle | Optional 72px round grayscale avatar, optional status line with a 6px `ink` dot (not used on Shenanigans), optional Eyebrow, `hero` headline, `lead` subtitle (max 560px), up to two buttons | Centered by default, `align="start"` for left. One per page. |
 | SectionTitle | Optional Eyebrow, `title`, optional `body` description in `ink-muted` | Left by default; center only above grids. |
 | Eyebrow | Mono uppercase `caption` on `fill-muted`, `radius-sm`, 2px × 8px padding | One or two words above a title. |
 | Prose | 680px column, `prose` text; `h2`/`h3`, links underlined in `line-strong` (ink on hover), lists with `ink-subtle` markers, blockquote with 3px `ink` rule, inline code on `fill-muted`, `pre` on `paper-soft` with `radius-lg`, rounded images, hairline `hr` | Wrap rendered Markdown in it. |
@@ -195,8 +195,8 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 | PostCard | `row` (default): 112px mono date column, title, excerpt, Tags + read time, hairline below, `fill-hover` on hover. `card`: outline Frame with 16:9 image | Row for indexes, card for "latest posts". |
 | PostHeader | Tags, `post-title`, `lead` subtitle, byline (32px avatar, name, mono date / read time), hairline below | Sits in a narrow section above Prose. |
 | Callout | `paper-soft` (or outline) box, `radius-md`, 16px padding, 18px info icon in `ink-subtle`, 15/24px text | 1–2 per post. |
-| ReactionBar | 32px pill toggles (`radius-full`, `line` border): line icon, label, mono count | Pressed = `ink` border, filled icon, `aria-pressed`. Defaults Like, Insightful, Fun. No emoji. |
-| Comment | 32px avatar, name 14/600 + mono date, 15/24px body in `ink-muted`, ghost "Reply"; replies indented 16px behind a 1px `line` thread | One level of nesting. Comment box = TextField + small primary Button. |
+| ReactionBar (not used on Shenanigans) | 32px pill toggles (`radius-full`, `line` border): line icon, label, mono count | Pressed = `ink` border, filled icon, `aria-pressed`. Defaults Like, Insightful, Fun. No emoji. |
+| Comment (not used on Shenanigans) | 32px avatar, name 14/600 + mono date, 15/24px body in `ink-muted`, ghost "Reply"; replies indented 16px behind a 1px `line` thread | One level of nesting. Comment box = TextField + small primary Button. |
 | QuoteCard | Soft Frame, `lg` padding: `quote` text, person (36px avatar, name, role), optional arrow buttons right | One quote at a time. |
 | Accordion | Hairline rows, 14px chevron rotating 90° open, question in 15px/500, answer indented 30px in `ink-muted` | One open at a time; `aria-expanded` + `aria-controls`. |
 | CTABanner | Soft Frame, `radius-xl`, 48px padding, centered `title` (optional soft run), description, 1–2 actions or an email field + button | One per page, before the footer. |
@@ -207,13 +207,13 @@ Every page starts with NavBar and ends with Footer; between them, sections alter
 
 | Page | Sections, top to bottom |
 | --- | --- |
-| Home | HeroTitle (avatar, status, two actions) · SectionTitle + one `featured` ProjectCard + 2–3 ProjectCards (soft) · SectionTitle + latest PostCard rows · optional Stats or QuoteCard (soft) · CTABanner "Get in touch" |
+| Home | HeroTitle (headline, subtitle, View projects and Read the blog, photo with name and caption; no status line, no Get in touch) · About me (catchphrase, bio, quick-facts Frame, Skills and tools, Experience and highlights, résumé button when the file exists) · SectionTitle + the one `featured` ProjectCard (soft) · SectionTitle + latest PostCard rows · CTABanner "Got something in mind?" |
 | Projects index | SectionTitle · row of filter Tags · ProjectCard grid, 2–3 columns |
 | Project case study | PostHeader (year, role, tags) · hero image in `radius-lg` · Prose with Callouts and screenshots · links (live, source) · PostNav |
 | Blog index | SectionTitle · filter Tags with counts · PostCard rows (newest first) · pagination |
-| Post | PostHeader · Prose (narrow) · ReactionBar · Comments + comment TextField · PostNav · newsletter CTABanner |
-| About | HeroTitle `align="start"` · Prose bio · Stats · Accordion (FAQ or "uses") · CTABanner |
-| Admin editor | NavBar · narrow section: TextFields for title, slug, excerpt, tags · Markdown body TextField with a live Prose preview · secondary "Save draft" + primary "Publish" |
+| Post | PostHeader · Prose (narrow) · "The project this post is about" (featured ProjectCard, only for a published linked project) · PostNav (older and newer). No reactions, comments or newsletter |
+| About | Not a page: it is the About me section on Home |
+| Admin | Sidebar shell (paper-soft, 232px) on desktop; top bar and a three-way section switcher on phones. Lists use a table with status badges. Editors: sticky top bar with save state, main column (title, markdown with toolbar and live Prose preview), settings Frame (status, slug, excerpt or summary, tags, cover with required alt text); secondary "Save draft" + primary "Publish". Destructive actions use the primary button with an explicit verb, never red. See the admin design for every state |
 | 404 | Centered HeroTitle with a playful line and one "Back home" button |
 
 Empty, loading and error states use the same pieces: a short `body` line in `ink-muted` inside a soft Frame, with one ghost or secondary button to recover. Loading skeletons are `fill-muted` blocks at `radius-sm`, no shimmer.
@@ -288,14 +288,14 @@ Tokens ship as CSS custom properties: light on `:root`, dark under `[data-theme=
 }
 ```
 
-**Stack notes (Astro + Svelte islands + Supabase)**
+**Stack notes (SvelteKit + shadcn-svelte + Supabase)**
 
-- Put the token file in a global stylesheet imported once by the base layout; load the two fonts there with `display=swap` (or self-host them).
-- Static, non-interactive components (Section, Frame, SectionTitle, ProjectCard, PostCard, PostHeader, Prose, Footer) are Astro components with no client JavaScript.
-- Only interactive parts are Svelte islands: theme toggle, filter Tags, ReactionBar, Comment thread + form, Accordion, carousels, the admin editor. Hydrate with `client:visible` (or `client:idle` for the nav).
-- Set the theme before first paint: a tiny inline script in `<head>` reads the saved choice or `prefers-color-scheme` and sets `data-theme` on `<html>`, so there is no flash.
-- Class names use the `sh-` prefix; scoped component styles may be used, but values still come only from tokens.
-- Reaction counts and comments come from Supabase; render counts optimistically and roll back on error.
+- The token file lives in `src/lib/styles/tokens.css`, imported once from the root stylesheet. Tailwind's theme (`@theme inline`) reads the tokens at run time, so both themes work with no per-component switching. The shadcn-svelte colour names (`--background`, `--primary`, ...) are mapped onto the tokens; destructive maps to `ink` because the design uses no red.
+- Fonts are self-hosted from `@fontsource` packages (Space Grotesk as the variable font, registered as "Space Grotesk Variable", and Space Mono 400 and 700) with `display=swap`; there is no request to Google Fonts.
+- Everything is a Svelte component and pages are server-rendered. The type styles are Tailwind utilities (`text-hero`, `text-card-title`, `text-caption`, ...), not `sh-` classes.
+- Set the theme before first paint: a tiny inline script in `app.html` reads the saved choice or `prefers-color-scheme` and sets `data-theme` on `<html>`, so there is no flash. It carries the CSP nonce.
+- Rendered markdown goes through one shared function and is wrapped in `.prose-shenanigans`; code uses class-based `hljs-*` colours made only of tokens.
+- Photos are grayscale (the `grayscale` utility on the page, a pre-converted PNG for link previews).
 
 ## Agent checklist
 
