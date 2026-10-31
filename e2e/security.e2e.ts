@@ -19,7 +19,7 @@ test.describe('security headers and CSP', () => {
 
 	test('public pages get a short shared cache window', async ({ request }) => {
 		const h = (await request.get('/')).headers();
-		expect(h['cache-control']).toContain('s-maxage=60');
+		expect(h['cache-control']).toContain('s-maxage=45');
 	});
 
 	test('admin pages are never cached and are noindex', async ({ request }) => {

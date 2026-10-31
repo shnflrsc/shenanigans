@@ -9,7 +9,7 @@ test.describe('preview images (FR-32)', () => {
 		const response = await request.get('/og/site.png');
 		expect(response.status()).toBe(200);
 		expect(response.headers()['content-type']).toBe('image/png');
-		expect(response.headers()['cache-control']).toContain('s-maxage=60');
+		expect(response.headers()['cache-control']).toContain('s-maxage=45');
 		expect(size(await response.body())).toEqual({ width: 1200, height: 630 });
 	});
 

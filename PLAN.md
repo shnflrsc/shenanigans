@@ -128,9 +128,9 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 ### M7 Freshness and caching
 
-- [ ] **M7-1** On-demand revalidation after create/edit/publish/unpublish/delete for affected pages (post/project page, indexes, Home, tag counts, sitemap, og image) using Vercel ISR with bypass token (D9; verify adapter-vercel `isr` options when implementing). Covers: PR-6. Deps: M5, M6. Accept: pages update within 60s. Verify: Playwright flow against preview; in local dev the 60s cache window fallback is tested via headers.
-- [ ] **M7-2** Fallback note "Saved. The public page can take up to a minute to update." shown in the saved toast. Covers: PR-6. Deps: M6-5.
-- [ ] **M7-3** Reconsider prerender/ISR (record outcome only). Covers: PR-4. Deps: M7-1.
+- [x] **M7-1** On-demand revalidation after create/edit/publish/unpublish/delete for affected pages (post/project page, indexes, Home, tag counts, sitemap, og image) using Vercel ISR with bypass token (D9; verify adapter-vercel `isr` options when implementing). Covers: PR-6. Deps: M5, M6. Accept: pages update within 60s. Verify: Playwright flow against preview; in local dev the 60s cache window fallback is tested via headers. (done 2026-10-31)
+- [x] **M7-2** Fallback note "Saved. The public page can take up to a minute to update." shown in the saved toast. Covers: PR-6. Deps: M6-5. (done 2026-10-31)
+- [x] **M7-3** Reconsider prerender/ISR (record outcome only). Covers: PR-4. Deps: M7-1. (done 2026-10-31)
 
 ### M8 Hardening and QA
 
@@ -298,6 +298,8 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 - M3-4 (partial): the real GitHub sign-in round trip cannot be verified until H1-H4 are done (GitHub OAuth app, numeric GitHub id, Supabase GitHub provider credentials). Everything around it is tested with the local stack: login states, denied/error notices, redirects, 401s, rate limits, callback error path. Manual check needed: sign in with your account, then with a second account to see the denied state and the signed-out result.
 
+- M7-1 (partial): on-demand revalidation on Vercel (D9) is implemented as `revalidatePublic` (HEAD with `x-prerender-revalidate` when `VERCEL_ISR_BYPASS_TOKEN` and `ORIGIN` are set) but the ISR route config (`export const config = { isr: ... }` with the bypass token on the public routes) is NOT enabled because it cannot be verified without a Vercel deployment. The tested fallback (s-maxage=45 + stale-while-revalidate=10, so at most 55s stale, plus the dashboard note) already meets PR-6. Needs: after H5, enable ISR on the public routes per the adapter-vercel docs, set the token, and re-run the freshness e2e against the preview deployment.
+
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
 
 - D1 DESIGN.md is stale in places (Astro/islands, reactions, comments, newsletter, About page, brand block footer). PRODUCT.md and SOFTWARE.md win; ignore those parts. Public design wins on visuals.
@@ -319,6 +321,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D17 RLS write policy uses `public.is_admin()` (SECURITY DEFINER) which matches the caller's GitHub identity in `auth.identities` against the `admin_allowlist` table (filled by `bun run db:allow-admin` from `ADMIN_GITHUB_ID`). `user_metadata` is user-editable so it is not used. Tags are readable by the public only when used by published content.
 - D18 The 30 per minute limit for unauthenticated /admin/* requests is applied to requests that carry no Supabase session cookie, because the limiter runs before any auth call (SR-14). Requests with a cookie are validated by auth and refused by requireAdmin.
 - D19 Home empty state: the admin design handoff says "hero with one Get in touch button and a Nothing published yet frame", but PRODUCT.md 4.4 and FR-1 say the hero never has a Get in touch button and FR-29 specifies per-section empty states. Built per FR-1/FR-29 (HomeEmpty board): featured and latest-posts sections each show their own empty card. Launch state hides "All projects"/"All posts" under two items.
+- D21 PR-4 outcome (M7-3): public pages stay server-rendered with a 45s shared cache. Prerendering or ISR is reconsidered only if real traffic shows the database or markdown rendering is a bottleneck.
 - D20 404 buttons: the admin handoff says Back home + Read the blog, PRODUCT.md 4.7 and FR-30 say Go home, View projects and Read the blog. Built the three-button version (PRODUCT.md wins on behaviour). The 500 page omits the design's "request reference" placeholder (no technical details, FR-30). `/auth/callback` is a page route (not an endpoint) so its 429 renders the styled error page.
 
 ## 11. Spec change requests
@@ -357,3 +360,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 M6-7: post editor (create/save/publish/unpublish/delete, slug follows title then locks, tag combobox with inline create, project selector, cover + required alt, live preview via shared render, indicator, failed-save banner + Retry, expired-session dialog, LeaveGuard with beforeNavigate/beforeunload); upload endpoint (byte-sniffed types, no SVG, 5MB, random names, lazy bucket create) + 11 unit tests; 16 e2e tests incl. offline, expired session, forged slug, SVG rejection
 - 2026-10-31 M6-10: projects list (order up/down, featured switch with swap toast + Undo, status, delete), project editor (all fields, featured hint names the project that loses it, slug lock via first_published_at), tags admin (create, near-duplicate refusal, inline rename with slug preview, delete dialog with counts); 7 e2e tests; M6-8, M6-9
 - 2026-10-31 M6-11: storage cleanup: covers removed on replace/delete (best effort, markdown-inline images not tracked); e2e proves old and deleted covers disappear
+- 2026-10-31 M7-1: revalidatePublic (Vercel bypass-header path, unit tested) + tested fallback; cache tightened to s-maxage=45/swr=10 (max 55s stale); freshness e2e for post and project; ISR route config deferred as a blocker (needs Vercel). M7-2 note shown, M7-3 recorded as D21

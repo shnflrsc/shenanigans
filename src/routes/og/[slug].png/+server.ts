@@ -19,7 +19,7 @@ const remember = (key: string, png: Uint8Array) => {
 // Short shared cache keeps the image inside the 60 second freshness window (FR-32, PR-6).
 const headers = {
 	'Content-Type': 'image/png',
-	'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=30'
+	'Cache-Control': 'public, max-age=0, s-maxage=45, stale-while-revalidate=10'
 };
 
 /** `/og/site.png` is the site preview; `/og/<post-slug>.png` is that published post's preview (FR-32). */

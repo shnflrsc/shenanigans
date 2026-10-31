@@ -30,7 +30,7 @@ export const headers: Handle = async ({ event, resolve }) => {
 		(h.get('content-type') ?? '').startsWith('text/html')
 	) {
 		// Public pages: short shared cache so repeat requests skip the database (PR-1). Kept short for PR-6.
-		h.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=30');
+		h.set('Cache-Control', 'public, max-age=0, s-maxage=45, stale-while-revalidate=10');
 	}
 	return response;
 };
