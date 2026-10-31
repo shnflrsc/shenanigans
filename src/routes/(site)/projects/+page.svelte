@@ -23,7 +23,7 @@
 
 <Section>
 	<div class="flex flex-col gap-8">
-		<SectionTitle tag="h1" eyebrow="Portfolio" soft="Things I have built.">Projects.</SectionTitle>
+		<SectionTitle tag="h1" soft="Things I have built.">Projects.</SectionTitle>
 
 		{#if data.total === 0}
 			<EmptyCard variant="soft" title="No projects yet" text="They’re on the way.">
