@@ -1,3 +1,169 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
+
+@import '../lib/styles/tokens.css';
+
+/* Tokens stay the source of truth; Tailwind utilities read them at runtime so both themes work. */
+@theme inline {
+	--color-*: initial;
+	--color-paper: var(--paper);
+	--color-paper-soft: var(--paper-soft);
+	--color-paper-raised: var(--paper-raised);
+	--color-fill-muted: var(--fill-muted);
+	--color-fill-hover: var(--fill-hover);
+	--color-ink: var(--ink);
+	--color-ink-muted: var(--ink-muted);
+	--color-ink-subtle: var(--ink-subtle);
+	--color-on-ink: var(--on-ink);
+	--color-line: var(--line);
+	--color-line-strong: var(--line-strong);
+	--color-edge-highlight: var(--edge-highlight);
+	--color-image-overlay: var(--image-overlay);
+	--color-scrim: var(--scrim);
+	--color-transparent: transparent;
+	--color-current: currentColor;
+
+	--font-sans: var(--font-sans);
+	--font-mono: var(--font-mono);
+
+	--radius-sm: var(--radius-sm);
+	--radius-md: var(--radius-md);
+	--radius-lg: var(--radius-lg);
+	--radius-xl: var(--radius-xl);
+	--radius-full: var(--radius-full);
+
+	--shadow-sm: var(--shadow-sm);
+	--shadow-md: var(--shadow-md);
+	--shadow-focus: var(--focus-ring);
+
+	--spacing: 4px;
+}
+
+@layer base {
+	html {
+		background: var(--paper);
+		color: var(--ink);
+		font-family: var(--font-sans);
+		-webkit-text-size-adjust: 100%;
+	}
+	body {
+		background: var(--paper);
+		color: var(--ink);
+		font-size: 16px;
+		line-height: 26px;
+		min-height: 100dvh;
+	}
+	::selection {
+		background: var(--selection);
+	}
+	:focus-visible {
+		outline: none;
+		box-shadow: var(--focus-ring);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		* {
+			transition-duration: 0.01ms !important;
+			animation-duration: 0.01ms !important;
+		}
+	}
+}
+
+/* Type styles from DESIGN.md. Mobile scales hero and title. */
+@utility text-hero {
+	font-size: 40px;
+	line-height: 46px;
+	font-weight: 600;
+	letter-spacing: -0.035em;
+	@media (min-width: 720px) {
+		font-size: 56px;
+		line-height: 62px;
+	}
+}
+@utility text-post-title {
+	font-size: 44px;
+	line-height: 52px;
+	font-weight: 600;
+	letter-spacing: -0.03em;
+}
+@utility text-title {
+	font-size: 28px;
+	line-height: 36px;
+	font-weight: 600;
+	letter-spacing: -0.025em;
+	@media (min-width: 720px) {
+		font-size: 36px;
+		line-height: 44px;
+	}
+}
+@utility text-prose-h2 {
+	font-size: 26px;
+	line-height: 34px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+@utility text-quote {
+	font-size: 22px;
+	line-height: 32px;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+}
+@utility text-lead {
+	font-size: 20px;
+	line-height: 30px;
+	font-weight: 400;
+}
+@utility text-prose-h3 {
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+@utility text-card-title {
+	font-size: 17px;
+	line-height: 24px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+@utility text-prose {
+	font-size: 17px;
+	line-height: 30px;
+	font-weight: 400;
+}
+@utility text-body {
+	font-size: 16px;
+	line-height: 26px;
+	font-weight: 400;
+}
+@utility text-small {
+	font-size: 14px;
+	line-height: 22px;
+	font-weight: 400;
+}
+@utility text-ui {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 500;
+}
+@utility text-stat {
+	font-family: var(--font-mono);
+	font-size: 36px;
+	line-height: 40px;
+	letter-spacing: -0.03em;
+}
+@utility text-code {
+	font-family: var(--font-mono);
+	font-size: 14px;
+	line-height: 22px;
+}
+@utility text-caption {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	line-height: 16px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
