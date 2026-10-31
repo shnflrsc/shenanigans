@@ -81,7 +81,7 @@ export async function createPost(db: Db, input: PostInput): Promise<string> {
 /** Saves a post. The slug cannot change once the post has been published (FR-19), whatever the form sends. */
 export async function updatePost(db: Db, id: string, input: PostInput) {
 	try {
-		await db.transaction(async (tx) => {
+		return await db.transaction(async (tx) => {
 			const [existing] = await tx.select().from(s.posts).where(eq(s.posts.id, id)).for('update');
 			if (!existing) throw new AdminError('not_found', 'Post not found');
 			if (existing.publishedAt && input.slug !== existing.slug) {
@@ -101,6 +101,7 @@ export async function updatePost(db: Db, id: string, input: PostInput) {
 				})
 				.where(eq(s.posts.id, id));
 			await syncPostTags(tx, id, input.tagIds);
+			return { previousCover: existing.coverImage };
 		});
 	} catch (error) {
 		if (isUnique(error)) throw new AdminError('slug_taken', 'That slug is already used', 'slug');
@@ -212,7 +213,7 @@ export async function createProject(db: Db, input: ProjectInput): Promise<string
 
 export async function updateProject(db: Db, id: string, input: ProjectInput) {
 	try {
-		await db.transaction(async (tx) => {
+		return await db.transaction(async (tx) => {
 			const [existing] = await tx
 				.select()
 				.from(s.projects)
@@ -240,6 +241,7 @@ export async function updateProject(db: Db, id: string, input: ProjectInput) {
 				})
 				.where(eq(s.projects.id, id));
 			await syncProjectTags(tx, id, input.tagIds);
+			return { previousCover: existing.coverImage };
 		});
 	} catch (error) {
 		if (isUnique(error)) throw new AdminError('slug_taken', 'That slug is already used', 'slug');

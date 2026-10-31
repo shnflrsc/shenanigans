@@ -265,3 +265,46 @@ test.describe('Delete', () => {
 		expect(await sql(`select 1 from posts where slug = 'e2e-delete-from-editor'`)).toHaveLength(0);
 	});
 });
+
+test.describe('Image cleanup (D3)', () => {
+	test('deleting a post removes its cover from storage, and replacing a cover removes the old one', async ({
+		page,
+		request
+	}) => {
+		await page.goto('/admin/posts/new');
+		await page.getByLabel('Title').fill('E2E Cleanup');
+		await page.getByLabel('Excerpt').fill('x');
+		await page
+			.locator('#cover')
+			.setInputFiles({ name: 'a.png', mimeType: 'image/png', buffer: PNG });
+		await page.getByLabel('Alt text').fill('one pixel');
+		await page.getByRole('button', { name: 'Save draft' }).click();
+		await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
+		const [first] = await sql<{ cover_image: string }>(
+			`select cover_image from posts where slug = 'e2e-cleanup'`
+		);
+		const url = (path: string) => `http://127.0.0.1:54321/storage/v1/object/public/images/${path}`;
+		expect((await request.get(url(first.cover_image))).status()).toBe(200);
+
+		// Replace the cover: the old object goes away after the save.
+		await page
+			.locator('#cover')
+			.setInputFiles({ name: 'b.png', mimeType: 'image/png', buffer: PNG });
+		await expect(page.getByText('Unsaved changes')).toBeVisible();
+		await page.getByRole('button', { name: 'Save draft' }).click();
+		await expect(page.getByText('All changes saved')).toBeVisible();
+		const [second] = await sql<{ cover_image: string }>(
+			`select cover_image from posts where slug = 'e2e-cleanup'`
+		);
+		expect(second.cover_image).not.toBe(first.cover_image);
+		await expect.poll(async () => (await request.get(url(first.cover_image))).status()).toBe(400);
+		expect((await request.get(url(second.cover_image))).status()).toBe(200);
+
+		await page.getByRole('button', { name: 'Delete post' }).click();
+		await page.getByRole('alertdialog').getByRole('button', { name: 'Delete post' }).click();
+		await expect(page).toHaveURL(/\/admin\/posts$/);
+		await expect
+			.poll(async () => (await request.get(url(second.cover_image))).status())
+			.not.toBe(200);
+	});
+});

@@ -15,6 +15,7 @@ import {
 import { fieldErrors, idParam, postInput, tagName } from '#lib/server/content/validation.js';
 import { db } from '#lib/server/db/index.js';
 import { revalidatePublic } from '#lib/server/revalidate.js';
+import { removeImages } from '#lib/server/storage.js';
 import type { Actions, PageServerLoad } from './$types';
 
 const idOrNew = z.union([z.literal('new'), idParam]);
@@ -66,7 +67,10 @@ export const actions: Actions = {
 
 		try {
 			const id = idPart.data === 'new' ? await createPost(db, input.data) : idPart.data;
-			if (idPart.data !== 'new') await updatePost(db, id, input.data);
+			if (idPart.data !== 'new') {
+				const { previousCover } = await updatePost(db, id, input.data);
+				if (previousCover !== input.data.coverImage) await removeImages([previousCover]);
+			}
 
 			let row: { slug: string };
 			if (form.data.intent === 'publish') row = await setPostStatus(db, id, 'published');
@@ -99,6 +103,7 @@ export const actions: Actions = {
 		if (!id.success) return fail(404, { message: 'Post not found' });
 		try {
 			const row = await deletePost(db, id.data);
+			await removeImages([row.coverImage]);
 			await revalidatePublic({ posts: [row.slug] });
 		} catch (e) {
 			if (e instanceof AdminError) return fail(404, { message: e.message });

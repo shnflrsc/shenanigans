@@ -12,6 +12,7 @@ import {
 import { idParam } from '#lib/server/content/validation.js';
 import { db } from '#lib/server/db/index.js';
 import { revalidatePublic } from '#lib/server/revalidate.js';
+import { removeImages } from '#lib/server/storage.js';
 import type { Actions, PageServerLoad } from './$types';
 
 const filter = z.enum(['all', 'published', 'draft']).catch('all');
@@ -90,6 +91,7 @@ export const actions: Actions = {
 		if (!parsed.success) return fail(400, { message: 'That request was not valid' });
 		return guarded(async () => {
 			const row = await deleteProject(db, parsed.data.id);
+			await removeImages([row.coverImage]);
 			await revalidatePublic({ projects: [row.slug] });
 			return { ok: true };
 		});

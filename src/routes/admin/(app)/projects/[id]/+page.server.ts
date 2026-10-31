@@ -16,6 +16,7 @@ import {
 import { fieldErrors, idParam, projectInput, tagName } from '#lib/server/content/validation.js';
 import { db } from '#lib/server/db/index.js';
 import { revalidatePublic } from '#lib/server/revalidate.js';
+import { removeImages } from '#lib/server/storage.js';
 import type { Actions, PageServerLoad } from './$types';
 
 const idOrNew = z.union([z.literal('new'), idParam]);
@@ -65,7 +66,10 @@ export const actions: Actions = {
 
 		try {
 			const id = idPart.data === 'new' ? await createProject(db, input.data) : idPart.data;
-			if (idPart.data !== 'new') await updateProject(db, id, input.data);
+			if (idPart.data !== 'new') {
+				const { previousCover } = await updateProject(db, id, input.data);
+				if (previousCover !== input.data.coverImage) await removeImages([previousCover]);
+			}
 			let row: { slug: string };
 			if (form.data.intent === 'publish') row = await setProjectStatus(db, id, 'published');
 			else if (form.data.intent === 'unpublish') row = await setProjectStatus(db, id, 'draft');
@@ -113,6 +117,7 @@ export const actions: Actions = {
 		if (!id.success) return fail(404, { message: 'Project not found' });
 		try {
 			const row = await deleteProject(db, id.data);
+			await removeImages([row.coverImage]);
 			await revalidatePublic({ projects: [row.slug] });
 		} catch (e) {
 			if (e instanceof AdminError) return fail(404, { message: e.message });
