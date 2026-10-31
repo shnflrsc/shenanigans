@@ -1,54 +1,39 @@
-# sv
+# Shenanigans
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Personal portfolio and blog. SvelteKit 3, Svelte 5, Tailwind 4, shadcn-svelte, Drizzle, Supabase (Postgres, Auth, Storage), deployed on Vercel.
 
-## Creating a project
+Start with [PLAN.md](PLAN.md): it is the build plan and the progress log. Product intent is in PRODUCT.md, requirements in SOFTWARE.md, journeys in JOURNEY.md, visuals in DESIGN.md.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Local development
 
-```sh
-# create a new project
-npx sv create my-app
+Needs [bun](https://bun.sh) and Docker Desktop (running).
+
+```bash
+bun install
+cp .env.example .env        # then fill in values; see below
+bun run db:start            # Supabase local stack (Postgres 54322, API 54321)
+bun run db:migrate          # apply Drizzle migrations
+bun run db:seed             # sample content (development only)
+bun run dev
 ```
 
-To recreate this project with the same configuration:
+`bunx supabase status` prints the local URL and keys for `.env`. The local keys are public demo keys, not secrets. Real GitHub sign-in needs an OAuth app (PLAN.md H2): put its client id and secret in `supabase/.env` (git-ignored) as `SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET`, then set `ADMIN_GITHUB_ID` in `.env` and run `bun run db:allow-admin`.
 
-```sh
-# recreate this project
-bun x sv@1.1.1 create --template minimal --types ts --add eslint tailwindcss="plugins:typography,forms" prettier vitest="usages:unit,component" playwright="demo:no" enhanced-img sveltekit-adapter="adapter:vercel" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" ai-tools="ide:claude-code+delivery:plugin" --install bun shenanigans
-```
+## Commands
 
-## Adding features
+| Purpose            | Command                       |
+| ------------------ | ----------------------------- |
+| Typecheck          | `bun run check`               |
+| Lint and format    | `bun run lint`                |
+| Unit tests         | `bunx vitest --run`           |
+| End-to-end tests   | `bunx playwright test`        |
+| Build              | `bun run build`               |
+| New migration      | `bun run db:generate`         |
+| Apply migrations   | `bun run db:migrate`          |
+| Stop local stack   | `bun run db:stop`             |
 
-Add features to your project with `sv add`:
+Database tests run inside rolled-back transactions against the local stack, so `db:start` and `db:migrate` must have run first.
 
-```sh
-npx sv add
-```
+## Environment
 
-For example, to add Tailwind CSS:
-
-```sh
-npx sv add tailwindcss
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
+Variables are declared and validated in `src/env.ts`. Secrets are server-only and never reach client code.
