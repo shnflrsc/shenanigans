@@ -315,6 +315,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D15 Package `#lib` alias is used for imports in app code.
 - D16 Local builds use `@sveltejs/adapter-node` (adapter-vercel needs symlink rights and fails on Windows without developer mode); `adapter-vercel` is used when `VERCEL` is set. `.env` holds placeholder values so env validation passes locally; real values come from H1-H4.
 - D17 RLS write policy uses `public.is_admin()` (SECURITY DEFINER) which matches the caller's GitHub identity in `auth.identities` against the `admin_allowlist` table (filled by `bun run db:allow-admin` from `ADMIN_GITHUB_ID`). `user_metadata` is user-editable so it is not used. Tags are readable by the public only when used by published content.
+- D18 The 30 per minute limit for unauthenticated /admin/* requests is applied to requests that carry no Supabase session cookie, because the limiter runs before any auth call (SR-14). Requests with a cookie are validated by auth and refused by requireAdmin.
 
 ## 11. Spec change requests
 
