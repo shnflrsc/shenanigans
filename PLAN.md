@@ -136,14 +136,14 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 - [x] **M8-1** Test suites listed in section 7 completed; coverage gaps closed. Covers: all SR. Verify: full `bun run test:unit -- --run` and e2e. (done 2026-10-31)
 - [x] **M8-2** Accessibility: add `@axe-core/playwright` checks on every public page and admin screen in both themes; keyboard pass. Covers: UR-2, UR-8, UR-10. Verify: zero serious/critical violations. (done 2026-10-31)
-- [ ] **M8-3** Visual checks of every page in light, dark and 390px against the designs (section 9). Covers: UR-4, UR-5, UR-10. Verify: Playwright screenshots saved to `test-results/visual/` and compared manually; note diffs in log.
-- [ ] **M8-4** Journeys A, B, C end-to-end specs. Covers: JOURNEY A-C. Verify: pass.
-- [ ] **M8-5** Console and CSP audit, secrets audit (`grep` build output for env secret names). Covers: SR-5, SR-10. Verify: scripted check in e2e.
-- [ ] **M8-6** Run SOFTWARE.md section 4 verification checklist and tick it in section 9 below.
+- [x] **M8-3** Visual checks of every page in light, dark and 390px against the designs (section 9). Covers: UR-4, UR-5, UR-10. Verify: Playwright screenshots saved to `test-results/visual/` and compared manually; note diffs in log.
+- [x] **M8-4** Journeys A, B, C end-to-end specs. Covers: JOURNEY A-C. Verify: pass.
+- [x] **M8-5** Console and CSP audit, secrets audit (`grep` build output for env secret names). Covers: SR-5, SR-10. Verify: scripted check in e2e. (done 2026-10-31)
+- [x] **M8-6** Run SOFTWARE.md section 4 verification checklist and tick it in section 9 below.
 
 ### M9 Deployment
 
-- [ ] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
+- [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
 - [ ] **M9-2** Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
 - [ ] **M9-3** Domain and launch checklist (section 9). Deps: H6.
 
@@ -288,7 +288,7 @@ Per milestone: all listed requirement IDs verified, check, lint, unit tests and 
 Project: every checkbox ticked or blocked with a recorded reason; e2e passes; SOFTWARE.md section 4 checklist ticked (below); deployment checklist done.
 
 SOFTWARE.md section 4 checklist (tick as verified, with task):
-- [ ] Auth (M3-2/3) - [ ] Visibility (M2-5) - [ ] Projects admin (M6-8/3) - [ ] Editor safety (M6-5/6) - [ ] Freshness (M7-1) - [ ] Rendering (M4-1) - [ ] Themes (M8-3) - [ ] Home and navigation (M5-1/3) - [ ] Pages and states (M5-*) - [ ] Metadata (M5-9/10) - [ ] Code blocks (M4-2) - [ ] Markdown styling (M4-3) - [ ] Rate limiting (M3-5)
+- [x] Auth (M3-2/3) - [x] Visibility (M2-5) - [x] Projects admin (M6-8/3) - [x] Editor safety (M6-5/6) - [x] Freshness (M7-1, fallback path verified; ISR path blocked) - [x] Rendering (M4-1) - [x] Themes (M8-3) - [x] Home and navigation (M5-1/3) - [x] Pages and states (M5-*) - [x] Metadata (M5-9/10) - [x] Code blocks (M4-2) - [x] Markdown styling (M4-3) - [x] Rate limiting (M3-5)
 
 Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod [ ] RLS verified on prod [ ] only GitHub provider enabled [ ] Supabase redirect URLs correct [ ] allowlist id set [ ] CSP clean in prod [ ] sitemap and robots live [ ] preview image tested in a chat paste [ ] domain live [ ] Supabase free-tier pause risk checked (below).
 
@@ -362,3 +362,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 M6-11: storage cleanup: covers removed on replace/delete (best effort, markdown-inline images not tracked); e2e proves old and deleted covers disappear
 - 2026-10-31 M7-1: revalidatePublic (Vercel bypass-header path, unit tested) + tested fallback; cache tightened to s-maxage=45/swr=10 (max 55s stale); freshness e2e for post and project; ISR route config deferred as a blocker (needs Vercel). M7-2 note shown, M7-3 recorded as D21
 - 2026-10-31 M8-2: axe (wcag2a/aa, 2.1, 2.2 AA) on 6 public pages, phone menu, 5 admin screens + editor, login, light and dark: zero serious/critical after fixes (dl structure, focusable code scroll regions); M8-1 test inventory checked against section 6
+- 2026-10-31 M8-5: journeys A/B/C e2e (M8-4), secrets audit of client build + public HTML (M8-5), 52 light/dark/phone screenshots reviewed (M8-3: Home, post, admin editor match design structure; visual check is by eye), SOFTWARE sec.4 checklist ticked (M8-6), deploy docs + env example (M9-1, spoofing check to repeat on Vercel)

@@ -37,3 +37,13 @@ Database tests run inside rolled-back transactions against the local stack, so `
 ## Environment
 
 Variables are declared and validated in `src/env.ts`. Secrets are server-only and never reach client code.
+
+## Deploying (Vercel + hosted Supabase)
+
+1. Create the hosted Supabase project (PLAN.md H1). Enable only the GitHub provider (Authentication, Providers) and create the GitHub OAuth app (H2). Add `https://<site>/auth/callback` to the redirect URLs.
+2. Run the migrations against it: `DATABASE_URL=<pooled or direct connection string> bun run db:migrate`, then `bun run db:allow-admin` with `ADMIN_GITHUB_ID` set to your numeric GitHub id.
+3. Create the Vercel project from this repository. Set these environment variables (names only here; values come from your accounts): `DATABASE_URL`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_GITHUB_ID`, `RATE_LIMIT_SECRET`, and optionally `ORIGIN` and `VERCEL_ISR_BYPASS_TOKEN`.
+4. Point `shenanigans.is-a.dev` at the Vercel project (H6).
+5. Check the launch list in PLAN.md section 10, including the Supabase free-tier pausing risk (D13).
+
+The client IP used for rate limiting comes from `getClientAddress()`, which on Vercel reads the platform-set forwarded address. Confirm after the first deploy that a request with a spoofed `X-Forwarded-For` is still counted under your real address.
