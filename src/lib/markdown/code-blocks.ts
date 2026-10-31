@@ -72,6 +72,8 @@ export function rehypeCodeBlocks() {
 				]),
 				h('span', { class: 'sr-only code-copy-status', role: 'status' })
 			]);
+			// Long lines scroll sideways, so keyboard users must be able to focus the block to scroll it.
+			node.properties = { ...node.properties, tabIndex: 0 };
 			parent.children[index] = h('div', { class: 'code-block' }, [header, node]);
 			// The wrapper holds the pre we just moved; do not descend into it again.
 			return 'skip';

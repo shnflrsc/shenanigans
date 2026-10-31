@@ -25,8 +25,8 @@ describe('revalidatePublic', () => {
 	});
 
 	it('requests every affected URL with the bypass header, and survives failures', async () => {
-		const fetcher = vi.fn(async (url: string | URL | Request) => {
-			if (String(url).endsWith('/blog')) throw new Error('boom');
+		const fetcher = vi.fn(async (...args: [string | URL | Request, RequestInit?]) => {
+			if (String(args[0]).endsWith('/blog')) throw new Error('boom');
 			return new Response(null);
 		});
 		await revalidatePublic(

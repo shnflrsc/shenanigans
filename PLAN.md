@@ -134,8 +134,8 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 ### M8 Hardening and QA
 
-- [ ] **M8-1** Test suites listed in section 7 completed; coverage gaps closed. Covers: all SR. Verify: full `bun run test:unit -- --run` and e2e.
-- [ ] **M8-2** Accessibility: add `@axe-core/playwright` checks on every public page and admin screen in both themes; keyboard pass. Covers: UR-2, UR-8, UR-10. Verify: zero serious/critical violations.
+- [x] **M8-1** Test suites listed in section 7 completed; coverage gaps closed. Covers: all SR. Verify: full `bun run test:unit -- --run` and e2e. (done 2026-10-31)
+- [x] **M8-2** Accessibility: add `@axe-core/playwright` checks on every public page and admin screen in both themes; keyboard pass. Covers: UR-2, UR-8, UR-10. Verify: zero serious/critical violations. (done 2026-10-31)
 - [ ] **M8-3** Visual checks of every page in light, dark and 390px against the designs (section 9). Covers: UR-4, UR-5, UR-10. Verify: Playwright screenshots saved to `test-results/visual/` and compared manually; note diffs in log.
 - [ ] **M8-4** Journeys A, B, C end-to-end specs. Covers: JOURNEY A-C. Verify: pass.
 - [ ] **M8-5** Console and CSP audit, secrets audit (`grep` build output for env secret names). Covers: SR-5, SR-10. Verify: scripted check in e2e.
@@ -361,3 +361,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 M6-10: projects list (order up/down, featured switch with swap toast + Undo, status, delete), project editor (all fields, featured hint names the project that loses it, slug lock via first_published_at), tags admin (create, near-duplicate refusal, inline rename with slug preview, delete dialog with counts); 7 e2e tests; M6-8, M6-9
 - 2026-10-31 M6-11: storage cleanup: covers removed on replace/delete (best effort, markdown-inline images not tracked); e2e proves old and deleted covers disappear
 - 2026-10-31 M7-1: revalidatePublic (Vercel bypass-header path, unit tested) + tested fallback; cache tightened to s-maxage=45/swr=10 (max 55s stale); freshness e2e for post and project; ISR route config deferred as a blocker (needs Vercel). M7-2 note shown, M7-3 recorded as D21
+- 2026-10-31 M8-2: axe (wcag2a/aa, 2.1, 2.2 AA) on 6 public pages, phone menu, 5 admin screens + editor, login, light and dark: zero serious/critical after fixes (dl structure, focusable code scroll regions); M8-1 test inventory checked against section 6

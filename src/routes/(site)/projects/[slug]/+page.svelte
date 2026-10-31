@@ -63,13 +63,15 @@
 
 		{#if facts.length || hasLinks}
 			<Frame>
-				<dl class="grid grid-cols-2 gap-x-6 gap-y-5 min-[720px]:grid-cols-4">
-					{#each facts as fact (fact.label)}
-						<div class="flex flex-col gap-1">
-							<dt class="text-caption text-ink-subtle">{fact.label}</dt>
-							<dd class="text-small">{fact.value}</dd>
-						</div>
-					{/each}
+				<div class="grid grid-cols-2 gap-x-6 gap-y-5 min-[720px]:grid-cols-4">
+					<dl class="contents">
+						{#each facts as fact (fact.label)}
+							<div class="flex flex-col gap-1">
+								<dt class="text-caption text-ink-subtle">{fact.label}</dt>
+								<dd class="text-small">{fact.value}</dd>
+							</div>
+						{/each}
+					</dl>
 					{#if hasLinks}
 						<div class="col-span-2 flex flex-wrap items-center gap-1 min-[720px]:col-span-1">
 							{#if project.liveUrl}
@@ -84,7 +86,7 @@
 							{/if}
 						</div>
 					{/if}
-				</dl>
+				</div>
 			</Frame>
 		{/if}
 
