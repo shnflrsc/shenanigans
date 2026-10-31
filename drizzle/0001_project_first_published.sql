@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "first_published_at" timestamp with time zone;

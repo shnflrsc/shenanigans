@@ -94,7 +94,8 @@ async function main() {
 				repoUrl: 'https://github.com/example/sample',
 				featured: true,
 				sortOrder: 0,
-				status: 'published'
+				status: 'published',
+				firstPublishedAt: days(30)
 			},
 			{
 				slug: 'sample-shenanigans',
@@ -105,7 +106,8 @@ async function main() {
 				role: 'Design and build',
 				team: 'Solo',
 				sortOrder: 1,
-				status: 'published'
+				status: 'published',
+				firstPublishedAt: days(20)
 			},
 			{
 				slug: 'sample-draft-project',

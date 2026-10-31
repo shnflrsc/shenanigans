@@ -61,6 +61,8 @@ export const projects = pgTable(
 		featured: boolean('featured').notNull().default(false),
 		sortOrder: integer('sort_order').notNull().default(0),
 		status: contentStatus('status').notNull().default('draft'),
+		// Set the first time the project is published; the slug is locked from then on (FR-19).
+		firstPublishedAt: timestamp('first_published_at', { withTimezone: true }),
 		...timestamps
 	},
 	(t) => [

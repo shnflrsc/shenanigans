@@ -325,6 +325,10 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 (none yet)
 
+Spec change requests are recorded here. Implemented defaults stay in place until you decide.
+
+- SCR-1 (FR-19, data model 3.2): `projects` has no `published_at`, so "slug locked after first publish" cannot be told from a project that is currently a draft after being published. Added `projects.first_published_at` (nullable timestamp, set on first publish, never cleared). Posts use the existing `published_at`. Migration `drizzle/0001_project_first_published.sql`. Please confirm or suggest another way.
+
 ## 12. Progress log
 
 (entries below, newest last)
@@ -348,3 +352,4 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - 2026-10-31 M5-8: root +error.svelte -> ErrorPage (404/429/500 with nav+footer), handleError logs unknown errors and returns a generic message; callback converted to a page route so 429 renders styled page (M3-6); e2e errors (4): 404 status, unpublished = unknown, forced 500 shows no detail, 429 with Retry-After
 - 2026-10-31 M5-9: Seo component (title, description, canonical, OG, Twitter, preview image) on all page types, sitemap.xml (published only), robots.txt with sitemap; e2e seo (10)
 - 2026-10-31 M5-10: OG images via satori + @resvg/resvg-js at /og/site.png and /og/<slug>.png (tokens read from tokens.css, fonts from @fontsource, title as text, per-instance cache keyed on updated_at, s-maxage=60); 5 e2e tests; visually checked. Photo slot is a muted tile until H7. VERIFY ON VERCEL: native resvg binary. M5-11 Cover lazy/eager/16:10-16:9/placeholder tested
+- 2026-10-31 M2-6: (helper entry) admin data layer: validation + slugify, posts/projects/tags CRUD, slug locking, featured swap (advisory lock, concurrent test), reorder, tag dedupe, 20 tests; SCR-1 first_published_at migration
