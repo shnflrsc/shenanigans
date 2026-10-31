@@ -7,6 +7,7 @@ import { rehypeGithubAlerts } from 'rehype-github-alerts';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 import { rehypeCodeBlocks } from './code-blocks';
+import { rehypeExternalLinks } from './external-links';
 
 /**
  * The one markdown pipeline (SR-13): public pages and the admin live preview both call renderMarkdown().
@@ -26,6 +27,7 @@ const processor = unified()
 		// Headings and footnotes keep their ids but with the default "user-content-" prefix so they cannot clobber page globals.
 		clobberPrefix: 'user-content-'
 	})
+	.use(rehypeExternalLinks)
 	.use(rehypeGithubAlerts, {})
 	.use(rehypeHighlight, { detect: false, ignoreMissing: true })
 	.use(rehypeCodeBlocks)
