@@ -36,6 +36,8 @@
 		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.3.0",
+		"@types/hast": "^3.0.5",
+		"@types/mdast": "^4.0.4",
 		"@types/node": "^24",
 		"@vitest/browser-playwright": "^4.1.8",
 		"bits-ui": "^2.20.2",
@@ -75,6 +77,17 @@
 		"@fontsource/space-mono": "^5.3.0",
 		"@supabase/ssr": "^0.12.7",
 		"@supabase/supabase-js": "^2.118.0",
+		"hast-util-to-string": "^3.0.1",
+		"hastscript": "^9.0.3",
+		"rehype-github-alerts": "^4.2.0",
+		"rehype-highlight": "^7.0.2",
+		"rehype-sanitize": "^6.0.0",
+		"rehype-stringify": "^10.0.1",
+		"remark-gfm": "^4.0.1",
+		"remark-parse": "^11.0.0",
+		"remark-rehype": "^11.1.2",
+		"unified": "^11.0.5",
+		"unist-util-visit": "^5.2.0",
 		"zod": "^4.6.7"
 	}
 }
