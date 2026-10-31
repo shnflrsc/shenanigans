@@ -1,9 +1,19 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
+import type { User } from '@supabase/supabase-js';
+import type { ServerSupabase } from '#lib/server/auth/supabase.js';
+
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
+		interface Error {
+			message: string;
+		}
+		interface Locals {
+			/** Supabase client bound to this request's cookies. */
+			supabase: ServerSupabase;
+			/** The validated admin, or null. Never set for any other account. */
+			user: User | null;
+			/** True when a non-admin account was just signed out during this request. */
+			denied: boolean;
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
