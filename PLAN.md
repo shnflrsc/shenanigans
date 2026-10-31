@@ -144,8 +144,8 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 ### M9 Deployment
 
 - [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
-- [ ] **M9-2** Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
-- [ ] **M9-3** Domain and launch checklist (section 9). Deps: H6.
+- [ ] **M9-2** BLOCKED: Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
+- [ ] **M9-3** BLOCKED: Domain and launch checklist (section 9). Deps: H6.
 
 ## 5. Human-only tasks
 
@@ -300,6 +300,13 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 - M7-1 (partial): on-demand revalidation on Vercel (D9) is implemented as `revalidatePublic` (HEAD with `x-prerender-revalidate` when `VERCEL_ISR_BYPASS_TOKEN` and `ORIGIN` are set) but the ISR route config (`export const config = { isr: ... }` with the bypass token on the public routes) is NOT enabled because it cannot be verified without a Vercel deployment. The tested fallback (s-maxage=45 + stale-while-revalidate=10, so at most 55s stale, plus the dashboard note) already meets PR-6. Needs: after H5, enable ISR on the public routes per the adapter-vercel docs, set the token, and re-run the freshness e2e against the preview deployment.
 
+- M9-2 BLOCKED: needs H1 (hosted Supabase project and keys), H2 (GitHub OAuth app), H3/H4 (numeric GitHub id in env). Steps are in README "Deploying".
+- M9-3 BLOCKED: needs H5 (Vercel project and env vars) and H6 (is-a.dev registration). Then tick the deployment checklist in section 10.
+- H7: portrait photo not provided (hero shows a muted tile; the OG images use a tile too). Needs `src/lib/assets/portrait.jpg`; the grayscale OG photo slot also needs a pre-converted grayscale copy (not automated).
+- H8: résumé not provided (button hidden until `static/resume.pdf` exists).
+- H9: real About me text (`src/lib/content/about.ts`), real GitHub and LinkedIn URLs (`src/lib/site.ts`, currently github.com and linkedin.com), and real projects and posts. The sample content in the dev database is marked `[SAMPLE]` and must not be seeded in production (the seed script refuses `NODE_ENV=production`).
+- Verify on Vercel after deploy: native `@resvg/resvg-js` for OG images (D8), spoof-proof `getClientAddress()` (SR-14), adapter-vercel build.
+
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
 
 - D1 DESIGN.md is stale in places (Astro/islands, reactions, comments, newsletter, About page, brand block footer). PRODUCT.md and SOFTWARE.md win; ignore those parts. Public design wins on visuals.
@@ -325,8 +332,6 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D20 404 buttons: the admin handoff says Back home + Read the blog, PRODUCT.md 4.7 and FR-30 say Go home, View projects and Read the blog. Built the three-button version (PRODUCT.md wins on behaviour). The 500 page omits the design's "request reference" placeholder (no technical details, FR-30). `/auth/callback` is a page route (not an endpoint) so its 429 renders the styled error page.
 
 ## 11. Spec change requests
-
-(none yet)
 
 Spec change requests are recorded here. Implemented defaults stay in place until you decide.
 
@@ -363,3 +368,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 M7-1: revalidatePublic (Vercel bypass-header path, unit tested) + tested fallback; cache tightened to s-maxage=45/swr=10 (max 55s stale); freshness e2e for post and project; ISR route config deferred as a blocker (needs Vercel). M7-2 note shown, M7-3 recorded as D21
 - 2026-10-31 M8-2: axe (wcag2a/aa, 2.1, 2.2 AA) on 6 public pages, phone menu, 5 admin screens + editor, login, light and dark: zero serious/critical after fixes (dl structure, focusable code scroll regions); M8-1 test inventory checked against section 6
 - 2026-10-31 M8-5: journeys A/B/C e2e (M8-4), secrets audit of client build + public HTML (M8-5), 52 light/dark/phone screenshots reviewed (M8-3: Home, post, admin editor match design structure; visual check is by eye), SOFTWARE sec.4 checklist ticked (M8-6), deploy docs + env example (M9-1, spoofing check to repeat on Vercel)
+- 2026-10-31 FINAL: full run: check 0 errors, lint clean, 153 unit/client tests, 156 e2e tests, build ok. Remaining unchecked: M9-2, M9-3 (blocked, human tasks)
