@@ -58,6 +58,8 @@ The client IP used for rate limiting comes from `getClientAddress()`, which on V
 - **Build and bundle**: builds with throwaway values and fails if a server-only name or value is in the client build.
 - **Security tests**: starts the local Supabase stack and runs the database, authorization, sanitizer, upload, rate-limit, header, login and error-page tests.
 
+Dependabot proposes minor and patch updates weekly; major versions are upgraded by hand (SOFTWARE.md MR-4).
+
 Run the same checks locally: `bun audit --audit-level=high`, `bun run lint`, `bun run check`, and the tests named in the workflow.
 
 One-time settings on GitHub (not in the repository): under Settings, Code security, turn on Dependabot alerts, Dependabot security updates, and secret scanning with push protection; under Settings, Branches, require the five jobs as status checks on `main`.

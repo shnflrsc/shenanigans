@@ -1,6 +1,6 @@
 # Shenanigans: Software Requirements Specification
 
-Version 0.5 · 2026-11-01 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
+Version 0.6 · 2026-11-01 · Structured after IEEE 29148. Product intent lives in PRODUCT.md.
 
 ## 1. Introduction
 
@@ -29,6 +29,7 @@ A server-rendered SvelteKit application deployed on Vercel, backed by Supabase (
 | Preview images | A site preview image (static) and per-post preview images (1200×630) rendered from a template; `satori` and `@resvg/resvg-js` (FR-32) |
 | Rate limiting | A `rate_limits` table in Supabase Postgres, accessed through Drizzle (no extra service) |
 | Continuous checks | GitHub Actions: gitleaks, `bun audit`, dependency review, CodeQL, the project's lint, type check and security tests (SR-16); Dependabot for updates |
+| Tests | Vitest 5 (server tests in Node, component tests in Chromium through `@vitest/browser-playwright` and `vitest-browser-svelte` 3) and Playwright for end-to-end |
 | Markdown | unified pipeline: `remark-parse`, `remark-gfm`, `remark-rehype` (raw HTML disabled), `rehype-sanitize`, `rehype-github-alerts`, `rehype-highlight` (class-based, via lowlight), `rehype-stringify` |
 
 ### 2.3 Users
@@ -187,19 +188,19 @@ Posts and projects are separate tables.
 - MR-1: The design foundations are defined once, in the Tailwind theme and CSS variables (light and dark), and shadcn-svelte components read them, so they take on the Shenanigans look without per-component restyling. Pieces specific to the design system (such as ProjectCard, PostCard, HeroTitle, CTABanner, NavBar and Footer) are custom Svelte components built with Tailwind utilities, following the design system's markup, rules and page patterns. The design system's reference bundle (React components and `sh-` classes) is a visual reference only and is not shipped.
 - MR-2: Schema changes go through versioned Drizzle migrations.
 - MR-3: Site-level styles, including the phone overrides, must load after or be more specific than the component styles, or the overrides will not apply. With Tailwind, use responsive variants and a deliberate layer order so shadcn-svelte component styles do not win.
-- MR-4: Dependency and action updates arrive as Dependabot pull requests, which run the same checks as any change (SR-16).
+- MR-4: Minor and patch updates of packages, and updates of the pinned actions, arrive as grouped weekly Dependabot pull requests, which run the same checks as any change (SR-16). Major versions are excluded from Dependabot and upgraded by hand, as one deliberate change: TypeScript 7 (typescript-eslint does not support it yet) and the vitest 5 family (which needs the three vitest packages moved together and async `render` in component tests) both broke the build as separate pull requests.
 
 - SR-16: Automated security checks run in GitHub Actions on every push to `main`, every pull request, and weekly (new advisories appear without code changes). They never use `pull_request_target`, need no repository secrets, and fail the run when they find a problem. Five jobs:
 
   | Job | Guards against | Fails on |
   |---|---|---|
-  | secrets | Leaked keys, tokens or `.env` files in any commit | Any finding not in the allowlist of public local-development values |
+  | secrets | Leaked keys, tokens or `.env` files in any commit | Any finding (the history is clean, so there is no allowlist) |
   | dependencies | Known vulnerable packages | High or critical advisories (`bun audit`); on pull requests, added packages with high advisories |
-  | code-analysis | Injection, XSS, unsafe redirects in our code | CodeQL `security-extended` alerts, lint errors (including `svelte/no-at-html-tags`), type errors |
+  | code-analysis | Injection, XSS, unsafe redirects in our code | CodeQL `security-extended` alerts, lint errors (including `svelte/no-at-html-tags` and the bans on `eval`, `setTimeout` with a string, and `new Function`), type errors |
   | build-and-bundle | Server-only values reaching the browser (SR-5) | Any server-only variable name or value found in the client build |
-  | security-tests | Broken access control and misconfiguration (SR-1 to SR-4, SR-7 to SR-11, SR-14) | Any failure in the project's own database, authorization, sanitizer, upload, rate-limit, header and login tests, run against a local Supabase stack |
+  | security-tests | Broken access control and misconfiguration (SR-1 to SR-4, SR-7 to SR-11, SR-14) | Any failure in the project's own database, authorization, sanitizer, upload, rate-limit, header and login tests, run against a local Supabase stack. The route inventory requires one `requireAdmin(` call per load function, form action and endpoint under `/admin`, not just one per file |
 
-  Third-party actions are pinned to commit hashes and kept current by Dependabot, which also proposes package updates. Making the five jobs required status checks on `main` is a manual repository setting.
+  Third-party actions are pinned to commit hashes and kept current by Dependabot, which also proposes package updates. The five jobs are required status checks on `main` through a repository ruleset, so a red check or a pull request with merge conflicts cannot be merged. Dependency review needs the repository's dependency graph switched on. Only the security-relevant tests run in CI; the full suite (including the accessibility, motion and visual end-to-end tests) runs locally.
 
 ## 4. Verification
 - Auth: confirm a non-allowlisted GitHub account is rejected and signed out; confirm direct requests to admin actions without a session fail.
@@ -216,11 +217,13 @@ Posts and projects are separate tables.
 - Markdown styling: view a test post containing all five alert types and code blocks in several languages in both themes; confirm the browser console shows no CSP violations; check contrast of comments, muted shades and alert text in both themes.
 - Rate limiting: confirm the 11th sign-in request in 10 minutes returns 429 with `Retry-After`; confirm the third allowlist rejection blocks that IP for an hour; confirm `X-Forwarded-For` spoofing does not change the counted IP; fire concurrent requests and confirm the count is exact (no lost increments); confirm the table is not readable through the Supabase API.
 
-- CI security checks: prove each can fail on a throwaway branch (a fake key, a vulnerable package, an unsanitized `{@html}`, a server variable in client code, a removed `requireAdmin(` call, a removed CSP) and confirm the run goes red; confirm the weekly and manual runs appear, Dependabot opens its first pull request, and CodeQL results show under Security.
+- CI security checks: prove each can fail on a throwaway branch (a fake key, a vulnerable package, an unsanitized `{@html}` or `eval`, a server variable in client code, a removed `requireAdmin(` call, a removed CSP) and confirm the run goes red; confirm the weekly and manual runs appear, Dependabot opens its first pull request, and CodeQL results show under Security. Done on 2026-11-01: every fault was caught except `eval` and a single removed guard in a file with several handlers, which led to the ESLint bans and the per-handler route inventory above.
 
 ## 5. Open issues
 - Live scan of the deployed site (for example OWASP ZAP) is deferred until the first deployment.
-- Branch protection with the five CI jobs as required checks is a manual GitHub setting; secret scanning with push protection and Dependabot alerts are switched on in the same place.
+- Done in the repository settings (not in code): a ruleset requiring the five CI jobs on `main`, the dependency graph, Dependabot alerts and security updates, and secret scanning with push protection.
+- The accessibility, motion and visual end-to-end tests do not run in CI yet; adding them is a possible later step.
+- TypeScript 7 waits for typescript-eslint support.
 - Résumé file: still to be provided (FR-23). The button stays hidden until `static/resume.pdf` exists.
 - RSS feed: still not planned.
 - On-demand revalidation on Vercel (PR-6): the hook exists (`VERCEL_ISR_BYPASS_TOKEN`), but the ISR route configuration is not enabled until it can be verified on a deployed project. The short cache window already meets the 60 second requirement.
