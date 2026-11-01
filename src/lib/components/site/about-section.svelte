@@ -22,8 +22,8 @@
 				<p class="text-prose-h2">
 					{about.catchphrase} <span class="text-ink-subtle">{about.catchphraseSoft}</span>
 				</p>
-				<!-- Full width: the three parts of the story sit side by side on wide screens. -->
-				<div class="grid gap-x-12 gap-y-4 min-[900px]:grid-cols-3">
+				<!-- Full width: the three parts of the story, one row each. -->
+				<div class="flex flex-col gap-4">
 					{#each about.bio as paragraph (paragraph)}
 						<p class="text-body text-ink-muted">{paragraph}</p>
 					{/each}
