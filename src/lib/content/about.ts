@@ -5,9 +5,9 @@ export const about = {
 	catchphrase: 'Jack of all trades,',
 	catchphraseSoft: 'incompetent at none.',
 	bio: [
-		'I started programming as a kid, trying to squeeze more FPS out of Minecraft on a low-end laptop. That led me to modding, and modding led me to Java.',
-		'Besides sharpening my development skills, I’m working on the ones that go with them: communication, networking, sales and marketing.',
-		'Away from the keyboard, I’m learning Spanish, doing calisthenics and practicing portrait drawing.'
+		'I started programming as a kid, trying to squeeze more FPS out of Minecraft on a low-end laptop. Fixing one slow machine made me want to understand how the game worked underneath, which led me to modding, and modding led me to Java. That curiosity is still what pulls me into every project.',
+		'Besides sharpening my development skills, I’m working on the ones that go with them: communication, networking, sales and marketing. Building something good is only half of it. I want to be able to explain it, share it and put it in front of the people who need it.',
+		'Away from the keyboard, I’m learning Spanish, doing calisthenics and practicing portrait drawing. They are slow, patient skills, and they remind me that getting better comes from showing up again and again.'
 	],
 	facts: [
 		{ label: 'Studying', value: 'BS Information Technology, 2nd year' },

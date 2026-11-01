@@ -18,13 +18,16 @@
 
 		<!-- Two rows: the catchphrase and bio, then the quick-facts card. -->
 		<div class="flex flex-col gap-12">
-			<div class="flex max-w-[560px] flex-col gap-4">
+			<div class="flex flex-col gap-6">
 				<p class="text-prose-h2">
 					{about.catchphrase} <span class="text-ink-subtle">{about.catchphraseSoft}</span>
 				</p>
-				{#each about.bio as paragraph (paragraph)}
-					<p class="text-body text-ink-muted">{paragraph}</p>
-				{/each}
+				<!-- Full width: the three parts of the story sit side by side on wide screens. -->
+				<div class="grid gap-x-12 gap-y-4 min-[900px]:grid-cols-3">
+					{#each about.bio as paragraph (paragraph)}
+						<p class="text-body text-ink-muted">{paragraph}</p>
+					{/each}
+				</div>
 			</div>
 			<Frame>
 				<dl class="grid grid-cols-2 gap-x-6 gap-y-5 min-[720px]:grid-cols-3">
