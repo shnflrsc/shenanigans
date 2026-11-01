@@ -30,7 +30,7 @@ test('editing a published project and pressing Save stores every change', async 
 	await page.getByLabel('Live URL').fill('https://example.com/two');
 	await page.getByLabel('Role').fill('Lead');
 	await page.getByRole('button', { name: 'Save', exact: true }).click();
-	await expect(page.getByText('All changes saved')).toBeVisible();
+	await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
 
 	const [row] = await sql<{
 		title: string;

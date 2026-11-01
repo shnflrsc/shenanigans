@@ -40,6 +40,13 @@
 		</a>
 
 		<header class="flex flex-col gap-4 border-b border-line pb-8">
+			<h1 class="text-post-title max-[719px]:text-[32px] max-[719px]:leading-10">{post.title}</h1>
+			<p class="text-lead text-ink-muted">{post.excerpt}</p>
+			<p class="flex flex-wrap gap-x-4 gap-y-1 text-caption text-ink-subtle">
+				<span>{site.fullName}</span>
+				{#if post.publishedAt}<span>{formatDate(post.publishedAt)}</span>{/if}
+				<span>{formatReadTime(data.readTime)}</span>
+			</p>
 			{#if post.tags.length}
 				<ul class="flex flex-wrap gap-2" aria-label="Tags">
 					{#each post.tags as tag (tag.slug)}
@@ -52,13 +59,6 @@
 					{/each}
 				</ul>
 			{/if}
-			<h1 class="text-post-title max-[719px]:text-[32px] max-[719px]:leading-10">{post.title}</h1>
-			<p class="text-lead text-ink-muted">{post.excerpt}</p>
-			<p class="flex flex-wrap gap-x-4 gap-y-1 text-caption text-ink-subtle">
-				<span>{site.fullName}</span>
-				{#if post.publishedAt}<span>{formatDate(post.publishedAt)}</span>{/if}
-				<span>{formatReadTime(data.readTime)}</span>
-			</p>
 		</header>
 
 		{#if post.coverImage}

@@ -45,11 +45,6 @@
 		</a>
 
 		<header class="flex flex-col gap-4 border-b border-line pb-8">
-			{#if project.tags.length}
-				<ul class="flex flex-wrap gap-2" aria-label="Tags">
-					{#each project.tags as tag (tag.slug)}<li><Tag label={tag.name} /></li>{/each}
-				</ul>
-			{/if}
 			<h1 class="text-post-title max-[719px]:text-[32px] max-[719px]:leading-10">
 				{project.title}
 			</h1>
@@ -58,37 +53,41 @@
 				<span>{site.fullName}</span>
 				{#if data.project.hasBody}<span>{formatReadTime(data.readTime)}</span>{/if}
 			</p>
-		</header>
-
-		{#if facts.length || hasLinks}
-			<Frame>
-				<div class="flex flex-wrap items-center gap-x-10 gap-y-5">
-					<dl class="contents">
-						{#each facts as fact (fact.label)}
-							<div class="flex flex-col gap-1">
-								<dt class="text-caption text-ink-subtle">{fact.label}</dt>
-								<dd class="text-small">{fact.value}</dd>
+			{#if project.tags.length}
+				<ul class="flex flex-wrap gap-2" aria-label="Tags">
+					{#each project.tags as tag (tag.slug)}<li><Tag label={tag.name} /></li>{/each}
+				</ul>
+			{/if}
+			{#if facts.length || hasLinks}
+				<Frame>
+					<div class="flex flex-wrap items-center gap-x-10 gap-y-5">
+						<dl class="contents">
+							{#each facts as fact (fact.label)}
+								<div class="flex flex-col gap-1">
+									<dt class="text-caption text-ink-subtle">{fact.label}</dt>
+									<dd class="text-small">{fact.value}</dd>
+								</div>
+							{/each}
+						</dl>
+						<!-- Each link has its own column. -->
+						{#if project.liveUrl}
+							<div class="flex items-center">
+								<Button variant="secondary" size="sm" href={project.liveUrl}
+									>Live site<ExternalLinkIcon aria-hidden="true" /></Button
+								>
 							</div>
-						{/each}
-					</dl>
-					<!-- Each link has its own column. -->
-					{#if project.liveUrl}
-						<div class="flex items-center">
-							<Button variant="secondary" size="sm" href={project.liveUrl}
-								>Live site<ExternalLinkIcon aria-hidden="true" /></Button
-							>
-						</div>
-					{/if}
-					{#if project.repoUrl}
-						<div class="flex items-center">
-							<Button variant="secondary" size="sm" href={project.repoUrl}
-								>Source<ExternalLinkIcon aria-hidden="true" /></Button
-							>
-						</div>
-					{/if}
-				</div>
-			</Frame>
-		{/if}
+						{/if}
+						{#if project.repoUrl}
+							<div class="flex items-center">
+								<Button variant="secondary" size="sm" href={project.repoUrl}
+									>Source<ExternalLinkIcon aria-hidden="true" /></Button
+								>
+							</div>
+						{/if}
+					</div>
+				</Frame>
+			{/if}
+		</header>
 
 		<Cover
 			path={project.coverImage}

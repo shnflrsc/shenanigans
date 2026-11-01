@@ -41,7 +41,7 @@ test.describe('Freshness (PR-6)', () => {
 
 		await page.getByLabel('Title').fill('E2E Fresh Post Edited');
 		await page.getByRole('button', { name: 'Save', exact: true }).click();
-		await expect(page.getByText('All changes saved')).toBeVisible();
+		await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
 		await expect
 			.poll(
 				async () => (await text('/blog/e2e-fresh-post')).includes('E2E Fresh Post Edited'),

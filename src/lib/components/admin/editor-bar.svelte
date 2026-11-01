@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import AlertCircleIcon from '@lucide/svelte/icons/circle-alert';
-	import CheckIcon from '@lucide/svelte/icons/check';
 	import LoaderIcon from '@lucide/svelte/icons/loader-circle';
 	import { resolve } from '$app/paths';
 	import type { IndicatorState } from '#lib/admin/editor.svelte.js';
@@ -15,9 +14,11 @@
 		status: 'draft' | 'published';
 		state: IndicatorState;
 		actions: Snippet;
+		/** Optional controls shown next to the status badge, on every screen size. */
+		extra?: Snippet;
 	};
 
-	let { backLabel, backRoute, title, status, state, actions }: Props = $props();
+	let { backLabel, backRoute, title, status, state, actions, extra }: Props = $props();
 </script>
 
 <header
@@ -32,8 +33,9 @@
 		<span class="truncate font-semibold">{title || 'Untitled'}</span>
 	</nav>
 	<StatusBadge {status} />
+	{@render extra?.()}
 
-	<!-- Save indicator: an unsaved dot, a spinner, or a check, always with words. -->
+	<!-- Save indicator: an unsaved dot or a spinner, always with words. A finished save is a toast. -->
 	<p class="flex items-center gap-1.5 text-[13px] leading-5" role="status" aria-live="polite">
 		{#if state === 'saving'}
 			<LoaderIcon class="size-4 animate-spin text-ink-subtle" aria-hidden="true" /><span
@@ -46,10 +48,6 @@
 		{:else if state === 'failed' || state === 'expired'}
 			<AlertCircleIcon class="size-4" aria-hidden="true" /><span class="font-medium text-ink"
 				>Not saved</span
-			>
-		{:else}
-			<CheckIcon class="size-4 text-ink-subtle" aria-hidden="true" /><span class="text-ink-subtle"
-				>All changes saved</span
 			>
 		{/if}
 	</p>
