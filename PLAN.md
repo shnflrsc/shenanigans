@@ -156,6 +156,18 @@ Spec: DESIGN.md "Motion (public site)", PRODUCT.md section 6, SOFTWARE.md UR-11.
 - [x] **M10-3** Scroll reveal. Touches: all other `Section`s on public pages. Covers: UR-11. Deps: M10-1. Accept: each section below the fold slides in once when 5% of it is visible; no section ever animates twice; children of a section never have their own timing; checked in the real dev server and the production preview by scrolling slowly, quickly and jumping to the bottom. Verify: Playwright scroll tests (slow, fast, jump), full-page screenshots show every section visible. (done 2026-11-01)
 - [x] **M10-4** Motion QA and docs. Covers: UR-11, SR-10, UR-10. Deps: M10-2, M10-3. Accept: no CSP violations or console errors; axe clean in both themes (audits wait for animations to finish); phone widths checked; admin screens have no entrance or reveal; DESIGN.md matches what was built. Verify: motion Playwright suite, axe, screenshots in light, dark and phone widths. (done 2026-11-01)
 
+### M11 CI security checks
+
+Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.md G13. Decision D25. Free tools, no repository secrets, read-only permissions, actions pinned to commit hashes.
+
+- [x] **M11-0** Documents first: PRODUCT 0.5, SOFTWARE 0.5, DESIGN, JOURNEY 0.3. Verify: SR-16 present and consistent across the four files.
+- [ ] **M11-1** Baseline: run `bun audit`, gitleaks and the security test subset locally; fix real findings. Covers: SR-16. Verify: all clean or each exception written down.
+- [ ] **M11-2** `.gitleaks.toml` allowlisting only the public local-development values. Covers: SR-16. Verify: gitleaks over full history is clean; a fake key is still caught.
+- [ ] **M11-3** `.github/workflows/security.yml` with the five jobs. Covers: SR-16. Verify: workflow lints (actionlint) and the jobs run locally where possible.
+- [ ] **M11-4** `.github/dependabot.yml` (packages and actions, weekly). Covers: MR-4.
+- [ ] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
+- [ ] **M11-6** First run on GitHub and failure drills on throwaway branches. Covers: SR-16. Verify: every job green on the real branch and red on its matching drill.
+
 ## 5. Human-only tasks
 
 | ID | Needed by | What I need from you | Until then |
@@ -339,6 +351,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D18 The 30 per minute limit for unauthenticated /admin/* requests is applied to requests that carry no Supabase session cookie, because the limiter runs before any auth call (SR-14). Requests with a cookie are validated by auth and refused by requireAdmin.
 - D19 Home empty state: the admin design handoff says "hero with one Get in touch button and a Nothing published yet frame", but PRODUCT.md 4.4 and FR-1 say the hero never has a Get in touch button and FR-29 specifies per-section empty states. Built per FR-1/FR-29 (HomeEmpty board): featured and latest-posts sections each show their own empty card. Launch state hides "All projects"/"All posts" under two items.
 - D21 PR-4 outcome (M7-3): public pages stay server-rendered with a 45s shared cache. Prerendering or ISR is reconsidered only if real traffic shows the database or markdown rendering is a bottleneck.
+- D25 CI security checks (owner's request, 2026-11-01): one GitHub Actions workflow with five jobs (secrets, dependencies, code-analysis, build-and-bundle, security-tests), run on push to `main`, pull requests, weekly and on demand. Public repository, so GitHub's scanners are free. Documents are updated before any pipeline file. A live scan of the deployed site is deferred. Making the jobs required checks is a manual repository setting.
 - D24 No "public page can take up to a minute" note anywhere in the dashboard (owner's request, 2026-11-01). Toasts after saving say only "Draft saved.", "Published.", "Unpublished." or "Saved.". The 60 second freshness requirement (PR-6) is unchanged and still met by the cache window.
 - D23 Motion (CONFIRMED by the owner, 2026-11-01): one slide-in fade, applied to whole sections only. First section on load, every other section on its first scroll into view. No inner stagger or per-element timing; no hover/press effects, page transitions, theme cross-fade or springs for now. 600ms, `cubic-bezier(0.22, 1, 0.36, 1)`, 24px rise, public site only, reduced motion and no-JavaScript show everything at once, 2.5s CSS fallback.
 - D22 Motion, first version (superseded by D23): all five moments, energetic, with per-element staggers, springs, hover effects, page transitions and a theme cross-fade. Built, then undone at the owner's request because many elements moving on their own timings looked messy.
