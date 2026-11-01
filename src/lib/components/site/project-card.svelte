@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { cn } from '#lib/utils.js';
@@ -60,22 +59,19 @@
 				{#each project.tags as tag (tag.slug)}<li><Tag label={tag.name} /></li>{/each}
 			</ul>
 		{/if}
-		<div class="relative z-10 -ml-3 flex flex-wrap gap-1">
-			{#if project.body}
-				<Button variant="ghost" size="sm" {href}
-					>Case study<ArrowRightIcon aria-hidden="true" /></Button
-				>
-			{/if}
-			{#if project.liveUrl}
-				<Button variant="ghost" size="sm" href={project.liveUrl}
-					>Live site<ExternalLinkIcon aria-hidden="true" /></Button
-				>
-			{/if}
-			{#if project.repoUrl}
-				<Button variant="ghost" size="sm" href={project.repoUrl}
-					>Source<ExternalLinkIcon aria-hidden="true" /></Button
-				>
-			{/if}
-		</div>
+		{#if project.liveUrl || project.repoUrl}
+			<div class="relative z-10 -ml-3 flex flex-wrap gap-1">
+				{#if project.liveUrl}
+					<Button variant="ghost" size="sm" href={project.liveUrl}
+						>Live site<ExternalLinkIcon aria-hidden="true" /></Button
+					>
+				{/if}
+				{#if project.repoUrl}
+					<Button variant="ghost" size="sm" href={project.repoUrl}
+						>Source<ExternalLinkIcon aria-hidden="true" /></Button
+					>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </article>

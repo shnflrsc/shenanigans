@@ -24,7 +24,8 @@ test.describe('Journey A: recruiter', () => {
 		await page.getByRole('link', { name: 'About me' }).count();
 		await expect(page.getByRole('heading', { name: 'About me' })).toBeVisible();
 
-		await page.getByRole('link', { name: 'Case study' }).first().click();
+		// The whole card is a link to the project page, through its title.
+		await page.getByRole('link', { name: 'Sample: Handbook assistant' }).first().click();
 		await expect(page).toHaveURL(/\/projects\/sample-handbook-assistant$/);
 		await expect(page.getByText('My role')).toBeVisible();
 
