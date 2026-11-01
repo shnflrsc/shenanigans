@@ -1,7 +1,7 @@
 version: 2
 updates:
-  # Packages (bun.lock is read by the npm ecosystem), one grouped pull request a week.
-  - package-ecosystem: npm
+  # Packages (bun.lock), one grouped pull request a week.
+  - package-ecosystem: bun
     directory: /
     schedule:
       interval: weekly
