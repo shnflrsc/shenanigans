@@ -1,3 +1,4 @@
+import { isrFiltered } from '#lib/server/isr.js';
 import { z } from 'zod';
 import { content } from '#lib/server/content/index.js';
 import type { PageServerLoad } from './$types';
@@ -22,3 +23,5 @@ export const load: PageServerLoad = async ({ url }) => {
 	const projects = known ? all.filter((p) => p.tags.some((t) => t.slug === tag)) : all;
 	return { projects, tags, total: all.length, tag: known ? tag : null };
 };
+
+export const config = isrFiltered;
