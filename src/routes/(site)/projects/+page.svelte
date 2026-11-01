@@ -19,7 +19,7 @@
 	path="/projects"
 />
 
-<Section>
+<Section enter>
 	<div class="flex flex-col gap-8">
 		<SectionTitle tag="h1" soft="Things I have built.">Projects.</SectionTitle>
 

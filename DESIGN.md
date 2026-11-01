@@ -135,7 +135,7 @@ All spacing sits on a 4px base; corners grow with the surface; depth is rare and
 - **Not animated for now:** hover and press effects, focus ring fades, link underlines, page-to-page transitions, the theme switch, springs and staggers. Existing plain colour, border and shadow transitions (150–200ms) stay as they were.
 - **Banned:** parallax, spin, looping or continuous motion, bounce, anything that follows the pointer, movement that makes text hard to read or a control hard to hit.
 - **Reduced motion.** With `prefers-reduced-motion: reduce` nothing slides or fades; every section is simply shown. Nothing waits for an animation to become visible.
-- **Without JavaScript, or if it fails.** Content is always visible. A section is only hidden by script, and only after it is known to be below the screen; a CSS fallback shows any section still hidden after 2.5 seconds.
+- **Without JavaScript, or if it fails.** Content is always visible. Sections after the first start hidden only once the page has marked itself as running script (before first paint, so there is no flash); each is shown the first time 5% of it is on screen, including a section peeking into the first screen. If that script never runs, a CSS fallback shows every section after 2.5 seconds.
 - **Performance.** Only `opacity` and `transform` animate, with no layout shift (CLS stays 0). The hero photo is never faded on its own.
 - **Admin.** No entrances or scroll reveals: only the 150–200ms transitions on background, border, color and shadow, plus the standard enter and exit of dialogs, menus and toasts.
 

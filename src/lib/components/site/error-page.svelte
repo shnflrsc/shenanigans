@@ -43,7 +43,7 @@
 <div class="flex min-h-dvh flex-col">
 	<SiteNav />
 	<main class="flex-1">
-		<Section>
+		<Section enter>
 			<div class="mx-auto flex max-w-[560px] flex-col items-center gap-6 text-center">
 				<Eyebrow>{copy.eyebrow}</Eyebrow>
 				<h1 class="text-hero">

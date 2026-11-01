@@ -29,7 +29,7 @@
 	path="/blog"
 />
 
-<Section width="narrow">
+<Section width="narrow" enter>
 	<div class="flex flex-col gap-8">
 		<SectionTitle tag="h1" soft="What I learn while building.">Blog.</SectionTitle>
 
