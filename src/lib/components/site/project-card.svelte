@@ -17,7 +17,6 @@
 			coverAlt: string | null;
 			liveUrl: string | null;
 			repoUrl: string | null;
-			body: string | null;
 			tags: { slug: string; name: string }[];
 		};
 		/** Image left, body right, larger title. One per page. */
