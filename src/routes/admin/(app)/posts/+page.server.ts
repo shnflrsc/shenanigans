@@ -11,7 +11,7 @@ import type { Actions, PageServerLoad } from './$types';
 const filter = z.enum(['all', 'published', 'draft']).catch('all');
 
 export const load: PageServerLoad = async (event) => {
-	requireAdmin(event, { redirectToLogin: true });
+	// removed
 	const status = filter.parse(event.url.searchParams.get('status') ?? 'all');
 	const posts = await listPosts(db, status === 'all' ? undefined : status);
 	return { posts, status };
