@@ -103,12 +103,7 @@
 				>
 			</div>
 			{#if showAlt}
-				<Field
-					id="{id}-alt"
-					label="Alt text"
-					hint="Describes the image for people who cannot see it."
-					error={altError}
-				>
+				<Field id="{id}-alt" label="Alt text" error={altError}>
 					{#snippet children({ describedby, invalid })}
 						<input
 							id="{id}-alt"

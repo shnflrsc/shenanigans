@@ -200,14 +200,7 @@
 
 		<!-- The post details sit below the editor as plain fields, not in a card. -->
 		<div class="flex flex-col gap-5">
-			<Field
-				id="slug"
-				label="Slug"
-				hint={locked
-					? 'Locked after the first publish, so links keep working.'
-					: 'Made from the title. You can edit it until you publish.'}
-				error={editor.errors.slug}
-			>
+			<Field id="slug" label="Slug" error={editor.errors.slug}>
 				{#snippet children({ describedby, invalid })}
 					<div class="relative">
 						<input
@@ -235,12 +228,7 @@
 				{/snippet}
 			</Field>
 
-			<Field
-				id="excerpt"
-				label="Excerpt"
-				hint="Shown on cards and used as the page description."
-				error={editor.errors.excerpt}
-			>
+			<Field id="excerpt" label="Excerpt" error={editor.errors.excerpt}>
 				{#snippet children({ describedby, invalid })}
 					<textarea
 						id="excerpt"
@@ -255,29 +243,33 @@
 				{/snippet}
 			</Field>
 
-			<Field id="tags" label="Tags">
-				<TagPicker id="tags" bind:tags bind:selected={editor.data.tagIds} oncreate={createTag} />
-			</Field>
+			<!-- Tags, then the linked project, each on its own row. -->
+			<div class="flex flex-col gap-5">
+				<Field id="tags" label="Tags">
+					<TagPicker
+						id="tags-new"
+						bind:tags
+						bind:selected={editor.data.tagIds}
+						oncreate={createTag}
+					/>
+				</Field>
 
-			<Field
-				id="project"
-				label="The project this post is about"
-				hint="Optional. Shown at the end of the post."
-			>
-				{#snippet children({ describedby })}
-					<select
-						id="project"
-						bind:value={editor.data.projectId}
-						aria-describedby={describedby}
-						class={input}
-					>
-						<option value="">None</option>
-						{#each data.projects as project (project.id)}
-							<option value={project.id}>{project.title}</option>
-						{/each}
-					</select>
-				{/snippet}
-			</Field>
+				<Field id="project" label="The project this post is about">
+					{#snippet children({ describedby })}
+						<select
+							id="project"
+							bind:value={editor.data.projectId}
+							aria-describedby={describedby}
+							class={input}
+						>
+							<option value="">None</option>
+							{#each data.projects as project (project.id)}
+								<option value={project.id}>{project.title}</option>
+							{/each}
+						</select>
+					{/snippet}
+				</Field>
+			</div>
 
 			<div class="flex flex-col gap-1.5">
 				<span class="text-ui">Cover image</span>

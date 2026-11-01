@@ -240,3 +240,62 @@ test.describe('Edit and Preview switch (one pane at a time)', () => {
 		await expect(page.locator('#body-panel-preview')).toBeVisible();
 	});
 });
+
+test.describe('Post details: tags and project on their own rows, no notes', () => {
+	test('tags and the project selector each have their own row', async ({ page }) => {
+		for (const width of [1280, 390]) {
+			await page.setViewportSize({ width, height: 900 });
+			await page.goto('/admin/posts/new');
+			const tags = (await page.locator('#tags-new').boundingBox())!;
+			const project = (await page.locator('#project').boundingBox())!;
+			// The project field is below Tags, starting at the same left edge.
+			expect(project.y).toBeGreaterThan(tags.y + tags.height);
+			expect(Math.abs(project.x - tags.x)).toBeLessThan(2);
+		}
+	});
+
+	test('the notes under the fields are gone', async ({ page }) => {
+		await page.goto('/admin/posts/new');
+		for (const note of [
+			'Made from the title. You can edit it until you publish.',
+			'Shown on cards and used as the page description.',
+			'Optional. Shown at the end of the post.',
+			'Describes the image for people who cannot see it.'
+		]) {
+			await expect(page.getByText(note)).toHaveCount(0);
+		}
+	});
+
+	test('tags are toggle chips: click to add, click again to remove, and they save', async ({
+		page
+	}) => {
+		const { sql } = await import('./db');
+		await sql(
+			`insert into tags (slug, name) values ('e2e-chip-a', 'E2E Chip A'), ('e2e-chip-b', 'E2E Chip B') on conflict do nothing`
+		);
+		try {
+			await page.goto('/admin/posts/new');
+			const a = page.getByRole('button', { name: 'E2E Chip A', exact: true });
+			const b = page.getByRole('button', { name: 'E2E Chip B', exact: true });
+			await a.click();
+			await b.click();
+			await b.click();
+			await expect(a).toHaveAttribute('aria-pressed', 'true');
+			await expect(b).toHaveAttribute('aria-pressed', 'false');
+			await page.getByLabel('Title').fill('E2E Chips');
+			await page.getByLabel('Excerpt').fill('x');
+			await page.getByRole('button', { name: 'Save draft' }).click();
+			await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
+			await expect(page.getByRole('button', { name: 'E2E Chip A', exact: true })).toHaveAttribute(
+				'aria-pressed',
+				'true'
+			);
+			await expect(page.getByRole('button', { name: 'E2E Chip B', exact: true })).toHaveAttribute(
+				'aria-pressed',
+				'false'
+			);
+		} finally {
+			await sql(`delete from tags where slug like 'e2e-chip-%'`);
+		}
+	});
+});

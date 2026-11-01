@@ -388,7 +388,12 @@
 			</Field>
 
 			<Field id="tags" label="Tags">
-				<TagPicker id="tags" bind:tags bind:selected={editor.data.tagIds} oncreate={createTag} />
+				<TagPicker
+					id="tags-new"
+					bind:tags
+					bind:selected={editor.data.tagIds}
+					oncreate={createTag}
+				/>
 			</Field>
 
 			<div class="flex flex-col gap-1.5">

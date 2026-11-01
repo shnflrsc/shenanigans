@@ -68,8 +68,7 @@ test.describe('Freshness (PR-6)', () => {
 		await page.goto('/admin/projects/new');
 		await page.getByLabel('Title').fill('E2E Fresh Project');
 		await page.getByLabel('Summary').fill('Fresh summary');
-		await page.locator('#tags').fill('Svelte');
-		await page.getByRole('option', { name: 'Svelte', exact: true }).click();
+		await page.getByRole('button', { name: 'Svelte', exact: true }).click();
 		await page.getByRole('button', { name: 'Publish' }).click();
 		await expect(page.getByRole('button', { name: 'Unpublish' })).toBeVisible();
 

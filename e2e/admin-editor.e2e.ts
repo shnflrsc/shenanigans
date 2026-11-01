@@ -72,7 +72,6 @@ test.describe('Post editor', () => {
 		await expect(page.getByRole('button', { name: 'Unpublish' })).toBeVisible();
 		const slug = page.getByLabel('Slug');
 		await expect(slug).toHaveAttribute('readonly', '');
-		await expect(page.getByText('Locked after the first publish')).toBeVisible();
 
 		// Forge a slug change straight at the action.
 		const id = page.url().split('/').pop()!;
@@ -99,11 +98,17 @@ test.describe('Post editor', () => {
 
 	test('creates a tag inline and reuses an existing name in any letter case', async ({ page }) => {
 		await page.goto('/admin/posts/new');
-		await page.locator('#tags').fill('E2E Brand New');
-		await page.getByRole('option', { name: /Create tag “E2E Brand New”/ }).click();
-		await expect(page.getByRole('list', { name: 'Selected tags' })).toContainText('E2E Brand New');
-		await page.locator('#tags').fill('e2e brand new');
-		await expect(page.getByRole('option', { name: /Create tag/ })).toHaveCount(0);
+		await page.locator('#tags-new').fill('E2E Brand New');
+		await page.locator('#tags-new').press('Enter');
+		const chip = page.getByRole('button', { name: 'E2E Brand New', exact: true });
+		await expect(chip).toHaveAttribute('aria-pressed', 'true');
+		// The same name in another letter case picks the existing tag instead of creating another.
+		await chip.click();
+		await expect(chip).toHaveAttribute('aria-pressed', 'false');
+		await page.locator('#tags-new').fill('e2e brand new');
+		await page.getByRole('button', { name: 'Add' }).click();
+		await expect(chip).toHaveAttribute('aria-pressed', 'true');
+		await expect(page.getByRole('button', { name: /^e2e brand new$/i })).toHaveCount(1);
 		expect(await sql(`select 1 from tags where slug = 'e2e-brand-new'`)).toHaveLength(1);
 	});
 
