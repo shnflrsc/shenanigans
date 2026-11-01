@@ -4,7 +4,6 @@
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { navigating } from '$app/state';
 	import { runAction } from '#lib/admin/actions.js';
 	import ConfirmDialog from '#lib/components/admin/confirm-dialog.svelte';
 	import EmptyState from '#lib/components/admin/empty-state.svelte';
@@ -27,7 +26,6 @@
 
 	let deleting = $state<{ id: string; title: string } | null>(null);
 	let confirmOpen = $state(false);
-	const loading = $derived(navigating.to !== null);
 </script>
 
 <svelte:head><title>Posts · Admin</title></svelte:head>
@@ -57,19 +55,12 @@
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->
 </div>
 
-{#if loading}
-	<div class="flex flex-col gap-2" aria-busy="true" aria-label="Loading posts">
-		{#each [0, 1, 2, 3] as i (i)}
-			<div class="h-14 rounded-sm bg-fill-muted"></div>
-		{/each}
-	</div>
-{:else if data.posts.length === 0}
+{#if data.posts.length === 0}
 	<EmptyState
 		icon={FileTextIcon}
 		title={data.status === 'all'
 			? 'No posts yet'
 			: `No ${data.status === 'draft' ? 'draft' : 'published'} posts`}
-		text="Write a post in markdown, preview it live, and publish it when it is ready."
 	>
 		<Button href={resolve('/admin/(app)/posts/[id]', { id: 'new' })}>
 			<PlusIcon aria-hidden="true" />New post

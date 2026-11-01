@@ -7,7 +7,6 @@
 	import StarIcon from '@lucide/svelte/icons/star';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { navigating } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { runAction } from '#lib/admin/actions.js';
 	import ConfirmDialog from '#lib/components/admin/confirm-dialog.svelte';
@@ -33,7 +32,6 @@
 	let deleting = $state<{ id: string; title: string } | null>(null);
 	let confirmOpen = $state(false);
 	let flash = $state<string | null>(null);
-	const loading = $derived(navigating.to !== null);
 
 	async function feature(project: { id: string; title: string }, on: boolean) {
 		const result = await runAction('setFeatured', { id: project.id, featured: String(on) });
@@ -87,16 +85,8 @@
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->
 </div>
 
-{#if loading}
-	<div class="flex flex-col gap-2" aria-busy="true" aria-label="Loading projects">
-		{#each [0, 1, 2] as i (i)}<div class="h-14 rounded-sm bg-fill-muted"></div>{/each}
-	</div>
-{:else if data.projects.length === 0}
-	<EmptyState
-		icon={FolderIcon}
-		title={data.total === 0 ? 'No projects yet' : 'No projects here'}
-		text="Add a project with a short summary and a case study. Mark one as featured to spotlight it on Home."
-	>
+{#if data.projects.length === 0}
+	<EmptyState icon={FolderIcon} title={data.total === 0 ? 'No projects yet' : 'No projects here'}>
 		<Button href={resolve('/admin/(app)/projects/[id]', { id: 'new' })}>
 			<PlusIcon aria-hidden="true" />New project
 		</Button>

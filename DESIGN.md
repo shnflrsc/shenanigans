@@ -235,7 +235,7 @@ Every page starts with NavBar and ends with Footer; between them, sections alter
 | Admin | Sidebar shell (paper-soft, 232px) on desktop; top bar and a three-way section switcher on phones. Lists use a table with status badges. Editors: sticky top bar with save state, main column (title, markdown with toolbar and live Prose preview), settings Frame (status, slug, excerpt or summary, tags, cover with required alt text); secondary "Save draft" + primary "Publish". Destructive actions use the primary button with an explicit verb, never red. See the admin design for every state |
 | 404 | Centered HeroTitle with a playful line and one "Back home" button |
 
-Empty, loading and error states use the same pieces: a short `body` line in `ink-muted` inside a soft Frame, with one ghost or secondary button to recover. Loading skeletons are `fill-muted` blocks at `radius-sm`, no shimmer.
+Empty and error states use the same pieces: a title inside a soft Frame, with one ghost or secondary button to recover; admin empty states have a title only, no subtitle. The admin lists show no loading skeleton: switching between All, Published and Drafts keeps the current list on screen until the new one arrives.
 
 ## Content and voice
 

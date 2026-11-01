@@ -53,12 +53,7 @@
 >
 	<div class="flex items-start gap-2">
 		<div class="flex-1">
-			<Field
-				id="new-tag"
-				label="New tag"
-				hint="The slug is made from the name. Tags are shared by posts and projects."
-				error={createError}
-			>
+			<Field id="new-tag" label="New tag" error={createError}>
 				{#snippet children({ describedby, invalid })}
 					<input
 						id="new-tag"
@@ -79,11 +74,7 @@
 </form>
 
 {#if data.tags.length === 0}
-	<EmptyState
-		icon={TagIcon}
-		title="No tags yet"
-		text="Tags appear here once you create them, either above or while editing a post or project."
-	/>
+	<EmptyState icon={TagIcon} title="No tags yet" />
 {:else}
 	<div class="overflow-x-auto rounded-lg border border-line">
 		<table class="w-full min-w-[560px] text-left">
