@@ -101,7 +101,7 @@ test.describe('Home with little or no content', () => {
 		await sql(`update posts set status = 'draft' where slug <> 'sample-first-post'`);
 		await sql(`update projects set status = 'draft' where slug <> 'sample-handbook-assistant'`);
 		await page.goto('/');
-		await expect(page.getByText('More projects are on the way.')).toBeVisible();
+		await expect(page.getByText('More projects are on the way.')).toHaveCount(0);
 		await expect(page.getByText('That’s the first one. More soon.')).toHaveCount(0);
 		await expect(page.getByRole('link', { name: 'All projects', exact: true })).toHaveCount(0);
 		await expect(page.getByRole('link', { name: 'All posts', exact: true })).toHaveCount(0);

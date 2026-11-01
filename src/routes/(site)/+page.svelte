@@ -38,9 +38,6 @@
 		</div>
 		{#if data.featured}
 			<ProjectCard project={data.featured} featured />
-			{#if data.counts.projects === 1}
-				<p class="text-small text-ink-subtle">More projects are on the way.</p>
-			{/if}
 		{:else}
 			<EmptyCard eyebrow="Featured" title="Nothing featured right now" />
 		{/if}

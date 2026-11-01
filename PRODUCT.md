@@ -89,7 +89,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 - **Home, no posts:** "No posts yet. The first one is in the works."
 - **Projects, none:** "No projects yet. They're on the way." Filter chips hidden; buttons "Read the blog" and "Go home".
 - **Blog, none:** "Nothing here yet. The first post is in the works." Filter chips hidden; buttons "View projects" and "Go home".
-- **Launch state (one project, one post):** Home shows the one featured project plus "More projects are on the way."
+- **Launch state (one project, one post):** Home shows the one featured project and nothing else about more to come.
 - **404:** "This page wandered off. Or it was never here." with buttons Go home, View projects and Read the blog. It also covers unpublished and deleted content.
 - **500:** "Something broke on my end. Not yours." with buttons Try again and Go home, and an email link.
 
