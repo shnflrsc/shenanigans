@@ -56,14 +56,13 @@
 			<p class="text-lead text-ink-muted">{project.summary}</p>
 			<p class="flex flex-wrap gap-x-4 gap-y-1 text-caption text-ink-subtle">
 				<span>{site.fullName}</span>
-				<span>Case study</span>
 				{#if data.project.hasBody}<span>{formatReadTime(data.readTime)}</span>{/if}
 			</p>
 		</header>
 
 		{#if facts.length || hasLinks}
 			<Frame>
-				<div class="grid grid-cols-2 gap-x-6 gap-y-5 min-[720px]:grid-cols-4">
+				<div class="flex flex-wrap items-center gap-x-10 gap-y-5">
 					<dl class="contents">
 						{#each facts as fact (fact.label)}
 							<div class="flex flex-col gap-1">
@@ -72,18 +71,19 @@
 							</div>
 						{/each}
 					</dl>
-					{#if hasLinks}
-						<div class="col-span-2 flex flex-wrap items-center gap-1 min-[720px]:col-span-1">
-							{#if project.liveUrl}
-								<Button variant="secondary" size="sm" href={project.liveUrl}
-									>Live site<ExternalLinkIcon aria-hidden="true" /></Button
-								>
-							{/if}
-							{#if project.repoUrl}
-								<Button variant="secondary" size="sm" href={project.repoUrl}
-									>Source<ExternalLinkIcon aria-hidden="true" /></Button
-								>
-							{/if}
+					<!-- Each link has its own column. -->
+					{#if project.liveUrl}
+						<div class="flex items-center">
+							<Button variant="secondary" size="sm" href={project.liveUrl}
+								>Live site<ExternalLinkIcon aria-hidden="true" /></Button
+							>
+						</div>
+					{/if}
+					{#if project.repoUrl}
+						<div class="flex items-center">
+							<Button variant="secondary" size="sm" href={project.repoUrl}
+								>Source<ExternalLinkIcon aria-hidden="true" /></Button
+							>
 						</div>
 					{/if}
 				</div>

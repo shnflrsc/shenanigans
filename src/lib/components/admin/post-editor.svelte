@@ -276,6 +276,7 @@
 					bind:path={editor.data.coverImage}
 					bind:alt={editor.data.coverAlt}
 					altError={editor.errors.coverAlt}
+					note="Recommended: 1600 × 900 px (16:9). It is shown at 16:9 at the top of the post, and anything outside that shape is cropped."
 				/>
 			</div>
 

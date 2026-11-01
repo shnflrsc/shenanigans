@@ -16,6 +16,8 @@
 		altError?: string;
 		/** When set, the field shows the alt text input too (covers need it). */
 		showAlt?: boolean;
+		/** A line under the field, such as the recommended size for the place the image is used. */
+		note?: string;
 		/** Called after a successful upload with the path and public URL. */
 		onuploaded?: (result: { path: string; url: string }) => void;
 	};
@@ -26,6 +28,7 @@
 		alt = $bindable(),
 		altError,
 		showAlt = true,
+		note,
 		onuploaded
 	}: Props = $props();
 
@@ -194,4 +197,6 @@
 			event.currentTarget.value = '';
 		}}
 	/>
+
+	{#if note}<p id="{id}-note" class="text-[12px] leading-4 text-ink-subtle">{note}</p>{/if}
 </div>
