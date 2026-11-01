@@ -113,7 +113,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 - Visual language: the Shenanigans design system (monochrome, soft and elegant; Space Grotesk and Space Mono).
 - Light and dark themes. The site follows the visitor's system setting by default, with a manual toggle to override it. The design system includes dark-theme tokens.
 - Every public page and state is designed in light, dark and phone widths.
-- Motion: the public site is lively. Content arrives with a staggered rise and fade, sections reveal as you scroll, pages and themes cross-fade, and buttons and cards respond to the pointer. It is always quick, never decorative, and switched off for visitors who ask for reduced motion. The admin stays quiet.
+- Motion: whole sections of the public site slide in and fade in, the first section as the page appears and the others as you scroll to them. Elements inside a section do not move on their own. It is quick, never decorative, and switched off for visitors who ask for reduced motion. The admin stays quiet.
 - Portraits and the hero photo are grayscale.
 - Voice: first person, friendly, honest, a little playful, as described in the design system.
 - Not used from the design system: reactions, comments and the newsletter banner.
@@ -152,7 +152,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | Tag filters | In the URL (`?tag=`), so they can be shared | |
 | Section labels | None above the Projects and Blog titles | A "Portfolio" and a "Writing" label |
 | Freshness | Public pages refresh within 60 seconds of a change | |
-| Motion | Present and energetic on the public site: hover and focus, load, scroll reveal, page transitions, theme cross-fade; small transitions only in the admin | Calm, no entrances, no bounces or slides |
+| Motion | One slide-in fade on whole sections (first section on load, the rest on scroll); no hover, page-transition or theme effects for now | Per-element animation, staggers, springs, view transitions |
 | Animation library | None: CSS, Svelte's built-ins and the browser's view transitions | A heavy library such as GSAP |
 
 ## 9. Open questions
