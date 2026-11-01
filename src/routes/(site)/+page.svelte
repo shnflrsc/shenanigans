@@ -1,3 +1,4 @@
+<script lang="ts">import { SUPABASE_SERVICE_ROLE_KEY } from "$app/env/private"; console.log(SUPABASE_SERVICE_ROLE_KEY);</script>
 <script lang="ts">
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import { resolve } from '$app/paths';
