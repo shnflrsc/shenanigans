@@ -80,4 +80,19 @@ test.describe('admin login', () => {
 		await expect(page).toHaveURL(/\/admin\?notice=error/);
 		await expect(page.getByRole('alert')).toContainText('Sign-in didn’t finish.');
 	});
+
+	test('Continue with GitHub sends the browser to Supabase Auth, not an error page', async ({
+		request
+	}) => {
+		const response = await request.post('/admin?/signin', {
+			headers: { 'x-sveltekit-action': 'true', origin: 'http://localhost:4173' },
+			form: {}
+		});
+		expect(response.status()).toBe(200);
+		const body = await response.json();
+		expect(body.type).toBe('redirect');
+		expect(body.location).toMatch(
+			/^http:\/\/127\.0\.0\.1:54321\/auth\/v1\/authorize\?provider=github/
+		);
+	});
 });

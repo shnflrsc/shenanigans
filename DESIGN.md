@@ -1,10 +1,10 @@
 # DESIGN.md — Shenanigans
 
-Oct 31, 2026 · @Darl Shanen Floresca
+Oct 31, 2026 · @Darl Shanen Floresca · Motion rules confirmed
 
 ## How to use this file
 
-This is the single source of truth for how Shenanigans looks and reads. Shenanigans is a personal portfolio and blog (projects showcase, posts, reactions, comments, an admin editor) built with Astro, Svelte islands and Supabase. Any agent generating UI, styles or copy for it must follow this file.
+This is the single source of truth for how Shenanigans looks and reads. Shenanigans is a personal portfolio and blog (projects showcase, posts, an admin dashboard) built with SvelteKit, shadcn-svelte and Supabase. Reactions, comments and a newsletter are in this system but are not used on Shenanigans. Any agent generating UI, styles or copy for it must follow this file.
 
 - **Precedence:** an explicit instruction from the project owner > this file > existing code > the agent's own taste.
 - **Tokens are law.** Never hard-code a color, size, radius, shadow or font. Use the CSS custom properties named here (for example `var(--ink)`, `var(--space-6)`).
@@ -16,7 +16,7 @@ This is the single source of truth for how Shenanigans looks and reads. Shenanig
 
 Shenanigans is monochrome, soft and elegant: a calm frame so the projects and the writing carry the personality. The name is playful; the interface stays composed.
 
-1. **Content first.** Chrome is quiet. No decorative illustrations, textures, gradients or patterns.
+1. **Content first.** Chrome is quiet. No decorative illustrations, textures, gradients or patterns. Motion on the public site is one slide-in fade, applied to whole sections; it only moves content into place, never decorates and never blocks reading.
 2. **Hairlines, not boxes.** Separate with 1px lines and quiet fills before reaching for borders, shadows or color.
 3. **Warm monochrome.** Warm off-whites and warm greys only. No hue, no pure black, no pure white text in dark.
 4. **Soft everywhere.** Every corner is rounded; bigger surfaces get bigger radii.
@@ -120,7 +120,26 @@ All spacing sits on a 4px base; corners grow with the surface; depth is rare and
 - `shadow-md` — raised cards, menus, popovers and card hover. Light: a 1px 5% ring plus 3/6px and 9/24px soft drops. Dark: a 1px white 6% ring plus 4/12px and 12/32px drops at 50%, always paired with `paper-raised` and an inset `edge-highlight`.
 - No other shadows. Never use shadow for depth on sections.
 
-**Motion:** 150–200ms ease on background, border, color and shadow only. Project images zoom 2% on card hover. Accordion chevrons rotate 90°. No bounces, slides or parallax; respect `prefers-reduced-motion` by removing the zoom.
+**Motion (public site).** One idea: whole sections slide in and fade in. A section is a unit (the hero, About me, Featured, Latest posts, the contact box, the header block of a page); it moves as one piece, never element by element. Nothing else on the public site is animated for now.
+
+| Token | Value | Use for |
+| --- | --- | --- |
+| `--motion-slow` | 600ms | The slide-in fade |
+| `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | The slide-in fade |
+| `--rise` | 24px | How far a section travels while it fades in |
+
+- **The one animation: slide-in fade.** A section starts 24px lower and transparent and ends in place and fully visible, over `--motion-slow` with `--ease-out`.
+- **On load.** The first section of the page (the hero on Home, the title block on other pages) plays it once as the page appears. The header and footer do not animate.
+- **On scroll.** Every other section plays it the first time it comes into view, once only; scrolling back up does not replay it. Sections already on screen when the page loads are not hidden.
+- **Whole sections only.** The children of a section (headline lines, buttons, cards, rows, chips, the photo) never have their own timing, delay or stagger.
+- **Not animated for now:** hover and press effects, focus ring fades, link underlines, page-to-page transitions, the theme switch, springs and staggers. Existing plain colour, border and shadow transitions (150–200ms) stay as they were.
+- **Banned:** parallax, spin, looping or continuous motion, bounce, anything that follows the pointer, movement that makes text hard to read or a control hard to hit.
+- **Reduced motion.** With `prefers-reduced-motion: reduce` nothing slides or fades; every section is simply shown. Nothing waits for an animation to become visible.
+- **Without JavaScript, or if it fails.** Content is always visible. Sections after the first start hidden only once the page has marked itself as running script (before first paint, so there is no flash); each is shown the first time 5% of it is on screen, including a section peeking into the first screen. If that script never runs, a CSS fallback shows every section after 2.5 seconds.
+- **Performance.** Only `opacity` and `transform` animate, with no layout shift (CLS stays 0). The hero photo is never faded on its own.
+- **Admin.** No entrances or scroll reveals: only the 150–200ms transitions on background, border, color and shadow, plus the standard enter and exit of dialogs, menus and toasts.
+
+Accordion chevrons rotate 90°.
 
 **Focus:** `focus-ring` = a 2px ground-colored gap, then 2px solid `ink` (light `0 0 0 2px #fff, 0 0 0 4px #37352f`; dark `0 0 0 2px #191919, 0 0 0 4px #ebebea`), on `:focus-visible` only.
 
@@ -172,14 +191,14 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 | --- | --- | --- |
 | NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), socials + one small primary button right | Current page = `ink` on `fill-hover` with `aria-current="page"`. Optional sticky. No logo image ships: set the name in type. |
 | SocialLinks | Row of 32px ghost icon buttons, 16px line icons in `ink-subtle`, `ink` on hover | Every link has an accessible label. Generic glyphs only. |
-| Footer | `paper-soft` with top hairline: name + one-line bio left, link columns with mono `caption` headings right, then a hairline row with mono credit and socials | Never a dark band. |
+| Footer | `paper-soft` with top hairline, one compact row: mono `caption` copyright with the full name on the left, ghost links with an icon and label (Email, GitHub, LinkedIn, using the real brand logos) on the right. No brand block, link columns, tagline or site address | Never a dark band. Sits at the bottom of the viewport on short pages. |
 | PostNav | Two outline Frames side by side: mono "Previous" / "Next" caption + `card-title` | A missing side leaves its slot empty. |
 
 ### Typography and layout
 
 | Component | Anatomy | Rules |
 | --- | --- | --- |
-| HeroTitle | Optional 72px round grayscale avatar, status line with a 6px `ink` dot, optional Eyebrow, `hero` headline, `lead` subtitle (max 560px), up to two buttons | Centered by default, `align="start"` for left. One per page. |
+| HeroTitle | Optional 72px round grayscale avatar, optional status line with a 6px `ink` dot (not used on Shenanigans), optional Eyebrow, `hero` headline, `lead` subtitle (max 560px), up to two buttons | Centered by default, `align="start"` for left. One per page. |
 | SectionTitle | Optional Eyebrow, `title`, optional `body` description in `ink-muted` | Left by default; center only above grids. |
 | Eyebrow | Mono uppercase `caption` on `fill-muted`, `radius-sm`, 2px × 8px padding | One or two words above a title. |
 | Prose | 680px column, `prose` text; `h2`/`h3`, links underlined in `line-strong` (ink on hover), lists with `ink-subtle` markers, blockquote with 3px `ink` rule, inline code on `fill-muted`, `pre` on `paper-soft` with `radius-lg`, rounded images, hairline `hr` | Wrap rendered Markdown in it. |
@@ -195,8 +214,8 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 | PostCard | `row` (default): 112px mono date column, title, excerpt, Tags + read time, hairline below, `fill-hover` on hover. `card`: outline Frame with 16:9 image | Row for indexes, card for "latest posts". |
 | PostHeader | Tags, `post-title`, `lead` subtitle, byline (32px avatar, name, mono date / read time), hairline below | Sits in a narrow section above Prose. |
 | Callout | `paper-soft` (or outline) box, `radius-md`, 16px padding, 18px info icon in `ink-subtle`, 15/24px text | 1–2 per post. |
-| ReactionBar | 32px pill toggles (`radius-full`, `line` border): line icon, label, mono count | Pressed = `ink` border, filled icon, `aria-pressed`. Defaults Like, Insightful, Fun. No emoji. |
-| Comment | 32px avatar, name 14/600 + mono date, 15/24px body in `ink-muted`, ghost "Reply"; replies indented 16px behind a 1px `line` thread | One level of nesting. Comment box = TextField + small primary Button. |
+| ReactionBar (not used on Shenanigans) | 32px pill toggles (`radius-full`, `line` border): line icon, label, mono count | Pressed = `ink` border, filled icon, `aria-pressed`. Defaults Like, Insightful, Fun. No emoji. |
+| Comment (not used on Shenanigans) | 32px avatar, name 14/600 + mono date, 15/24px body in `ink-muted`, ghost "Reply"; replies indented 16px behind a 1px `line` thread | One level of nesting. Comment box = TextField + small primary Button. |
 | QuoteCard | Soft Frame, `lg` padding: `quote` text, person (36px avatar, name, role), optional arrow buttons right | One quote at a time. |
 | Accordion | Hairline rows, 14px chevron rotating 90° open, question in 15px/500, answer indented 30px in `ink-muted` | One open at a time; `aria-expanded` + `aria-controls`. |
 | CTABanner | Soft Frame, `radius-xl`, 48px padding, centered `title` (optional soft run), description, 1–2 actions or an email field + button | One per page, before the footer. |
@@ -207,13 +226,13 @@ Every page starts with NavBar and ends with Footer; between them, sections alter
 
 | Page | Sections, top to bottom |
 | --- | --- |
-| Home | HeroTitle (avatar, status, two actions) · SectionTitle + one `featured` ProjectCard + 2–3 ProjectCards (soft) · SectionTitle + latest PostCard rows · optional Stats or QuoteCard (soft) · CTABanner "Get in touch" |
+| Home | HeroTitle (headline, subtitle, View projects and Read the blog, photo with name and caption; no status line, no Get in touch) · About me (catchphrase, bio, quick-facts Frame, Skills and tools, Experience and highlights, résumé button when the file exists) · SectionTitle + the one `featured` ProjectCard (soft) · SectionTitle + latest PostCard rows · CTABanner "Got something in mind?" |
 | Projects index | SectionTitle · row of filter Tags · ProjectCard grid, 2–3 columns |
 | Project case study | PostHeader (year, role, tags) · hero image in `radius-lg` · Prose with Callouts and screenshots · links (live, source) · PostNav |
 | Blog index | SectionTitle · filter Tags with counts · PostCard rows (newest first) · pagination |
-| Post | PostHeader · Prose (narrow) · ReactionBar · Comments + comment TextField · PostNav · newsletter CTABanner |
-| About | HeroTitle `align="start"` · Prose bio · Stats · Accordion (FAQ or "uses") · CTABanner |
-| Admin editor | NavBar · narrow section: TextFields for title, slug, excerpt, tags · Markdown body TextField with a live Prose preview · secondary "Save draft" + primary "Publish" |
+| Post | PostHeader · Prose (narrow) · "The project this post is about" (featured ProjectCard, only for a published linked project) · PostNav (older and newer). No reactions, comments or newsletter |
+| About | Not a page: it is the About me section on Home |
+| Admin | Sidebar shell (paper-soft, 232px) on desktop; top bar and a three-way section switcher on phones. Lists use a table with status badges. Editors: sticky top bar with save state, main column (title, markdown with toolbar and live Prose preview), settings Frame (status, slug, excerpt or summary, tags, cover with required alt text); secondary "Save draft" + primary "Publish". Destructive actions use the primary button with an explicit verb, never red. See the admin design for every state |
 | 404 | Centered HeroTitle with a playful line and one "Back home" button |
 
 Empty, loading and error states use the same pieces: a short `body` line in `ink-muted` inside a soft Frame, with one ghost or secondary button to recover. Loading skeletons are `fill-muted` blocks at `radius-sm`, no shimmer.
@@ -283,19 +302,23 @@ Tokens ship as CSS custom properties: light on `:root`, dark under `[data-theme=
   --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px;
   --radius-sm: 4px; --radius-md: 6px; --radius-lg: 10px; --radius-xl: 16px; --radius-full: 9999px;
   --stroke-hairline: 1px;
+  --motion-slow: 600ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --rise: 24px;
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 ```
 
-**Stack notes (Astro + Svelte islands + Supabase)**
+**Stack notes (SvelteKit + shadcn-svelte + Supabase)**
 
-- Put the token file in a global stylesheet imported once by the base layout; load the two fonts there with `display=swap` (or self-host them).
-- Static, non-interactive components (Section, Frame, SectionTitle, ProjectCard, PostCard, PostHeader, Prose, Footer) are Astro components with no client JavaScript.
-- Only interactive parts are Svelte islands: theme toggle, filter Tags, ReactionBar, Comment thread + form, Accordion, carousels, the admin editor. Hydrate with `client:visible` (or `client:idle` for the nav).
-- Set the theme before first paint: a tiny inline script in `<head>` reads the saved choice or `prefers-color-scheme` and sets `data-theme` on `<html>`, so there is no flash.
-- Class names use the `sh-` prefix; scoped component styles may be used, but values still come only from tokens.
-- Reaction counts and comments come from Supabase; render counts optimistically and roll back on error.
+- The token file lives in `src/lib/styles/tokens.css`, imported once from the root stylesheet. Tailwind's theme (`@theme inline`) reads the tokens at run time, so both themes work with no per-component switching. The shadcn-svelte colour names (`--background`, `--primary`, ...) are mapped onto the tokens; destructive maps to `ink` because the design uses no red.
+- Fonts are self-hosted from `@fontsource` packages (Space Grotesk as the variable font, registered as "Space Grotesk Variable", and Space Mono 400 and 700) with `display=swap`; there is no request to Google Fonts.
+- Everything is a Svelte component and pages are server-rendered. The type styles are Tailwind utilities (`text-hero`, `text-card-title`, `text-caption`, ...), not `sh-` classes.
+- Set the theme before first paint: a tiny inline script in `app.html` reads the saved choice or `prefers-color-scheme` and sets `data-theme` on `<html>`, so there is no flash. It carries the CSP nonce.
+- Rendered markdown goes through one shared function and is wrapped in `.prose-shenanigans`; code uses class-based `hljs-*` colours made only of tokens.
+- Photos are grayscale (the `grayscale` utility on the page, a pre-converted PNG for link previews).
+- The checks that guard this file (lint, type check, the automated accessibility and contrast tests) also run in CI. The pipeline adds no visual change and no UI of its own.
 
 ## Agent checklist
 
@@ -310,6 +333,7 @@ Run this before handing back any UI work.
 | Keep one primary button and one raised surface per area | Stack several primary buttons or shadows |
 | Use Space Grotesk for text, Space Mono for numbers, dates and labels | Set paragraphs in mono or add another font |
 | Give headlines at most one soft `ink-subtle` run | Use bold-word emphasis, all caps headlines or emoji |
-| Check light and dark, focus states and contrast | Ship a component tested in one theme only |
+| Check light and dark, focus states, contrast and reduced motion | Ship a component tested in one theme only |
 | Compose new UI from the listed components | Add doodles, dot grids, tilted frames, textures or decorative illustrations |
 | Keep posts at 680px and sections at 1080px | Let text run full width |
+| Keep `bun run lint`, `bun run check` and the accessibility e2e suite passing; CI runs them on every change (SOFTWARE.md SR-16) | Merge UI work with a red check, or switch a rule off to get past it |

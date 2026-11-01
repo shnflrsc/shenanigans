@@ -35,7 +35,7 @@
 
 <Seo title={project.title} description={project.summary} path={`/projects/${project.slug}`} />
 
-<Section tone="plain" width="narrow" class="pb-12">
+<Section tone="plain" width="narrow" class="pb-12" enter>
 	<div class="flex flex-col gap-8">
 		<a
 			href={resolve('/(site)/projects')}

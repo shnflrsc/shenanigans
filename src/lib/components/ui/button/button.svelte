@@ -55,6 +55,10 @@
 		children,
 		...restProps
 	}: ButtonProps = $props();
+	// Links to other sites open in a new tab, without handing them window.opener.
+	const external = $derived(
+		href && /^https?:\/\//i.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+	);
 </script>
 
 {#if href}
@@ -67,6 +71,7 @@
 		aria-disabled={disabled}
 		role={disabled ? 'link' : undefined}
 		tabindex={disabled ? -1 : undefined}
+		{...external}
 		{...restProps}
 	>
 		{@render children?.()}

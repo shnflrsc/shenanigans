@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, inArray, lt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, ne, sql } from 'drizzle-orm';
 import type { PgDatabase } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import * as s from '../db/schema';
@@ -146,9 +146,12 @@ export async function getPublishedPost(db: Db, slug: string) {
 		.from(s.posts)
 		.where(and(eq(s.posts.slug, slug), eq(s.posts.status, published)));
 	if (!row || !row.publishedAt) return null;
-	const at = row.publishedAt;
 	const [post] = await withPostTags(db, [row]);
 
+	// Neighbours follow the same order as the blog list: newest first, ties by id. The comparison uses this
+	// post's own stored timestamp, not a JavaScript Date: the database keeps microseconds and a Date keeps
+	// milliseconds, which made the latest post count as "newer than itself".
+	const self = sql`(select published_at from posts where id = ${row.id})`;
 	const neighbour = async (older: boolean) => {
 		const [n] = await db
 			.select({ slug: s.posts.slug, title: s.posts.title })
@@ -156,10 +159,16 @@ export async function getPublishedPost(db: Db, slug: string) {
 			.where(
 				and(
 					eq(s.posts.status, published),
-					older ? lt(s.posts.publishedAt, at) : gt(s.posts.publishedAt, at)
+					ne(s.posts.id, row.id),
+					older
+						? sql`(${s.posts.publishedAt} < ${self} or (${s.posts.publishedAt} = ${self} and ${s.posts.id} > ${row.id}))`
+						: sql`(${s.posts.publishedAt} > ${self} or (${s.posts.publishedAt} = ${self} and ${s.posts.id} < ${row.id}))`
 				)
 			)
-			.orderBy(older ? desc(s.posts.publishedAt) : asc(s.posts.publishedAt))
+			.orderBy(
+				older ? desc(s.posts.publishedAt) : asc(s.posts.publishedAt),
+				older ? asc(s.posts.id) : desc(s.posts.id)
+			)
 			.limit(1);
 		return n ?? null;
 	};

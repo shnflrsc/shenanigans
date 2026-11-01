@@ -7,9 +7,8 @@ export const site = {
 	domain: 'shenanigans.is-a.dev',
 	origin: 'https://shenanigans.is-a.dev',
 	email: 'floresca.shanegarcia@gmail.com',
-	// TODO(H9): replace with the real profile URLs. The designs only show github.com and linkedin.com.
-	github: 'https://github.com/',
-	linkedin: 'https://www.linkedin.com/',
+	github: 'https://github.com/shnflrsc',
+	linkedin: 'https://www.linkedin.com/in/darl-shanen-floresca/',
 	description:
 		'Darl’s portfolio and blog: projects, case studies and notes on what I learn along the way.'
 } as const;

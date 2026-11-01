@@ -47,7 +47,9 @@ describe('renderMarkdown is inert (SR-8)', () => {
 		const html = renderMarkdown(
 			'[link](https://example.com)\n\n- a\n- b\n\n| a | b |\n| - | - |\n| 1 | 2 |\n\n- [x] done\n\n![alt](https://example.com/a.png)'
 		);
-		expect(html).toContain('<a href="https://example.com">link</a>');
+		expect(html).toContain(
+			'<a href="https://example.com" target="_blank" rel="noopener noreferrer">link</a>'
+		);
 		expect(html).toContain('<ul>');
 		expect(html).toContain('<table>');
 		expect(html).toContain('type="checkbox"');
@@ -134,5 +136,27 @@ describe('readTimeMinutes', () => {
 		const words = Array.from({ length: 450 }, () => 'word').join(' ');
 		expect(readTimeMinutes(words)).toBe(3);
 		expect(readTimeMinutes('```\n' + words + '\n```')).toBe(1);
+	});
+});
+
+describe('external links', () => {
+	it('open in a new tab with noopener noreferrer; relative and mailto links do not', () => {
+		const html = renderMarkdown(
+			'[a](https://example.com) [b](/blog) [c](mailto:a@b.co) [d](http://example.org/x)'
+		);
+		expect(html).toContain(
+			'<a href="https://example.com" target="_blank" rel="noopener noreferrer">a</a>'
+		);
+		expect(html).toContain(
+			'<a href="http://example.org/x" target="_blank" rel="noopener noreferrer">d</a>'
+		);
+		expect(html).toContain('<a href="/blog">b</a>');
+		expect(html).toContain('<a href="mailto:a@b.co">c</a>');
+	});
+
+	it('a document cannot set its own target or rel', () => {
+		const html = renderMarkdown('<a href="https://x.test" target="_self" rel="opener">x</a>');
+		expect(html).not.toContain('opener"');
+		expect(html).not.toContain('_self');
 	});
 });

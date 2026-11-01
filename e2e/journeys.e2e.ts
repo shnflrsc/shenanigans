@@ -66,8 +66,8 @@ test.describe('Journey C: the owner publishes', () => {
 		await page.getByLabel('Title').fill('E2E Journey Post');
 		await page.getByLabel('Excerpt').fill('A teh typo in the excerpt');
 		await page.locator('#body').fill('Body with `code`.');
-		await page.locator('#tags').fill('E2E Journey Tag');
-		await page.getByRole('option', { name: /Create tag/ }).click();
+		await page.locator('#tags-new').fill('E2E Journey Tag');
+		await page.locator('#tags-new').press('Enter');
 		await page.getByRole('button', { name: 'Publish' }).click();
 		await expect(page.getByRole('button', { name: 'Unpublish' })).toBeVisible();
 

@@ -5,7 +5,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
-	import { SAVED_NOTE } from '#lib/admin/actions.js';
+	import { saveToast } from '#lib/admin/actions.js';
 	import { Editor } from '#lib/admin/editor.svelte.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { Switch } from '#lib/components/ui/switch/index.js';
@@ -93,10 +93,8 @@
 		if (!result) return;
 		status = result.status;
 		locked = Boolean(result.publishedAt);
-		toast.success(
-			intent === 'publish' ? 'Published.' : intent === 'unpublish' ? 'Unpublished.' : 'Saved.',
-			{ description: SAVED_NOTE }
-		);
+		const message = saveToast(intent, result.status);
+		toast.success(message.title);
 		if (!id) {
 			id = result.id;
 			await goto(resolve('/admin/(app)/projects/[id]', { id: result.id }), { replaceState: true });
@@ -174,7 +172,7 @@
 
 <LeaveGuard dirty={editor.dirty && !deleting} />
 
-<div class="-mx-4 -my-6 min-[720px]:-mx-12 min-[720px]:-my-8">
+<div class="-mx-4 -my-6 pb-20 min-[720px]:-mx-12 min-[720px]:-my-8 min-[720px]:pb-0">
 	<EditorBar
 		backLabel="Projects"
 		backRoute="/admin/(app)/projects"
@@ -214,15 +212,17 @@
 		<div class="flex min-w-0 flex-col gap-6">
 			<Field id="title" label="Title" error={err('title')}>
 				{#snippet children({ describedby, invalid })}
-					<input
+					<!-- A textarea that grows with its content, so a long title wraps instead of being cut off. -->
+					<textarea
 						id="title"
-						type="text"
+						rows="1"
 						bind:value={editor.data.title}
 						aria-describedby={describedby}
 						aria-invalid={invalid}
 						placeholder="Project name"
-						class="h-auto w-full border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0"
-					/>
+						onkeydown={(event) => event.key === 'Enter' && event.preventDefault()}
+						class="block field-sizing-content w-full resize-none overflow-hidden border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0"
+					></textarea>
 				{/snippet}
 			</Field>
 
@@ -386,7 +386,12 @@
 			</Field>
 
 			<Field id="tags" label="Tags">
-				<TagPicker id="tags" bind:tags bind:selected={editor.data.tagIds} oncreate={createTag} />
+				<TagPicker
+					id="tags-new"
+					bind:tags
+					bind:selected={editor.data.tagIds}
+					oncreate={createTag}
+				/>
 			</Field>
 
 			<div class="flex flex-col gap-1.5">

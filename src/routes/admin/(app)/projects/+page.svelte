@@ -9,7 +9,7 @@
 	import { resolve } from '$app/paths';
 	import { navigating } from '$app/state';
 	import { toast } from 'svelte-sonner';
-	import { runAction, SAVED_NOTE } from '#lib/admin/actions.js';
+	import { runAction } from '#lib/admin/actions.js';
 	import ConfirmDialog from '#lib/components/admin/confirm-dialog.svelte';
 	import EmptyState from '#lib/components/admin/empty-state.svelte';
 	import StatusBadge from '#lib/components/admin/status-badge.svelte';
@@ -206,8 +206,7 @@
 													status: project.status === 'published' ? 'draft' : 'published'
 												},
 												{
-													success: project.status === 'published' ? 'Unpublished.' : 'Published.',
-													description: SAVED_NOTE
+													success: project.status === 'published' ? 'Unpublished.' : 'Published.'
 												}
 											)}
 									>

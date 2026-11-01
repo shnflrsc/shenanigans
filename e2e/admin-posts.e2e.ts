@@ -40,9 +40,8 @@ test.describe('Posts list', () => {
 		);
 		expect(after.status).toBe('published');
 		expect(after.published_at).not.toBeNull();
-		await expect(
-			page.getByText('The public page can take up to a minute to update.')
-		).toBeVisible();
+		await expect(page.getByText('Published.', { exact: true })).toBeVisible();
+		await expect(page.getByText('up to a minute')).toHaveCount(0);
 
 		await row.getByRole('button', { name: /Actions for E2E toggle/ }).click();
 		await page.getByRole('menuitem', { name: 'Unpublish' }).click();

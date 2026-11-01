@@ -42,13 +42,7 @@
 				<p class="text-small text-ink-subtle">More projects are on the way.</p>
 			{/if}
 		{:else}
-			<EmptyCard
-				eyebrow="Featured"
-				title="Nothing featured right now"
-				text="I’m choosing which project to spotlight next. Everything I’ve shipped is on the Projects page."
-			>
-				<Button variant="secondary" href={resolve('/(site)/projects')}>See all projects</Button>
-			</EmptyCard>
+			<EmptyCard eyebrow="Featured" title="Nothing featured right now" />
 		{/if}
 	</div>
 </Section>
@@ -69,15 +63,8 @@
 					<PostCard {post} readTime={post.readTime} />
 				{/each}
 			</div>
-			{#if data.counts.posts === 1}
-				<p class="text-small text-ink-subtle">That’s the first one. More soon.</p>
-			{/if}
 		{:else}
-			<EmptyCard
-				eyebrow="Blog"
-				title="No posts yet"
-				text="The first one is in the works. It will show up here as soon as it’s published."
-			/>
+			<EmptyCard eyebrow="Blog" title="No posts yet" />
 		{/if}
 	</div>
 </Section>

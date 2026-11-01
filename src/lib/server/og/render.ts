@@ -57,15 +57,59 @@ const caption = (text: string) =>
 		text
 	);
 
-/** The grayscale-photo slot. Until the photo exists (PLAN.md H7) a muted tile stands in. */
-const photo = (size: number) =>
-	el({
+/**
+ * The grayscale 4:5 portrait made by `bun run og:portrait` (satori cannot decode WebP or apply filters),
+ * as a data URI. Absent until a portrait has been added (PLAN.md H7).
+ */
+const portraitFiles = import.meta.glob('/src/lib/assets/portrait-og.png', {
+	query: '?inline',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
+const portraitUri: string | null = Object.values(portraitFiles)[0] ?? null;
+
+/** The photo slot: the grayscale portrait, or a muted tile until a portrait exists. */
+const photo = (size: number): Node => {
+	const height = Math.round(size * 1.25);
+	const uri = portraitUri;
+	const box = {
 		width: size,
-		height: Math.round(size * 1.25),
+		height,
 		borderRadius: 10,
+		overflow: 'hidden',
 		background: light['fill-muted'],
 		border: `1px solid ${light['line']}`
-	});
+	};
+	return uri
+		? el(box, {
+				type: 'img',
+				props: { src: uri, width: size, height, style: { width: size, height } }
+			} as Node)
+		: el(box);
+};
+
+/** Small round portrait for the post preview (face crop of the same grayscale photo). */
+const avatar = (size: number): Node => {
+	const box = {
+		width: size,
+		height: size,
+		borderRadius: size,
+		overflow: 'hidden',
+		background: light['fill-muted'],
+		border: `1px solid ${light['line']}`
+	};
+	return portraitUri
+		? el(box, {
+				type: 'img',
+				props: {
+					src: portraitUri,
+					width: size,
+					height: size,
+					style: { width: size, height: size, objectFit: 'cover', objectPosition: '50% 25%' }
+				}
+			} as Node)
+		: el(box);
+};
 
 function frame(children: Node[]): Node {
 	return el(
@@ -137,13 +181,7 @@ function postCard(post: { title: string; date: string; readTime: string }): Node
 		),
 		el({ justifyContent: 'space-between', alignItems: 'center', width: '100%' }, [
 			el({ alignItems: 'center', gap: 20 }, [
-				el({
-					width: 56,
-					height: 56,
-					borderRadius: 56,
-					background: light['fill-muted'],
-					border: `1px solid ${light['line']}`
-				}),
+				avatar(56),
 				el({ fontSize: 26, fontWeight: 600 }, site.fullName)
 			]),
 			caption(site.domain)

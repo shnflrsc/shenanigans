@@ -10,6 +10,7 @@ const PNG = Buffer.from(
 test.beforeEach(async ({ context }) => {
 	await resetRateLimits();
 	await sql(`delete from posts where slug like 'e2e-%'`);
+	await sql(`delete from tags where slug like 'e2e-%'`);
 	await signInAsAdmin(context);
 });
 test.afterAll(async () => {
@@ -36,9 +37,8 @@ test.describe('Post editor', () => {
 		await page.getByRole('button', { name: 'Save draft' }).click();
 		await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
 		await expect(page.getByText('All changes saved')).toBeVisible();
-		await expect(
-			page.getByText('Saved. The public page can take up to a minute to update.')
-		).toBeVisible();
+		await expect(page.getByText('Draft saved.')).toBeVisible();
+		await expect(page.getByText('up to a minute')).toHaveCount(0);
 		const [row] = await sql<{ status: string; body: string }>(
 			`select status, body from posts where slug = 'e2e-first-post'`
 		);
@@ -52,6 +52,7 @@ test.describe('Post editor', () => {
 		await page
 			.locator('#body')
 			.fill('> [!TIP]\n> Nice\n\n```ts\nconst a = 1;\n```\n\n<script>window.__pwned=1</script>');
+		await page.getByRole('tab', { name: 'Preview' }).click();
 		const preview = page.locator('.prose-shenanigans');
 		await expect(preview.locator('.markdown-alert-tip')).toBeVisible();
 		await expect(preview.locator('.code-block .code-lang')).toHaveText('ts');
@@ -70,7 +71,6 @@ test.describe('Post editor', () => {
 		await expect(page.getByRole('button', { name: 'Unpublish' })).toBeVisible();
 		const slug = page.getByLabel('Slug');
 		await expect(slug).toHaveAttribute('readonly', '');
-		await expect(page.getByText('Locked after the first publish')).toBeVisible();
 
 		// Forge a slug change straight at the action.
 		const id = page.url().split('/').pop()!;
@@ -97,11 +97,17 @@ test.describe('Post editor', () => {
 
 	test('creates a tag inline and reuses an existing name in any letter case', async ({ page }) => {
 		await page.goto('/admin/posts/new');
-		await page.locator('#tags').fill('E2E Brand New');
-		await page.getByRole('option', { name: /Create tag “E2E Brand New”/ }).click();
-		await expect(page.getByRole('list', { name: 'Selected tags' })).toContainText('E2E Brand New');
-		await page.locator('#tags').fill('e2e brand new');
-		await expect(page.getByRole('option', { name: /Create tag/ })).toHaveCount(0);
+		await page.locator('#tags-new').fill('E2E Brand New');
+		await page.locator('#tags-new').press('Enter');
+		const chip = page.getByRole('button', { name: 'E2E Brand New', exact: true });
+		await expect(chip).toHaveAttribute('aria-pressed', 'true');
+		// The same name in another letter case picks the existing tag instead of creating another.
+		await chip.click();
+		await expect(chip).toHaveAttribute('aria-pressed', 'false');
+		await page.locator('#tags-new').fill('e2e brand new');
+		await page.getByRole('button', { name: 'Add' }).click();
+		await expect(chip).toHaveAttribute('aria-pressed', 'true');
+		await expect(page.getByRole('button', { name: /^e2e brand new$/i })).toHaveCount(1);
 		expect(await sql(`select 1 from tags where slug = 'e2e-brand-new'`)).toHaveLength(1);
 	});
 

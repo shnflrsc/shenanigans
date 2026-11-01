@@ -129,7 +129,7 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 ### M7 Freshness and caching
 
 - [x] **M7-1** On-demand revalidation after create/edit/publish/unpublish/delete for affected pages (post/project page, indexes, Home, tag counts, sitemap, og image) using Vercel ISR with bypass token (D9; verify adapter-vercel `isr` options when implementing). Covers: PR-6. Deps: M5, M6. Accept: pages update within 60s. Verify: Playwright flow against preview; in local dev the 60s cache window fallback is tested via headers. (done 2026-10-31)
-- [x] **M7-2** Fallback note "Saved. The public page can take up to a minute to update." shown in the saved toast. Covers: PR-6. Deps: M6-5. (done 2026-10-31)
+- [x] **M7-2** Saved toast. (The "public page can take up to a minute" note was removed at the owner's request, D24; toasts show only what happened.) Covers: PR-6. Deps: M6-5. (done 2026-10-31)
 - [x] **M7-3** Reconsider prerender/ISR (record outcome only). Covers: PR-4. Deps: M7-1. (done 2026-10-31)
 
 ### M8 Hardening and QA
@@ -146,6 +146,27 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 - [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
 - [ ] **M9-2** BLOCKED: Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
 - [ ] **M9-3** BLOCKED: Domain and launch checklist (section 9). Deps: H6.
+
+### M10 Motion (public site)
+
+Spec: DESIGN.md "Motion (public site)", PRODUCT.md section 6, SOFTWARE.md UR-11. Decision D23 (replaces the first version, D22): one animation, a slide-in fade, applied to whole sections only. Everything else (hover and press effects, per-element timing and staggers, page transitions, theme cross-fade) is out for now and may come back as separate, approved steps.
+
+- [x] **M10-1** Foundation and slide-in fade. Goal: tokens, the one keyframe, reduced-motion switch, safe-by-default hiding. Touches: `src/lib/styles/tokens.css`, `src/lib/styles/motion.css`, `src/lib/motion/reveal.ts`, `src/lib/components/site/section.svelte`. Covers: UR-11. Design: Motion. Deps: M1-5. Accept: `--motion-slow`, `--ease-out`, `--rise` exist; `Section` slides in as one block; sections after the first are hidden only once the page has marked itself as running script (the `js` class, before first paint), and shown once when 5% is visible, including one peeking into the first screen; a section scrolled past quickly is still shown; a 2.5s CSS fallback shows anything left hidden; reduced motion shows everything with no animation. Verify: Playwright with reduced motion, JavaScript off and blocked scripts shows every section at once. (done 2026-11-01)
+- [x] **M10-2** Load entrance. Touches: first `Section` of Home, Projects, Blog, case study, post and error pages (`enter` prop). Covers: UR-11. Deps: M10-1. Accept: the first section plays the slide-in once as the page appears, as one block with no inner timing; header and footer do not animate; the hero image is still eager and not delayed. Verify: Playwright checks one animation on that section and none on its children; CLS 0. (done 2026-11-01)
+- [x] **M10-3** Scroll reveal. Touches: all other `Section`s on public pages. Covers: UR-11. Deps: M10-1. Accept: each section below the fold slides in once when 5% of it is visible; no section ever animates twice; children of a section never have their own timing; checked in the real dev server and the production preview by scrolling slowly, quickly and jumping to the bottom. Verify: Playwright scroll tests (slow, fast, jump), full-page screenshots show every section visible. (done 2026-11-01)
+- [x] **M10-4** Motion QA and docs. Covers: UR-11, SR-10, UR-10. Deps: M10-2, M10-3. Accept: no CSP violations or console errors; axe clean in both themes (audits wait for animations to finish); phone widths checked; admin screens have no entrance or reveal; DESIGN.md matches what was built. Verify: motion Playwright suite, axe, screenshots in light, dark and phone widths. (done 2026-11-01)
+
+### M11 CI security checks
+
+Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.md G13. Decision D25. Free tools, no repository secrets, read-only permissions, actions pinned to commit hashes.
+
+- [x] **M11-0** Documents first: PRODUCT 0.5, SOFTWARE 0.5, DESIGN, JOURNEY 0.3. Verify: SR-16 present and consistent across the four files.
+- [x] **M11-1** Baseline: run `bun audit`, gitleaks and the security test subset locally; fix real findings. Covers: SR-16. Verify: all clean or each exception written down.
+- [x] **M11-2** No `.gitleaks.toml` needed: gitleaks over the full history found nothing, so there is no allowlist to maintain. Covers: SR-16. Verify: gitleaks over full history is clean; a fake key is still caught.
+- [x] **M11-3** `.github/workflows/security.yml` with the five jobs. Covers: SR-16. Verify: workflow lints (actionlint) and the jobs run locally where possible.
+- [x] **M11-4** `.github/dependabot.yml` (packages and actions, weekly). Covers: MR-4.
+- [x] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
+- [ ] **M11-6** First run on GitHub and failure drills on throwaway branches. Covers: SR-16. Verify: every job green on the real branch and red on its matching drill.
 
 ## 5. Human-only tasks
 
@@ -237,6 +258,7 @@ Required coverage (task in brackets): allowlist and authorization on every admin
 | UR-8 | M4-3, M8-2 |
 | UR-9 | M4-2 |
 | UR-10 | M8-2, M8-3 |
+| UR-11 | M10-1, M10-2, M10-3, M10-4 |
 | MR-1 | M1-1, M1-3 |
 | MR-2 | M2-2 |
 | MR-3 | M1-1, M1-3 |
@@ -329,6 +351,10 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 - D18 The 30 per minute limit for unauthenticated /admin/* requests is applied to requests that carry no Supabase session cookie, because the limiter runs before any auth call (SR-14). Requests with a cookie are validated by auth and refused by requireAdmin.
 - D19 Home empty state: the admin design handoff says "hero with one Get in touch button and a Nothing published yet frame", but PRODUCT.md 4.4 and FR-1 say the hero never has a Get in touch button and FR-29 specifies per-section empty states. Built per FR-1/FR-29 (HomeEmpty board): featured and latest-posts sections each show their own empty card. Launch state hides "All projects"/"All posts" under two items.
 - D21 PR-4 outcome (M7-3): public pages stay server-rendered with a 45s shared cache. Prerendering or ISR is reconsidered only if real traffic shows the database or markdown rendering is a bottleneck.
+- D25 CI security checks (owner's request, 2026-11-01): one GitHub Actions workflow with five jobs (secrets, dependencies, code-analysis, build-and-bundle, security-tests), run on push to `main`, pull requests, weekly and on demand. Public repository, so GitHub's scanners are free. Documents are updated before any pipeline file. A live scan of the deployed site is deferred. Making the jobs required checks is a manual repository setting.
+- D24 No "public page can take up to a minute" note anywhere in the dashboard (owner's request, 2026-11-01). Toasts after saving say only "Draft saved.", "Published.", "Unpublished." or "Saved.". The 60 second freshness requirement (PR-6) is unchanged and still met by the cache window.
+- D23 Motion (CONFIRMED by the owner, 2026-11-01): one slide-in fade, applied to whole sections only. First section on load, every other section on its first scroll into view. No inner stagger or per-element timing; no hover/press effects, page transitions, theme cross-fade or springs for now. 600ms, `cubic-bezier(0.22, 1, 0.36, 1)`, 24px rise, public site only, reduced motion and no-JavaScript show everything at once, 2.5s CSS fallback.
+- D22 Motion, first version (superseded by D23): all five moments, energetic, with per-element staggers, springs, hover effects, page transitions and a theme cross-fade. Built, then undone at the owner's request because many elements moving on their own timings looked messy.
 - D20 404 buttons: the admin handoff says Back home + Read the blog, PRODUCT.md 4.7 and FR-30 say Go home, View projects and Read the blog. Built the three-button version (PRODUCT.md wins on behaviour). The 500 page omits the design's "request reference" placeholder (no technical details, FR-30). `/auth/callback` is a page route (not an endpoint) so its 429 renders the styled error page.
 
 ## 11. Spec change requests
@@ -369,3 +395,6 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 M8-2: axe (wcag2a/aa, 2.1, 2.2 AA) on 6 public pages, phone menu, 5 admin screens + editor, login, light and dark: zero serious/critical after fixes (dl structure, focusable code scroll regions); M8-1 test inventory checked against section 6
 - 2026-10-31 M8-5: journeys A/B/C e2e (M8-4), secrets audit of client build + public HTML (M8-5), 52 light/dark/phone screenshots reviewed (M8-3: Home, post, admin editor match design structure; visual check is by eye), SOFTWARE sec.4 checklist ticked (M8-6), deploy docs + env example (M9-1, spoofing check to repeat on Vercel)
 - 2026-10-31 FINAL: full run: check 0 errors, lint clean, 153 unit/client tests, 156 e2e tests, build ok. Remaining unchecked: M9-2, M9-3 (blocked, human tasks)
+- 2026-10-31 post-build gaps: image insertion into markdown (uploader panel, required alt, inserts at cursor), phone sticky Save/Publish bar with editor-own top bar, toast offset; 11 new e2e tests
+- 2026-11-01 M10-4: motion v2 (D23): one slide-in fade on whole sections. First section plays it on load (CSS), every later section hidden under html.js and shown once at 5% visible (including one peeking into the first screen); background bands stay still; no hover/press/stagger/page-transition/theme effects. 13 motion e2e (reduced motion, JS off, blocked scripts 2.5s fallback, slow/fast/jump scroll, CLS, admin quiet); axe re-run with settle
+- 2026-11-01 M11-1..5: baseline clean (bun audit: no high/critical, 6 moderate/low left; gitleaks: 66 commits clean); security.yml (5 jobs, actions pinned to hashes, actionlint clean), dependabot.yml, README section. Locally: bundle check passes, 115 server tests and 28 security e2e tests pass. M11-6 (first run on GitHub, failure drills) waits for a push.

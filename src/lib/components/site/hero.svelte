@@ -6,7 +6,7 @@
 	import Section from './section.svelte';
 </script>
 
-<Section>
+<Section enter>
 	<div class="flex flex-wrap items-center justify-between gap-x-16 gap-y-12">
 		<div class="flex min-w-0 flex-1 basis-[480px] flex-col items-start gap-8">
 			<div class="flex flex-col gap-4">

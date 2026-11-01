@@ -1,6 +1,6 @@
 # Shenanigans: Product Requirements Document
 
-Version 0.2 · 2026-10-31 · Owner: Darl
+Version 0.5 · 2026-11-01 · Owner: Darl
 
 ## 1. Purpose
 
@@ -18,6 +18,7 @@ Shenanigans is a personal portfolio website with a project showcase and a blog. 
 - Analytics or tracking.
 - Multiple authors or multiple admins.
 - A separate About page. About lives as a section on Home instead (section 4.4).
+- Live penetration scanning of the deployed site, and paid security services. The automated checks are free and run on the code (section 8).
 
 ## 3. Audience
 
@@ -73,7 +74,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 - **Header on desktop:** brand "Shenanigans", links Home, Projects and Blog, then on the right a subtle theme toggle (icon button, no border) and a primary "Get in touch" button that opens an email.
 - **Header on phones (640px and narrower):** the links and the Get in touch button collapse into a menu. The bar shows the brand, the theme toggle and a menu button. The menu opens a panel with Home, Projects and Blog (large tap rows, current page highlighted) and a full-width Get in touch button.
-- **Footer:** one compact row on every page. Left: "© 2026 Darl · shenanigans.is-a.dev" (the year updates automatically). Right: Email, GitHub and LinkedIn as small links with an icon and a label. No brand block, link columns or tagline. On short pages the footer sits at the bottom of the screen.
+- **Footer:** one compact row on every page. Left: "© 2026 Darl Shanen Floresca" (the year updates automatically; the site address is not repeated). Right: Email, GitHub and LinkedIn as small links with an icon and a label. No brand block, link columns or tagline. On short pages the footer sits at the bottom of the screen.
 
 ### 4.6 Project and post pages
 
@@ -113,6 +114,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 - Visual language: the Shenanigans design system (monochrome, soft and elegant; Space Grotesk and Space Mono).
 - Light and dark themes. The site follows the visitor's system setting by default, with a manual toggle to override it. The design system includes dark-theme tokens.
 - Every public page and state is designed in light, dark and phone widths.
+- Motion: whole sections of the public site slide in and fade in, the first section as the page appears and the others as you scroll to them. Elements inside a section do not move on their own. It is quick, never decorative, and switched off for visitors who ask for reduced motion. The admin stays quiet.
 - Portraits and the hero photo are grayscale.
 - Voice: first person, friendly, honest, a little playful, as described in the design system.
 - Not used from the design system: reactions, comments and the newsletter banner.
@@ -139,22 +141,36 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | Hero | Photo, name and caption; buttons View projects and Read the blog | A status line; a Get in touch button in the hero |
 | Featured | Shows only the one featured project | A featured project plus a grid of other projects |
 | Header | Get in touch button and theme toggle; a menu on phones | |
-| Footer | One compact row: copyright and site address, plus Email, GitHub and LinkedIn | Brand block, link columns and tagline |
+| Footer | One compact row: copyright with my full name, plus Email, GitHub and LinkedIn with their logos | Brand block, link columns, tagline and the site address |
 | Section subtitles | Removed from Featured, Latest posts, Projects and Blog | |
 | Code blocks | Language label and a Copy button | |
 | Post and project | A post can link to the project it is about | |
 | Empty and error states | Designed for Home, Projects, Blog, 404 and 500 | |
-| Link previews | Site and post preview images, favicon, sitemap | |
+| Link previews | Site and post preview images (with my grayscale photo), favicon, sitemap | |
+| Admin screens | Designed (login and its states, posts, projects, tags, editors, dialogs, toasts, upload) | Not designed yet |
+| Image uploads | JPEG, PNG, WebP, GIF, AVIF; no SVG; 5 MB; covers are deleted from storage when replaced or when their content is deleted | |
+| Blog pagination | 10 posts per page | |
+| Tag filters | In the URL (`?tag=`), so they can be shared | |
+| Section labels | None above the Projects and Blog titles | A "Portfolio" and a "Writing" label |
+| Freshness | Public pages refresh within 60 seconds of a change | |
+| Motion | One slide-in fade on whole sections (first section on load, the rest on scroll); no hover, page-transition or theme effects for now | Per-element animation, staggers, springs, view transitions |
+| Animation library | None: CSS, Svelte's built-ins and the browser's view transitions | A heavy library such as GSAP |
+| Security checks | Free automated checks on every change and weekly: leaked secrets, vulnerable dependencies, code analysis, server keys kept out of the browser bundle, and the site's own security tests. No secrets needed; GitHub tells me when one fails. Visitors see nothing different | No automated checks; live scanning of the deployed site (later, if wanted) |
 
 ## 9. Open questions
 
 Still open:
 
-- Résumé file: placeholder, still to provide.
+- Résumé file: still to provide. The Download résumé button stays hidden until `static/resume.pdf` exists.
 - RSS feed: still not planned.
-- Admin screens, the login screen, the rate-limited (429) page and the wording for denied sign-ins: not designed yet.
+- Real projects and posts: to be written in the dashboard.
 
-Recommendations awaiting your confirmation (already applied in SOFTWARE.md, easy to reverse):
+Settled since version 0.2:
+
+- The admin screens, the login screen (default, signing in, denied, error, rate limited), the rate-limited (429) page and the denied-sign-in wording are designed and built.
+- About me now has its real content, in the site's code.
+
+Confirmed (applied in SOFTWARE.md):
 
 - Add an optional `team` field to projects for the "Team" row in the facts card (for example "Solo" or "Team of 4").
 - Add an optional link from a post to a project, for "The project this post is about".

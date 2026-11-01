@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import EmptyCard from '#lib/components/site/empty-card.svelte';
 	import FilterTags from '#lib/components/site/filter-tags.svelte';
 	import ProjectCard from '#lib/components/site/project-card.svelte';
 	import Section from '#lib/components/site/section.svelte';
 	import SectionTitle from '#lib/components/site/section-title.svelte';
 	import Seo from '#lib/components/site/seo.svelte';
-	import { Button } from '#lib/components/ui/button/index.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -21,15 +19,12 @@
 	path="/projects"
 />
 
-<Section>
+<Section enter>
 	<div class="flex flex-col gap-8">
-		<SectionTitle tag="h1" eyebrow="Portfolio" soft="Things I have built.">Projects.</SectionTitle>
+		<SectionTitle tag="h1" soft="Things I have built.">Projects.</SectionTitle>
 
 		{#if data.total === 0}
-			<EmptyCard variant="soft" title="No projects yet" text="They’re on the way.">
-				<Button variant="secondary" href={resolve('/(site)/blog')}>Read the blog</Button>
-				<Button variant="secondary" href={resolve('/(site)')}>Go home</Button>
-			</EmptyCard>
+			<EmptyCard variant="soft" title="No projects yet" />
 		{:else}
 			{#if showFilters}
 				<FilterTags
@@ -42,7 +37,6 @@
 			{/if}
 			{#if data.total === 1}
 				<ProjectCard project={data.projects[0]} featured />
-				<p class="text-small text-ink-subtle">That’s the first one. More soon.</p>
 			{:else}
 				<ul class="grid gap-6 min-[720px]:grid-cols-2">
 					{#each data.projects as project (project.slug)}

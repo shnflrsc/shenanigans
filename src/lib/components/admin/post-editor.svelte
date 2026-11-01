@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
-	import { SAVED_NOTE } from '#lib/admin/actions.js';
+	import { saveToast } from '#lib/admin/actions.js';
 	import { Editor } from '#lib/admin/editor.svelte.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { slugify } from '#lib/slug.js';
@@ -83,10 +83,8 @@
 		if (!result) return;
 		status = result.status;
 		locked = Boolean(result.publishedAt);
-		toast.success(
-			intent === 'publish' ? 'Published.' : intent === 'unpublish' ? 'Unpublished.' : 'Saved.',
-			{ description: SAVED_NOTE }
-		);
+		const message = saveToast(intent, result.status);
+		toast.success(message.title);
 		if (!id) {
 			id = result.id;
 			// First save of a new post: continue on its own page. Nothing is unsaved, so the guard stays quiet.
@@ -142,7 +140,7 @@
 
 <LeaveGuard dirty={editor.dirty && !deleting} />
 
-<div class="-mx-4 -my-6 min-[720px]:-mx-12 min-[720px]:-my-8">
+<div class="-mx-4 -my-6 pb-20 min-[720px]:-mx-12 min-[720px]:-my-8 min-[720px]:pb-0">
 	<EditorBar
 		backLabel="Posts"
 		backRoute="/admin/(app)/posts"
@@ -175,52 +173,32 @@
 		</div>
 	{/if}
 
-	<div
-		class="mx-auto grid max-w-[1360px] gap-8 p-4 min-[720px]:p-8 min-[1100px]:grid-cols-[1fr_320px]"
-	>
-		<div class="flex min-w-0 flex-col gap-6">
+	<div class="mx-auto flex max-w-[1000px] flex-col gap-6 p-4 min-[720px]:p-8">
+		<div class="contents">
 			<Field id="title" label="Title" error={editor.errors.title}>
 				{#snippet children({ describedby, invalid })}
-					<input
+					<!-- A textarea that grows with its content, so a long title wraps instead of being cut off. -->
+					<textarea
 						id="title"
-						type="text"
+						rows="1"
 						bind:value={editor.data.title}
 						aria-describedby={describedby}
 						aria-invalid={invalid}
 						placeholder="A title worth clicking"
+						onkeydown={(event) => event.key === 'Enter' && event.preventDefault()}
 						class={cn(
-							'h-auto w-full border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0',
+							'block field-sizing-content w-full resize-none overflow-hidden border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0',
 							invalid && 'underline decoration-2'
-						)}
-					/>
+						)}></textarea>
 				{/snippet}
 			</Field>
 
 			<MarkdownEditor id="body" label="Markdown" bind:value={editor.data.body} />
 		</div>
 
-		<aside class="flex flex-col gap-5 self-start rounded-lg border border-line bg-paper p-5">
-			<Field id="status" label="Status" hint="Use Publish or Unpublish above to change this.">
-				{#snippet children({ describedby })}
-					<input
-						id="status"
-						type="text"
-						readonly
-						value={status === 'published' ? 'Published' : 'Draft'}
-						aria-describedby={describedby}
-						class={cn(input, 'bg-paper-soft')}
-					/>
-				{/snippet}
-			</Field>
-
-			<Field
-				id="slug"
-				label="Slug"
-				hint={locked
-					? 'Locked after the first publish, so links keep working.'
-					: 'Made from the title. You can edit it until you publish.'}
-				error={editor.errors.slug}
-			>
+		<!-- The post details sit below the editor as plain fields, not in a card. -->
+		<div class="flex flex-col gap-5">
+			<Field id="slug" label="Slug" error={editor.errors.slug}>
 				{#snippet children({ describedby, invalid })}
 					<div class="relative">
 						<input
@@ -248,12 +226,7 @@
 				{/snippet}
 			</Field>
 
-			<Field
-				id="excerpt"
-				label="Excerpt"
-				hint="Shown on cards and used as the page description."
-				error={editor.errors.excerpt}
-			>
+			<Field id="excerpt" label="Excerpt" error={editor.errors.excerpt}>
 				{#snippet children({ describedby, invalid })}
 					<textarea
 						id="excerpt"
@@ -268,29 +241,33 @@
 				{/snippet}
 			</Field>
 
-			<Field id="tags" label="Tags">
-				<TagPicker id="tags" bind:tags bind:selected={editor.data.tagIds} oncreate={createTag} />
-			</Field>
+			<!-- Tags, then the linked project, each on its own row. -->
+			<div class="flex flex-col gap-5">
+				<Field id="tags" label="Tags">
+					<TagPicker
+						id="tags-new"
+						bind:tags
+						bind:selected={editor.data.tagIds}
+						oncreate={createTag}
+					/>
+				</Field>
 
-			<Field
-				id="project"
-				label="The project this post is about"
-				hint="Optional. Shown at the end of the post."
-			>
-				{#snippet children({ describedby })}
-					<select
-						id="project"
-						bind:value={editor.data.projectId}
-						aria-describedby={describedby}
-						class={input}
-					>
-						<option value="">None</option>
-						{#each data.projects as project (project.id)}
-							<option value={project.id}>{project.title}</option>
-						{/each}
-					</select>
-				{/snippet}
-			</Field>
+				<Field id="project" label="The project this post is about">
+					{#snippet children({ describedby })}
+						<select
+							id="project"
+							bind:value={editor.data.projectId}
+							aria-describedby={describedby}
+							class={input}
+						>
+							<option value="">None</option>
+							{#each data.projects as project (project.id)}
+								<option value={project.id}>{project.title}</option>
+							{/each}
+						</select>
+					{/snippet}
+				</Field>
+			</div>
 
 			<div class="flex flex-col gap-1.5">
 				<span class="text-ui">Cover image</span>
@@ -309,7 +286,7 @@
 					>
 				</div>
 			{/if}
-		</aside>
+		</div>
 	</div>
 </div>
 

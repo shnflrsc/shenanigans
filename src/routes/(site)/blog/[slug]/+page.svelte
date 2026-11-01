@@ -30,7 +30,7 @@
 	publishedTime={post.publishedAt}
 />
 
-<Section width="narrow" class="pb-12">
+<Section width="narrow" class="pb-12" enter>
 	<div class="flex flex-col gap-8">
 		<a
 			href={resolve('/(site)/blog')}

@@ -31,6 +31,14 @@ const authenticate: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+/**
+ * The markdown processor and its syntax highlighter set themselves up on first use, which took about two seconds
+ * on the first preview or post. Doing one render at start-up moves that cost out of the first visitor's request.
+ */
+void import('#lib/markdown/render.js').then(({ renderMarkdown }) =>
+	renderMarkdown(['```ts', 'const warm = 1;', '```', '', '> [!NOTE]', '> warm'].join('\n'))
+);
+
 export const handle: Handle = sequence(headers, rateLimit, authenticate);
 
 /**

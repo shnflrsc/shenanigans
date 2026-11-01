@@ -2,6 +2,27 @@ import { expect, test } from '@playwright/test';
 import { snapshotPublished, sql } from './db';
 
 test.describe('Projects', () => {
+	test('has no "first one" note when there is only one project', async ({ page }) => {
+		const { sql } = await import('./db');
+		const before = await sql<{ id: string }>(`select id from projects where status = 'published'`);
+		await sql(`update projects set status = 'draft'`);
+		await sql(
+			`insert into projects (slug, title, summary, status, first_published_at, sort_order) values ('e2e-only-project', 'E2E Only Project', 'x', 'published', now(), 99)`
+		);
+		try {
+			await page.goto('/projects');
+			await expect(page.locator('article')).toHaveCount(1);
+			await expect(page.getByText('More soon')).toHaveCount(0);
+			await expect(page.getByText('first one')).toHaveCount(0);
+		} finally {
+			await sql(`delete from projects where slug = 'e2e-only-project'`);
+			if (before.length)
+				await sql(
+					`update projects set status = 'published' where id in (${before.map((r) => `'${r.id}'`).join(',')})`
+				);
+		}
+	});
+
 	test('lists published projects in showcase order with tag chips and counts', async ({ page }) => {
 		await page.goto('/projects');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Projects.');
@@ -61,6 +82,32 @@ test.describe('Projects', () => {
 });
 
 test.describe('Blog', () => {
+	test('has no "first post" note when there is only one post', async ({ page }) => {
+		const { sql } = await import('./db');
+		const before = await sql<{ id: string }>(`select id from posts where status = 'published'`);
+		await sql(`update posts set status = 'draft'`);
+		await sql(
+			`insert into posts (slug, title, excerpt, body, status, published_at) values ('e2e-only-post', 'E2E Only Post', 'x', 'body', 'published', now())`
+		);
+		try {
+			await page.goto('/blog');
+			await expect(page.locator('article')).toHaveCount(1);
+			await expect(page.getByText('first post')).toHaveCount(0);
+			await expect(page.getByText('More soon')).toHaveCount(0);
+			await page.goto('/');
+			await expect(page.getByText('More soon')).toHaveCount(0);
+			// The only post has neither an older nor a newer neighbour.
+			await page.goto('/blog/e2e-only-post');
+			await expect(page.getByRole('navigation', { name: 'More posts' })).toHaveCount(0);
+		} finally {
+			await sql(`delete from posts where slug = 'e2e-only-post'`);
+			if (before.length)
+				await sql(
+					`update posts set status = 'published' where id in (${before.map((r) => `'${r.id}'`).join(',')})`
+				);
+		}
+	});
+
 	test('lists published posts newest first with tag chips and counts', async ({ page }) => {
 		await page.goto('/blog');
 		const titles = await page.locator('article h3').allTextContents();

@@ -12,7 +12,20 @@ const publicPages = [
 	'/nope-404'
 ];
 
+/** Lets the slide-in finish on every section, so the audit sees the settled page rather than a fade in progress. */
+async function settle(page: Page) {
+	const height = await page.evaluate(() => document.body.scrollHeight);
+	for (let y = 0; y <= height; y += 400) {
+		await page.evaluate((top) => window.scrollTo(0, top), y);
+		await page.waitForTimeout(60);
+	}
+	await page.evaluate(() => window.scrollTo(0, 0));
+	await page.waitForTimeout(900);
+	await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
+}
+
 async function audit(page: Page, label: string) {
+	await settle(page);
 	const results = await new AxeBuilder({ page })
 		.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
 		.analyze();

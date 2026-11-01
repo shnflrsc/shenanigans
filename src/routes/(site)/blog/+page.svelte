@@ -29,16 +29,12 @@
 	path="/blog"
 />
 
-<Section width="narrow">
+<Section width="narrow" enter>
 	<div class="flex flex-col gap-8">
-		<SectionTitle tag="h1" eyebrow="Writing" soft="What I learn while building.">Blog.</SectionTitle
-		>
+		<SectionTitle tag="h1" soft="What I learn while building.">Blog.</SectionTitle>
 
 		{#if data.totalAll === 0}
-			<EmptyCard variant="soft" title="Nothing here yet" text="The first post is in the works.">
-				<Button variant="secondary" href={resolve('/(site)/projects')}>View projects</Button>
-				<Button variant="secondary" href={resolve('/(site)')}>Go home</Button>
-			</EmptyCard>
+			<EmptyCard variant="soft" title="Nothing here yet" />
 		{:else}
 			{#if showFilters}
 				<FilterTags
@@ -54,9 +50,6 @@
 					<PostCard {post} readTime={post.readTime} />
 				{/each}
 			</div>
-			{#if data.totalAll === 1}
-				<p class="text-small text-ink-subtle">That’s the first post. More soon.</p>
-			{/if}
 
 			{#if data.pages > 1}
 				<nav aria-label="Pagination" class="flex items-center justify-between gap-4">

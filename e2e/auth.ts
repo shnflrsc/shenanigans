@@ -14,6 +14,8 @@ function env(name: string): string {
 	return match[1];
 }
 
+/** Must match `ADMIN_GITHUB_ID` in playwright.config.ts. */
+export const E2E_ADMIN_GITHUB_ID = '424242';
 const EMAIL = 'e2e-admin@example.test';
 // The local stack's JWT secret (printed by `supabase status`); a public demo value, not a secret.
 const LOCAL_JWT_SECRET = 'super-secret-jwt-token-with-at-least-32-characters-long';
@@ -30,7 +32,7 @@ function signJwt(payload: Record<string, unknown>) {
  * real session row, signs a JWT for it with the local stack's secret, and lets the real @supabase/ssr client
  * format the session cookies. The app still validates everything with getUser(). Local stack only.
  */
-async function createAdminSession(githubId = env('ADMIN_GITHUB_ID')) {
+async function createAdminSession(githubId = E2E_ADMIN_GITHUB_ID) {
 	const url = env('PUBLIC_SUPABASE_URL');
 	const anon = env('PUBLIC_SUPABASE_ANON_KEY');
 

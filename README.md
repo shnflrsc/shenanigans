@@ -47,3 +47,17 @@ Variables are declared and validated in `src/env.ts`. Secrets are server-only an
 5. Check the launch list in PLAN.md section 10, including the Supabase free-tier pausing risk (D13).
 
 The client IP used for rate limiting comes from `getClientAddress()`, which on Vercel reads the platform-set forwarded address. Confirm after the first deploy that a request with a spoofed `X-Forwarded-For` is still counted under your real address.
+
+## Security checks
+
+`.github/workflows/security.yml` runs on every push to `main`, every pull request, every Monday and on demand. It needs no secrets. Five jobs, each described in SOFTWARE.md (SR-16):
+
+- **Secrets**: gitleaks over the whole git history.
+- **Dependencies**: `bun audit` (fails on high and critical) and, on pull requests, GitHub's dependency review.
+- **Code analysis**: CodeQL, plus `bun run lint` and `bun run check`.
+- **Build and bundle**: builds with throwaway values and fails if a server-only name or value is in the client build.
+- **Security tests**: starts the local Supabase stack and runs the database, authorization, sanitizer, upload, rate-limit, header, login and error-page tests.
+
+Run the same checks locally: `bun audit --audit-level=high`, `bun run lint`, `bun run check`, and the tests named in the workflow.
+
+One-time settings on GitHub (not in the repository): under Settings, Code security, turn on Dependabot alerts, Dependabot security updates, and secret scanning with push protection; under Settings, Branches, require the five jobs as status checks on `main`.

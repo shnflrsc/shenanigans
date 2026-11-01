@@ -1,0 +1,51 @@
+/*
+ * Public-site motion (DESIGN.md "Motion (public site)", UR-11): one slide-in fade, on whole sections.
+ * Only opacity and transform move. Admin pages never use these classes.
+ */
+
+@keyframes slide-fade {
+	from {
+		opacity: 0;
+		transform: translateY(var(--rise));
+	}
+}
+/* If the scroll script never runs, a section still hidden is shown after 2.5 seconds. */
+@keyframes reveal-fallback {
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* The first section of a page plays it once as the page appears. Pure CSS: it ends visible even if script never loads. */
+[data-enter] {
+	animation: slide-fade var(--motion-slow) var(--ease-out) both;
+}
+
+/*
+ * Every other section plays it the first time it scrolls into view. It is hidden only once the page script has
+ * started (html.js, set before first paint), so without script nothing is hidden, and the 2.5s fallback shows it
+ * if the script that reveals it never runs.
+ */
+[data-reveal] {
+	transition:
+		opacity var(--motion-slow) var(--ease-out),
+		transform var(--motion-slow) var(--ease-out);
+}
+html.js [data-reveal]:not(.reveal-in) {
+	opacity: 0;
+	transform: translateY(var(--rise));
+	animation: reveal-fallback 0s linear 2.5s forwards;
+}
+
+/* Reduced motion: nothing slides or fades, nothing waits. */
+@media (prefers-reduced-motion: reduce) {
+	[data-enter],
+	[data-reveal],
+	html.js [data-reveal]:not(.reveal-in) {
+		animation: none !important;
+		transition: none !important;
+		opacity: 1 !important;
+		transform: none !important;
+	}
+}

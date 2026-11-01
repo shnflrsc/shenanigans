@@ -9,6 +9,7 @@
 	import QuoteIcon from '@lucide/svelte/icons/quote';
 	import type { Component } from 'svelte';
 	import { untrack } from 'svelte';
+	import ImageField from './image-field.svelte';
 	import Prose from '#lib/components/site/prose.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 
@@ -16,36 +17,100 @@
 		id: string;
 		label: string;
 		value: string;
-		/** Opens the image uploader; the editor inserts what it returns at the cursor. */
-		onimage?: () => void;
 	};
 
-	let { id, label, value = $bindable(), onimage }: Props = $props();
+	let { id, label, value = $bindable() }: Props = $props();
+
+	// The Image button opens an uploader under the toolbar; the result goes in at the cursor as ![alt](url) (FR-13).
+	let imageOpen = $state(false);
+	let imagePath = $state('');
+	let imageAlt = $state('');
+	let imageUrl = $state('');
+	let imageError = $state('');
+	let cursor = { start: 0, end: 0 };
+
+	function openImage() {
+		cursor = {
+			start: textarea?.selectionStart ?? value.length,
+			end: textarea?.selectionEnd ?? value.length
+		};
+		imagePath = '';
+		imageAlt = '';
+		imageUrl = '';
+		imageError = '';
+		imageOpen = true;
+	}
+
+	function insertImage() {
+		const alt = imageAlt.trim();
+		if (!alt) {
+			imageError = 'Add alt text for the image';
+			return;
+		}
+		// Brackets in alt text would end the markdown early.
+		const safeAlt = alt.replace(/[[\]]/g, '');
+		textarea?.setSelectionRange(cursor.start, cursor.end);
+		insert('\n![' + safeAlt + '](' + imageUrl + ')\n', '', '');
+		imageOpen = false;
+	}
+
+	// One pane at a time: Edit or Preview, switched from the right of the toolbar.
+	let mode = $state<'edit' | 'preview'>('edit');
+	const modes = [
+		{ id: 'edit', label: 'Edit' },
+		{ id: 'preview', label: 'Preview' }
+	] as const;
 
 	let textarea = $state<HTMLTextAreaElement | null>(null);
 	let html = $state('');
 	let previewFailed = $state(false);
+	// True until the first render for the current text has come back.
+	let waiting = $state(true);
 
-	// Live preview through the same render function as the public pages (SR-13), debounced.
+	// The preview is rendered by the same function as the public pages (SR-13). To keep switching to it quick, the
+	// text is rendered in the background a moment after typing pauses, so the result is usually waiting by the time
+	// you press Preview; if it is not, it is rendered right away.
+	let renderedFor: string | null = null;
 	$effect(() => {
 		const markdown = value;
-		const timer = setTimeout(async () => {
-			try {
-				const response = await fetch('/admin/preview', {
-					method: 'POST',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({ markdown })
-				});
-				if (!response.ok) throw new Error(String(response.status));
-				const result = (await response.json()) as { html: string };
-				untrack(() => {
-					html = result.html;
-					previewFailed = false;
-				});
-			} catch {
-				untrack(() => (previewFailed = true));
-			}
-		}, 250);
+		const showing = mode === 'preview';
+		if (renderedFor === markdown) {
+			untrack(() => (waiting = false));
+			return;
+		}
+		untrack(() => (waiting = true));
+		if (markdown.trim() === '') {
+			untrack(() => {
+				html = '';
+				renderedFor = markdown;
+				waiting = false;
+			});
+			return;
+		}
+		const timer = setTimeout(
+			async () => {
+				try {
+					const response = await fetch('/admin/preview', {
+						method: 'POST',
+						headers: { 'content-type': 'application/json' },
+						body: JSON.stringify({ markdown })
+					});
+					if (!response.ok) throw new Error(String(response.status));
+					const result = (await response.json()) as { html: string };
+					untrack(() => {
+						// Ignore an answer for text that has changed since.
+						if (markdown !== value) return;
+						html = result.html;
+						previewFailed = false;
+						renderedFor = markdown;
+						waiting = false;
+					});
+				} catch {
+					untrack(() => (previewFailed = true));
+				}
+			},
+			showing ? 0 : 600
+		);
 		return () => clearTimeout(timer);
 	});
 
@@ -80,43 +145,111 @@
 		class="flex flex-wrap items-center gap-0.5 border-b border-line bg-paper-soft p-1"
 	>
 		{#each tools as tool (tool.label)}
-			<Button variant="ghost" size="icon" aria-label={tool.label} onclick={tool.run}>
+			<Button
+				variant="ghost"
+				size="icon"
+				aria-label={tool.label}
+				disabled={mode !== 'edit'}
+				onclick={tool.run}
+			>
 				<tool.icon aria-hidden="true" />
 			</Button>
 		{/each}
-		{#if onimage}
-			<Button variant="ghost" size="sm" onclick={onimage}>
-				<ImageIcon aria-hidden="true" />Image
-			</Button>
-		{/if}
+		<Button
+			variant="ghost"
+			size="sm"
+			disabled={mode !== 'edit'}
+			aria-expanded={imageOpen}
+			aria-controls="{id}-image-panel"
+			onclick={() => (imageOpen ? (imageOpen = false) : openImage())}
+		>
+			<ImageIcon aria-hidden="true" />Image
+		</Button>
+
+		<!-- Edit and Preview, one at a time. -->
+		<div
+			role="tablist"
+			aria-label="Editor view"
+			class="ml-auto inline-flex rounded-md bg-fill-muted p-0.5"
+		>
+			{#each modes as tab (tab.id)}
+				<button
+					type="button"
+					role="tab"
+					id="{id}-tab-{tab.id}"
+					aria-selected={mode === tab.id}
+					aria-controls="{id}-panel-{tab.id}"
+					tabindex={mode === tab.id ? 0 : -1}
+					class="h-7 rounded-[5px] px-3 text-ui text-ink-muted aria-selected:bg-paper aria-selected:font-semibold aria-selected:text-ink aria-selected:shadow-sm"
+					onclick={() => {
+						mode = tab.id;
+						if (tab.id === 'preview') imageOpen = false;
+					}}
+					onkeydown={(event) => {
+						if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+						event.preventDefault();
+						mode = mode === 'edit' ? 'preview' : 'edit';
+						document.getElementById(`${id}-tab-${mode}`)?.focus();
+					}}
+				>
+					{tab.label}
+				</button>
+			{/each}
+		</div>
 	</div>
 
-	<div class="grid min-[900px]:grid-cols-2">
-		<div class="flex flex-col min-[900px]:border-r min-[900px]:border-line">
-			<label for={id} class="border-b border-line px-4 py-2 text-caption text-ink-subtle"
-				>{label}</label
-			>
-			<textarea
-				{id}
-				bind:this={textarea}
-				bind:value
-				spellcheck="true"
-				class="min-h-[420px] w-full flex-1 resize-y border-0 bg-paper p-4 font-mono text-[13px] leading-[22px] text-ink focus:ring-0"
-			></textarea>
-		</div>
-		<div class="flex flex-col border-t border-line min-[900px]:border-t-0">
-			<span class="border-b border-line px-4 py-2 text-caption text-ink-subtle">Preview</span>
-			<div class="min-h-[420px] overflow-auto bg-paper p-4" aria-live="off">
-				{#if previewFailed}
-					<p class="text-small text-ink-muted">
-						Preview is unavailable right now. Your text is safe.
-					</p>
-				{:else if value.trim() === ''}
-					<p class="text-small text-ink-subtle">Nothing to preview yet.</p>
-				{:else}
-					<Prose {html} />
-				{/if}
+	{#if imageOpen && mode === 'edit'}
+		<div id="{id}-image-panel" class="flex flex-col gap-3 border-b border-line bg-paper-soft p-4">
+			<ImageField
+				id="{id}-image"
+				bind:path={imagePath}
+				bind:alt={imageAlt}
+				altError={imageError}
+				onuploaded={({ url }) => {
+					imageUrl = url;
+					imageError = '';
+				}}
+			/>
+			<div class="flex gap-2">
+				<Button size="sm" disabled={!imagePath || !imageUrl} onclick={insertImage}
+					>Insert image</Button
+				>
+				<Button variant="ghost" size="sm" onclick={() => (imageOpen = false)}>Cancel</Button>
 			</div>
 		</div>
+	{/if}
+
+	<div
+		role="tabpanel"
+		id="{id}-panel-edit"
+		aria-labelledby="{id}-tab-edit"
+		hidden={mode !== 'edit'}
+		class="flex flex-col"
+	>
+		<textarea
+			{id}
+			aria-label={label}
+			bind:this={textarea}
+			bind:value
+			spellcheck="true"
+			class="min-h-[420px] w-full flex-1 resize-y border-0 bg-paper p-4 font-mono text-[13px] leading-[22px] text-ink focus:ring-0"
+		></textarea>
+	</div>
+	<div
+		role="tabpanel"
+		id="{id}-panel-preview"
+		aria-labelledby="{id}-tab-preview"
+		hidden={mode !== 'preview'}
+		class="min-h-[420px] overflow-auto bg-paper p-4"
+	>
+		{#if previewFailed}
+			<p class="text-small text-ink-muted">Preview is unavailable right now. Your text is safe.</p>
+		{:else if value.trim() === ''}
+			<p class="text-small text-ink-subtle">Nothing to preview yet.</p>
+		{:else if waiting && html === ''}
+			<p class="text-small text-ink-subtle">Rendering preview…</p>
+		{:else}
+			<Prose {html} />
+		{/if}
 	</div>
 </div>

@@ -92,6 +92,10 @@
 	--radius-xl: 16px;
 	--radius-full: 9999px;
 	--stroke-hairline: 1px;
+	/* Motion (DESIGN.md): the one slide-in fade. */
+	--motion-slow: 600ms;
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--rise: 24px;
 	/* "Variable" is the family name the @fontsource-variable package registers. */
 	--font-sans: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
