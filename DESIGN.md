@@ -318,6 +318,7 @@ Tokens ship as CSS custom properties: light on `:root`, dark under `[data-theme=
 - Set the theme before first paint: a tiny inline script in `app.html` reads the saved choice or `prefers-color-scheme` and sets `data-theme` on `<html>`, so there is no flash. It carries the CSP nonce.
 - Rendered markdown goes through one shared function and is wrapped in `.prose-shenanigans`; code uses class-based `hljs-*` colours made only of tokens.
 - Photos are grayscale (the `grayscale` utility on the page, a pre-converted PNG for link previews).
+- The checks that guard this file (lint, type check, the automated accessibility and contrast tests) also run in CI. The pipeline adds no visual change and no UI of its own.
 
 ## Agent checklist
 
@@ -335,3 +336,4 @@ Run this before handing back any UI work.
 | Check light and dark, focus states, contrast and reduced motion | Ship a component tested in one theme only |
 | Compose new UI from the listed components | Add doodles, dot grids, tilted frames, textures or decorative illustrations |
 | Keep posts at 680px and sections at 1080px | Let text run full width |
+| Keep `bun run lint`, `bun run check` and the accessibility e2e suite passing; CI runs them on every change (SOFTWARE.md SR-16) | Merge UI work with a red check, or switch a rule off to get past it |
