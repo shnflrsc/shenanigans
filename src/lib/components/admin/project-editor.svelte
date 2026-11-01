@@ -155,7 +155,10 @@
 			});
 			const result = deserialize(await response.text());
 			if (result.type === 'success') return (result.data as { tag: Tag }).tag;
-			toast.error('Could not create the tag.');
+			toast.error(
+				(result.type === 'failure' && (result.data as { message?: string })?.message) ||
+					'Could not create the tag.'
+			);
 		} catch {
 			toast.error('Could not reach the server.');
 		}
@@ -206,10 +209,8 @@
 		</div>
 	{/if}
 
-	<div
-		class="mx-auto grid max-w-[1360px] gap-8 p-4 min-[720px]:p-8 min-[1100px]:grid-cols-[1fr_320px]"
-	>
-		<div class="flex min-w-0 flex-col gap-6">
+	<div class="mx-auto flex max-w-[1000px] flex-col gap-6 p-4 min-[720px]:p-8">
+		<div class="contents">
 			<Field id="title" label="Title" error={err('title')}>
 				{#snippet children({ describedby, invalid })}
 					<!-- A textarea that grows with its content, so a long title wraps instead of being cut off. -->
@@ -221,17 +222,19 @@
 						aria-invalid={invalid}
 						placeholder="Project name"
 						onkeydown={(event) => event.key === 'Enter' && event.preventDefault()}
-						class="block field-sizing-content w-full resize-none overflow-hidden border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0"
-					></textarea>
+						class={cn(
+							'block field-sizing-content w-full resize-none overflow-hidden border-0 bg-transparent px-0 text-[36px] leading-[44px] font-semibold tracking-[-0.025em] focus:ring-0',
+							invalid && 'underline decoration-2'
+						)}></textarea>
 				{/snippet}
 			</Field>
 
-			<Field
-				id="summary"
-				label="Summary"
-				hint="One or two sentences: what it is and who it is for. Shown on cards."
-				error={err('summary')}
-			>
+			<MarkdownEditor id="body" label="Case study" bind:value={editor.data.body} />
+		</div>
+
+		<!-- The project details sit below the editor as plain fields, not in a card. -->
+		<div class="flex flex-col gap-5">
+			<Field id="summary" label="Summary" error={err('summary')}>
 				{#snippet children({ describedby, invalid })}
 					<textarea
 						id="summary"
@@ -246,53 +249,7 @@
 				{/snippet}
 			</Field>
 
-			<MarkdownEditor id="body" label="Case study" bind:value={editor.data.body} />
-		</div>
-
-		<aside class="flex flex-col gap-5 self-start rounded-lg border border-line bg-paper p-5">
-			<Field id="status" label="Status" hint="Use Publish or Unpublish above to change this.">
-				{#snippet children({ describedby })}
-					<input
-						id="status"
-						type="text"
-						readonly
-						value={status === 'published' ? 'Published' : 'Draft'}
-						aria-describedby={describedby}
-						class={cn(input, 'bg-paper-soft')}
-					/>
-				{/snippet}
-			</Field>
-
-			<div class="flex flex-col gap-1.5">
-				<div class="flex items-center justify-between">
-					<label for="featured" class="text-ui">Featured</label>
-					<Switch
-						id="featured"
-						checked={featured}
-						disabled={!id}
-						aria-describedby="featured-hint"
-						onCheckedChange={setFeatured}
-					/>
-				</div>
-				<p id="featured-hint" class="text-[12px] leading-4 text-ink-subtle">
-					{#if !id}
-						Save the project first, then you can feature it.
-					{:else if data.otherFeatured && !featured}
-						Turning this on removes the flag from {data.otherFeatured}.
-					{:else}
-						Only one project is featured on Home at a time.
-					{/if}
-				</p>
-			</div>
-
-			<Field
-				id="slug"
-				label="Slug"
-				hint={locked
-					? 'Locked after the first publish, so links keep working.'
-					: 'Made from the title. You can edit it until you publish.'}
-				error={err('slug')}
-			>
+			<Field id="slug" label="Slug" error={err('slug')}>
 				{#snippet children({ describedby, invalid })}
 					<div class="relative">
 						<input
@@ -320,7 +277,7 @@
 				{/snippet}
 			</Field>
 
-			<div class="grid grid-cols-2 gap-3">
+			<div class="grid gap-5 min-[720px]:grid-cols-3">
 				<Field id="year" label="Year" error={err('year')}>
 					{#snippet children({ describedby, invalid })}
 						<input
@@ -345,45 +302,45 @@
 						/>
 					{/snippet}
 				</Field>
+				<Field id="team" label="Team">
+					{#snippet children({ describedby })}
+						<input
+							id="team"
+							type="text"
+							bind:value={editor.data.team}
+							aria-describedby={describedby}
+							class={input}
+						/>
+					{/snippet}
+				</Field>
 			</div>
 
-			<Field id="team" label="Team" hint="For example Solo or Team of 4.">
-				{#snippet children({ describedby })}
-					<input
-						id="team"
-						type="text"
-						bind:value={editor.data.team}
-						aria-describedby={describedby}
-						class={input}
-					/>
-				{/snippet}
-			</Field>
-
-			<Field id="liveUrl" label="Live URL" error={err('liveUrl')}>
-				{#snippet children({ describedby, invalid })}
-					<input
-						id="liveUrl"
-						type="url"
-						bind:value={editor.data.liveUrl}
-						aria-describedby={describedby}
-						aria-invalid={invalid}
-						class={cn(input, invalid && 'ring-2 ring-ink')}
-					/>
-				{/snippet}
-			</Field>
-
-			<Field id="repoUrl" label="Repository URL" error={err('repoUrl')}>
-				{#snippet children({ describedby, invalid })}
-					<input
-						id="repoUrl"
-						type="url"
-						bind:value={editor.data.repoUrl}
-						aria-describedby={describedby}
-						aria-invalid={invalid}
-						class={cn(input, invalid && 'ring-2 ring-ink')}
-					/>
-				{/snippet}
-			</Field>
+			<div class="grid gap-5 min-[720px]:grid-cols-2">
+				<Field id="liveUrl" label="Live URL" error={err('liveUrl')}>
+					{#snippet children({ describedby, invalid })}
+						<input
+							id="liveUrl"
+							type="url"
+							bind:value={editor.data.liveUrl}
+							aria-describedby={describedby}
+							aria-invalid={invalid}
+							class={cn(input, invalid && 'ring-2 ring-ink')}
+						/>
+					{/snippet}
+				</Field>
+				<Field id="repoUrl" label="Repository URL" error={err('repoUrl')}>
+					{#snippet children({ describedby, invalid })}
+						<input
+							id="repoUrl"
+							type="url"
+							bind:value={editor.data.repoUrl}
+							aria-describedby={describedby}
+							aria-invalid={invalid}
+							class={cn(input, invalid && 'ring-2 ring-ink')}
+						/>
+					{/snippet}
+				</Field>
+			</div>
 
 			<Field id="tags" label="Tags">
 				<TagPicker
@@ -393,6 +350,27 @@
 					oncreate={createTag}
 				/>
 			</Field>
+
+			<div class="flex flex-col gap-1.5">
+				<div class="flex items-center justify-between">
+					<label for="featured" class="text-ui">Featured</label>
+					<Switch
+						id="featured"
+						checked={featured}
+						disabled={!id}
+						aria-describedby="featured-note"
+						onCheckedChange={setFeatured}
+					/>
+				</div>
+				<!-- Only said when it matters: before the first save, or when turning it on would take the flag from another project. -->
+				<p id="featured-note" class="text-[12px] leading-4 text-ink-subtle">
+					{#if !id}
+						Save the project first, then you can feature it.
+					{:else if data.otherFeatured && !featured}
+						Turning this on removes the flag from {data.otherFeatured}.
+					{/if}
+				</p>
+			</div>
 
 			<div class="flex flex-col gap-1.5">
 				<span class="text-ui">Cover image</span>
@@ -411,7 +389,7 @@
 					>
 				</div>
 			{/if}
-		</aside>
+		</div>
 	</div>
 </div>
 
