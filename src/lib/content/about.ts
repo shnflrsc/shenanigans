@@ -38,7 +38,8 @@ export const about = {
 			when: '2025 – now',
 			title: 'BS Information Technology',
 			detail: 'Bulacan State University'
-		}
+		},
+		{ when: '2026', title: 'BetterMeycauayan', detail: 'BetterGov' }
 	]
 };
 
