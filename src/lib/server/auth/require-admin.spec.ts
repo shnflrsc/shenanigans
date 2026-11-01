@@ -45,6 +45,21 @@ describe('route inventory (SR-2)', () => {
 		expect(unguarded).toEqual([]);
 	});
 
+	it('every load function, form action and endpoint calls requireAdmin itself', () => {
+		const routes = join(process.cwd(), 'src', 'routes');
+		const handler =
+			/^\s*(?:export const (?:load|GET|POST|PUT|PATCH|DELETE)\b|\w+: async \(event\))/gm;
+		const short = walk(join(routes, 'admin'))
+			.filter((file) => SERVER_FILES.has(basename(file)))
+			.map((file) => relative(routes, file).split(sep).join('/'))
+			.filter((rel) => !PUBLIC_ADMIN_ROUTES.has(rel))
+			.filter((rel) => {
+				const text = readFileSync(join(routes, rel), 'utf8');
+				return (text.match(/requireAdmin\(/g) ?? []).length < (text.match(handler) ?? []).length;
+			});
+		expect(short).toEqual([]);
+	});
+
 	it('finds the guarded files it is meant to check', () => {
 		const routes = join(process.cwd(), 'src', 'routes');
 		const found = walk(join(routes, 'admin')).filter((file) => SERVER_FILES.has(basename(file)));
