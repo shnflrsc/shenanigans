@@ -54,13 +54,27 @@
 		imageOpen = false;
 	}
 
+	// One pane at a time: Edit or Preview, switched from the right of the toolbar.
+	let mode = $state<'edit' | 'preview'>('edit');
+	const modes = [
+		{ id: 'edit', label: 'Edit' },
+		{ id: 'preview', label: 'Preview' }
+	] as const;
+
 	let textarea = $state<HTMLTextAreaElement | null>(null);
 	let html = $state('');
 	let previewFailed = $state(false);
+	// True until the first render for the current text has come back.
+	let waiting = $state(true);
 
-	// Live preview through the same render function as the public pages (SR-13), debounced.
+	// The preview is rendered by the same function as the public pages (SR-13), only while it is showing.
+	// Switching to it renders at once; later changes are debounced.
+	let renderedFor: string | null = null;
 	$effect(() => {
+		if (mode !== 'preview') return;
 		const markdown = value;
+		untrack(() => (waiting = markdown !== renderedFor));
+		const delay = renderedFor === null || renderedFor === markdown ? 0 : 250;
 		const timer = setTimeout(async () => {
 			try {
 				const response = await fetch('/admin/preview', {
@@ -73,11 +87,13 @@
 				untrack(() => {
 					html = result.html;
 					previewFailed = false;
+					renderedFor = markdown;
+					waiting = false;
 				});
 			} catch {
 				untrack(() => (previewFailed = true));
 			}
-		}, 250);
+		}, delay);
 		return () => clearTimeout(timer);
 	});
 
@@ -112,22 +128,60 @@
 		class="flex flex-wrap items-center gap-0.5 border-b border-line bg-paper-soft p-1"
 	>
 		{#each tools as tool (tool.label)}
-			<Button variant="ghost" size="icon" aria-label={tool.label} onclick={tool.run}>
+			<Button
+				variant="ghost"
+				size="icon"
+				aria-label={tool.label}
+				disabled={mode !== 'edit'}
+				onclick={tool.run}
+			>
 				<tool.icon aria-hidden="true" />
 			</Button>
 		{/each}
 		<Button
 			variant="ghost"
 			size="sm"
+			disabled={mode !== 'edit'}
 			aria-expanded={imageOpen}
 			aria-controls="{id}-image-panel"
 			onclick={() => (imageOpen ? (imageOpen = false) : openImage())}
 		>
 			<ImageIcon aria-hidden="true" />Image
 		</Button>
+
+		<!-- Edit and Preview, one at a time. -->
+		<div
+			role="tablist"
+			aria-label="Editor view"
+			class="ml-auto inline-flex rounded-md bg-fill-muted p-0.5"
+		>
+			{#each modes as tab (tab.id)}
+				<button
+					type="button"
+					role="tab"
+					id="{id}-tab-{tab.id}"
+					aria-selected={mode === tab.id}
+					aria-controls="{id}-panel-{tab.id}"
+					tabindex={mode === tab.id ? 0 : -1}
+					class="h-7 rounded-[5px] px-3 text-ui text-ink-muted aria-selected:bg-paper aria-selected:font-semibold aria-selected:text-ink aria-selected:shadow-sm"
+					onclick={() => {
+						mode = tab.id;
+						if (tab.id === 'preview') imageOpen = false;
+					}}
+					onkeydown={(event) => {
+						if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+						event.preventDefault();
+						mode = mode === 'edit' ? 'preview' : 'edit';
+						document.getElementById(`${id}-tab-${mode}`)?.focus();
+					}}
+				>
+					{tab.label}
+				</button>
+			{/each}
+		</div>
 	</div>
 
-	{#if imageOpen}
+	{#if imageOpen && mode === 'edit'}
 		<div id="{id}-image-panel" class="flex flex-col gap-3 border-b border-line bg-paper-soft p-4">
 			<ImageField
 				id="{id}-image"
@@ -148,32 +202,39 @@
 		</div>
 	{/if}
 
-	<div class="grid min-[900px]:grid-cols-2">
-		<div class="flex flex-col min-[900px]:border-r min-[900px]:border-line">
-			<label for={id} class="border-b border-line px-4 py-2 text-caption text-ink-subtle"
-				>{label}</label
-			>
-			<textarea
-				{id}
-				bind:this={textarea}
-				bind:value
-				spellcheck="true"
-				class="min-h-[420px] w-full flex-1 resize-y border-0 bg-paper p-4 font-mono text-[13px] leading-[22px] text-ink focus:ring-0"
-			></textarea>
-		</div>
-		<div class="flex flex-col border-t border-line min-[900px]:border-t-0">
-			<span class="border-b border-line px-4 py-2 text-caption text-ink-subtle">Preview</span>
-			<div class="min-h-[420px] overflow-auto bg-paper p-4" aria-live="off">
-				{#if previewFailed}
-					<p class="text-small text-ink-muted">
-						Preview is unavailable right now. Your text is safe.
-					</p>
-				{:else if value.trim() === ''}
-					<p class="text-small text-ink-subtle">Nothing to preview yet.</p>
-				{:else}
-					<Prose {html} />
-				{/if}
-			</div>
-		</div>
+	<div
+		role="tabpanel"
+		id="{id}-panel-edit"
+		aria-labelledby="{id}-tab-edit"
+		hidden={mode !== 'edit'}
+		class="flex flex-col"
+	>
+		<label for={id} class="border-b border-line px-4 py-2 text-caption text-ink-subtle"
+			>{label}</label
+		>
+		<textarea
+			{id}
+			bind:this={textarea}
+			bind:value
+			spellcheck="true"
+			class="min-h-[420px] w-full flex-1 resize-y border-0 bg-paper p-4 font-mono text-[13px] leading-[22px] text-ink focus:ring-0"
+		></textarea>
+	</div>
+	<div
+		role="tabpanel"
+		id="{id}-panel-preview"
+		aria-labelledby="{id}-tab-preview"
+		hidden={mode !== 'preview'}
+		class="min-h-[420px] overflow-auto bg-paper p-4"
+	>
+		{#if previewFailed}
+			<p class="text-small text-ink-muted">Preview is unavailable right now. Your text is safe.</p>
+		{:else if value.trim() === ''}
+			<p class="text-small text-ink-subtle">Nothing to preview yet.</p>
+		{:else if waiting && html === ''}
+			<p class="text-small text-ink-subtle">Rendering preview…</p>
+		{:else}
+			<Prose {html} />
+		{/if}
 	</div>
 </div>

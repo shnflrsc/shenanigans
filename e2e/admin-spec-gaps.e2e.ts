@@ -47,6 +47,7 @@ test.describe('Inserting images into markdown (FR-13)', () => {
 		);
 
 		// The live preview shows the picture, and the editor knows there are unsaved changes.
+		await page.getByRole('tab', { name: 'Preview' }).click();
 		await expect(page.locator('.prose-shenanigans img')).toHaveAttribute(
 			'alt',
 			'A tiny test picture'
@@ -171,5 +172,71 @@ test.describe('Phone: editors replace the shell bar with their own', () => {
 		await page.goto('/admin/posts/new');
 		await expect(page.getByRole('navigation', { name: 'Admin sections' })).toBeHidden();
 		await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeVisible();
+	});
+});
+
+test.describe('Edit and Preview switch (one pane at a time)', () => {
+	test('the switch sits at the far right of the toolbar and shows one pane at a time', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/admin/posts/new');
+		const toolbar = page.getByRole('toolbar', { name: 'Markdown formatting' });
+		const tabs = page.getByRole('tablist', { name: 'Editor view' });
+		await expect(tabs).toBeVisible();
+		// Inside the toolbar, and to the right of every tool.
+		const t = (await toolbar.boundingBox())!;
+		const s = (await tabs.boundingBox())!;
+		expect(s.x + s.width).toBeGreaterThan(t.x + t.width - 16);
+		const lastTool = (await toolbar.getByRole('button', { name: 'Image' }).boundingBox())!;
+		expect(s.x).toBeGreaterThan(lastTool.x + lastTool.width);
+
+		// Edit is selected first: only the editor shows, never side by side.
+		await expect(page.getByRole('tab', { name: 'Edit' })).toHaveAttribute('aria-selected', 'true');
+		await expect(page.locator('#body')).toBeVisible();
+		await expect(page.locator('#body-panel-preview')).toBeHidden();
+
+		await page.locator('#body').fill('Hello **world**');
+		await page.getByRole('tab', { name: 'Preview' }).click();
+		await expect(page.getByRole('tab', { name: 'Preview' })).toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
+		await expect(page.locator('#body')).toBeHidden();
+		await expect(page.locator('#body-panel-preview strong')).toHaveText('world');
+		// Formatting tools do nothing while previewing.
+		await expect(page.getByRole('button', { name: 'Bold' })).toBeDisabled();
+	});
+
+	test('switching back keeps the text and cursor, and arrow keys move between the tabs', async ({
+		page
+	}) => {
+		await page.goto('/admin/posts/new');
+		await page.locator('#body').fill('Keep this text');
+		await page.getByRole('tab', { name: 'Preview' }).click();
+		await page.getByRole('tab', { name: 'Edit' }).click();
+		await expect(page.locator('#body')).toHaveValue('Keep this text');
+		await page.getByRole('tab', { name: 'Edit' }).focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(page.getByRole('tab', { name: 'Preview' })).toBeFocused();
+		await expect(page.getByRole('tab', { name: 'Preview' })).toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
+		await expect(page.locator('#body-panel-preview')).toBeVisible();
+	});
+
+	test('editing does not count as unsaved when only switching tabs', async ({ page }) => {
+		await page.goto('/admin/posts/new');
+		await page.getByRole('tab', { name: 'Preview' }).click();
+		await expect(page.getByText('All changes saved')).toBeVisible();
+	});
+
+	test('on a phone the switch stays in the toolbar', async ({ page }) => {
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto('/admin/posts/new');
+		await expect(page.getByRole('tablist', { name: 'Editor view' })).toBeVisible();
+		await page.getByRole('tab', { name: 'Preview' }).click();
+		await expect(page.locator('#body-panel-preview')).toBeVisible();
 	});
 });

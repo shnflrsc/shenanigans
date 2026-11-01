@@ -53,6 +53,7 @@ test.describe('Post editor', () => {
 		await page
 			.locator('#body')
 			.fill('> [!TIP]\n> Nice\n\n```ts\nconst a = 1;\n```\n\n<script>window.__pwned=1</script>');
+		await page.getByRole('tab', { name: 'Preview' }).click();
 		const preview = page.locator('.prose-shenanigans');
 		await expect(preview.locator('.markdown-alert-tip')).toBeVisible();
 		await expect(preview.locator('.code-block .code-lang')).toHaveText('ts');
