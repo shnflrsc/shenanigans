@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { sql } from 'drizzle-orm';
 import * as s from '../db/schema';
 import { withRollback } from '../db/test-utils';
 import {
@@ -135,6 +136,58 @@ describe('public content queries', () => {
 			expect(filtered.posts.map((p) => p.slug).sort()).toEqual(['a', 'b']);
 			expect(filtered.posts[0].tags.map((t) => t.slug)).toEqual(['svelte']);
 			expect((await listPublishedPosts(tx, { tag: 'rare' })).posts).toEqual([]);
+		});
+	});
+
+	it('never links a post to itself, even with microsecond timestamps (the latest post has no "next")', async () => {
+		await withRollback(async (tx) => {
+			await tx.insert(s.posts).values([
+				{ slug: 'older', title: 'Older', excerpt: 'x', status: 'published', publishedAt: at(1) },
+				{ slug: 'latest', title: 'Latest', excerpt: 'x', status: 'published', publishedAt: at(9) },
+				{ slug: 'only-draft-newer', title: 'Draft', excerpt: 'x', publishedAt: at(20) }
+			]);
+			// A real publish time has microseconds, which a JavaScript Date cannot hold.
+			await tx.execute(
+				sql`update posts set published_at = '2026-01-09 10:00:00.123456+00' where slug = 'latest'`
+			);
+			const latest = await getPublishedPost(tx, 'latest');
+			expect(latest?.newer).toBeNull();
+			expect(latest?.older?.slug).toBe('older');
+			const older = await getPublishedPost(tx, 'older');
+			expect(older?.older).toBeNull();
+			expect(older?.newer?.slug).toBe('latest');
+		});
+	});
+
+	it('a single published post has no neighbours', async () => {
+		await withRollback(async (tx) => {
+			await tx.insert(s.posts).values({
+				slug: 'solo',
+				title: 'Solo',
+				excerpt: 'x',
+				status: 'published',
+				publishedAt: new Date()
+			});
+			await tx.execute(sql`update posts set published_at = now() where slug = 'solo'`);
+			const solo = await getPublishedPost(tx, 'solo');
+			expect(solo?.older).toBeNull();
+			expect(solo?.newer).toBeNull();
+		});
+	});
+
+	it('posts published at the same moment link to each other once, in list order', async () => {
+		await withRollback(async (tx) => {
+			await tx.insert(s.posts).values([
+				{ slug: 'tie-1', title: 'T1', excerpt: 'x', status: 'published', publishedAt: at(5) },
+				{ slug: 'tie-2', title: 'T2', excerpt: 'x', status: 'published', publishedAt: at(5) },
+				{ slug: 'tie-3', title: 'T3', excerpt: 'x', status: 'published', publishedAt: at(5) }
+			]);
+			const order = (await listPublishedPosts(tx)).posts.map((p) => p.slug);
+			for (const [i, slug] of order.entries()) {
+				const r = await getPublishedPost(tx, slug);
+				expect(r?.newer?.slug ?? null).toBe(order[i - 1] ?? null);
+				expect(r?.older?.slug ?? null).toBe(order[i + 1] ?? null);
+			}
 		});
 	});
 });

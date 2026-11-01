@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
-	import { SAVED_NOTE } from '#lib/admin/actions.js';
+	import { saveToast } from '#lib/admin/actions.js';
 	import { Editor } from '#lib/admin/editor.svelte.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { slugify } from '#lib/slug.js';
@@ -83,10 +83,8 @@
 		if (!result) return;
 		status = result.status;
 		locked = Boolean(result.publishedAt);
-		toast.success(
-			intent === 'publish' ? 'Published.' : intent === 'unpublish' ? 'Unpublished.' : 'Saved.',
-			{ description: SAVED_NOTE }
-		);
+		const message = saveToast(intent, result.status);
+		toast.success(message.title);
 		if (!id) {
 			id = result.id;
 			// First save of a new post: continue on its own page. Nothing is unsaved, so the guard stays quiet.

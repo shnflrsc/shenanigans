@@ -63,9 +63,6 @@
 					<PostCard {post} readTime={post.readTime} />
 				{/each}
 			</div>
-			{#if data.counts.posts === 1}
-				<p class="text-small text-ink-subtle">That’s the first one. More soon.</p>
-			{/if}
 		{:else}
 			<EmptyCard eyebrow="Blog" title="No posts yet" />
 		{/if}

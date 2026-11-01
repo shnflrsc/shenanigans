@@ -50,9 +50,6 @@
 					<PostCard {post} readTime={post.readTime} />
 				{/each}
 			</div>
-			{#if data.totalAll === 1}
-				<p class="text-small text-ink-subtle">That’s the first post. More soon.</p>
-			{/if}
 
 			{#if data.pages > 1}
 				<nav aria-label="Pagination" class="flex items-center justify-between gap-4">

@@ -37,7 +37,6 @@
 			{/if}
 			{#if data.total === 1}
 				<ProjectCard project={data.projects[0]} featured />
-				<p class="text-small text-ink-subtle">That’s the first one. More soon.</p>
 			{:else}
 				<ul class="grid gap-6 min-[720px]:grid-cols-2">
 					{#each data.projects as project (project.slug)}

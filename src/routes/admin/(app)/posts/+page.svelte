@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { navigating } from '$app/state';
-	import { runAction, SAVED_NOTE } from '#lib/admin/actions.js';
+	import { runAction } from '#lib/admin/actions.js';
 	import ConfirmDialog from '#lib/components/admin/confirm-dialog.svelte';
 	import EmptyState from '#lib/components/admin/empty-state.svelte';
 	import StatusBadge from '#lib/components/admin/status-badge.svelte';
@@ -132,8 +132,7 @@
 													status: post.status === 'published' ? 'draft' : 'published'
 												},
 												{
-													success: post.status === 'published' ? 'Unpublished.' : 'Published.',
-													description: SAVED_NOTE
+													success: post.status === 'published' ? 'Unpublished.' : 'Published.'
 												}
 											)}
 									>

@@ -93,13 +93,16 @@ test.describe('Freshness (PR-6)', () => {
 		await visitor.context().close();
 	});
 
-	test('the dashboard says how long public pages can take', async ({ page }) => {
+	test('saving says what happened, with no note about the public page', async ({ page }) => {
+		const note = page.getByText('up to a minute');
 		await page.goto('/admin/posts/new');
 		await page.getByLabel('Title').fill('E2E Note');
 		await page.getByLabel('Excerpt').fill('x');
 		await page.getByRole('button', { name: 'Save draft' }).click();
-		await expect(
-			page.getByText('Saved. The public page can take up to a minute to update.')
-		).toBeVisible();
+		await expect(page.getByText('Draft saved.')).toBeVisible();
+		await expect(note).toHaveCount(0);
+		await page.getByRole('button', { name: 'Publish' }).click();
+		await expect(page.getByText('Published.', { exact: true })).toBeVisible();
+		await expect(note).toHaveCount(0);
 	});
 });

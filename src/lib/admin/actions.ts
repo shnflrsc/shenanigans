@@ -2,7 +2,15 @@ import { deserialize } from '$app/forms';
 import { invalidateAll } from '$app/navigation';
 import { toast } from 'svelte-sonner';
 
-export const SAVED_NOTE = 'Saved. The public page can take up to a minute to update.';
+/** What to tell the admin after a save: a short title, nothing more. */
+export function saveToast(
+	intent: 'save' | 'publish' | 'unpublish',
+	status: 'draft' | 'published'
+): { title: string } {
+	if (intent === 'publish') return { title: 'Published.' };
+	if (intent === 'unpublish') return { title: 'Unpublished.' };
+	return { title: status === 'published' ? 'Saved.' : 'Draft saved.' };
+}
 
 type Result = { ok: boolean; data?: Record<string, unknown>; message?: string };
 

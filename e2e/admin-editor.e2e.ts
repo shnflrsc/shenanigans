@@ -37,9 +37,8 @@ test.describe('Post editor', () => {
 		await page.getByRole('button', { name: 'Save draft' }).click();
 		await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
 		await expect(page.getByText('All changes saved')).toBeVisible();
-		await expect(
-			page.getByText('Saved. The public page can take up to a minute to update.')
-		).toBeVisible();
+		await expect(page.getByText('Draft saved.')).toBeVisible();
+		await expect(page.getByText('up to a minute')).toHaveCount(0);
 		const [row] = await sql<{ status: string; body: string }>(
 			`select status, body from posts where slug = 'e2e-first-post'`
 		);
