@@ -180,7 +180,7 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 | H5 (done) Create Vercel project, set env vars | M9-1 | Project linked to repo; vars from `.env.example` | Local build only |
 | H6 Register `shenanigans.is-a.dev` | M9-3 | PR to is-a.dev register pointing to Vercel | Use `*.vercel.app` URL |
 | H7 (done) Photo | M5-3 | Grayscale-ready portrait file in `src/lib/assets/` (name `portrait.jpg`) | Neutral placeholder tile |
-| H8 Résumé PDF | M5-3 | File at `static/resume.pdf` | Button hidden |
+| H8 (done) Résumé PDF | M5-3 | File at `static/resume.pdf` | Button hidden |
 | H9 (done; real projects and posts are added over time) Real About me, projects, posts | Launch | Text for `about.ts`; content via the dashboard | Fixtures marked `[PLACEHOLDER]` |
 
 Never invent credentials. `.env.example` holds names only.
@@ -321,10 +321,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 - M3-4: the real GitHub sign-in works on the deployed site (checked by the owner). Still worth a manual check with a second account to see the denied state.
 
-- M7-1 (to confirm): ISR is now enabled on the public routes (`src/lib/server/isr.ts`, bypass token, one-minute expiry as a safety net, tag and page query cached separately). Needs one check on the Vercel preview or production: save a post and see the public page update within a few seconds.
-
 - M9-3 BLOCKED: needs H6 (is-a.dev registration). The Vercel project and env vars are in place. Then tick the deployment checklist in section 10.
-- H8: résumé not provided (button hidden until `static/resume.pdf` exists).
 - Verify on Vercel after deploy: native `@resvg/resvg-js` for OG images (D8), spoof-proof `getClientAddress()` (SR-14), adapter-vercel build.
 
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
@@ -409,3 +406,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 M7-1: ISR enabled on Home, Projects, Blog, project and post pages, the sitemap and post preview images (shared config in src/lib/server/isr.ts; bypass token from VERCEL_ISR_BYPASS_TOKEN; 60 s expiry as a safety net). To confirm on Vercel.
 - 2026-11-01 plan status: M9-2 ticked (hosted Supabase, GitHub provider and admin id are set up and sign-in works on the deployed site); M9-3 now waits only on the domain (H6); H1 to H5 marked done.
 - 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
+- 2026-11-02 plan status: ISR confirmed on the live site (a dashboard edit shows on the public page at once); résumé added (H8 done). Left: domain (H6) and the client-address spoof check on Vercel.
