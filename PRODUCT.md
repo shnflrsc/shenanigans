@@ -1,6 +1,6 @@
 # Shenanigans: Product Requirements Document
 
-Version 0.4 · 2026-10-31 · Owner: Darl
+Version 0.5 · 2026-11-01 · Owner: Darl
 
 ## 1. Purpose
 
@@ -18,6 +18,7 @@ Shenanigans is a personal portfolio website with a project showcase and a blog. 
 - Analytics or tracking.
 - Multiple authors or multiple admins.
 - A separate About page. About lives as a section on Home instead (section 4.4).
+- Live penetration scanning of the deployed site, and paid security services. The automated checks are free and run on the code (section 8).
 
 ## 3. Audience
 
@@ -154,6 +155,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | Freshness | Public pages refresh within 60 seconds of a change | |
 | Motion | One slide-in fade on whole sections (first section on load, the rest on scroll); no hover, page-transition or theme effects for now | Per-element animation, staggers, springs, view transitions |
 | Animation library | None: CSS, Svelte's built-ins and the browser's view transitions | A heavy library such as GSAP |
+| Security checks | Free automated checks on every change and weekly: leaked secrets, vulnerable dependencies, code analysis, server keys kept out of the browser bundle, and the site's own security tests. No secrets needed; GitHub tells me when one fails. Visitors see nothing different | No automated checks; live scanning of the deployed site (later, if wanted) |
 
 ## 9. Open questions
 
