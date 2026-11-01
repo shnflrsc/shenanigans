@@ -144,8 +144,8 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 ### M9 Deployment
 
 - [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
-- [ ] **M9-2** BLOCKED: Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
-- [ ] **M9-3** BLOCKED: Domain and launch checklist (section 9). Deps: H6.
+- [x] **M9-2** Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
+- [ ] **M9-3** BLOCKED on H6: Domain and launch checklist (section 9). Deps: H6.
 
 ### M10 Motion (public site)
 
@@ -173,15 +173,15 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 
 | ID | Needed by | What I need from you | Until then |
 |---|---|---|---|
-| H1 Create Supabase project (hosted) | M6-7 real upload, M9-2 | Project URL, anon key, service role key, DB connection string (pooled, port 6543) into `.env` locally and Vercel | Use Supabase local stack (needs Docker running) or compose Postgres for data work; Auth and Storage flows are tested with stubs |
-| H2 Create GitHub OAuth app | M3-4 real login | Client ID and secret into Supabase Auth GitHub provider; callback `https://<project>.supabase.co/auth/v1/callback` (and local `http://127.0.0.1:54321/auth/v1/callback`) | Stubbed auth in tests |
-| H3 Find numeric GitHub ID | M3-2 real login | `gh api user --jq .id` or github.com/users/NAME API | Tests use a fixture id |
-| H4 Add ID to env | M3 | `ADMIN_GITHUB_ID` | `.env.example` placeholder |
-| H5 Create Vercel project, set env vars | M9-1 | Project linked to repo; vars from `.env.example` | Local build only |
+| H1 (done) Create Supabase project (hosted) | M6-7 real upload, M9-2 | Project URL, anon key, service role key, DB connection string (pooled, port 6543) into `.env` locally and Vercel | Use Supabase local stack (needs Docker running) or compose Postgres for data work; Auth and Storage flows are tested with stubs |
+| H2 (done) Create GitHub OAuth app | M3-4 real login | Client ID and secret into Supabase Auth GitHub provider; callback `https://<project>.supabase.co/auth/v1/callback` (and local `http://127.0.0.1:54321/auth/v1/callback`) | Stubbed auth in tests |
+| H3 (done) Find numeric GitHub ID | M3-2 real login | `gh api user --jq .id` or github.com/users/NAME API | Tests use a fixture id |
+| H4 (done) Add ID to env | M3 | `ADMIN_GITHUB_ID` | `.env.example` placeholder |
+| H5 (done) Create Vercel project, set env vars | M9-1 | Project linked to repo; vars from `.env.example` | Local build only |
 | H6 Register `shenanigans.is-a.dev` | M9-3 | PR to is-a.dev register pointing to Vercel | Use `*.vercel.app` URL |
-| H7 Photo | M5-3 | Grayscale-ready portrait file in `src/lib/assets/` (name `portrait.jpg`) | Neutral placeholder tile |
+| H7 (done) Photo | M5-3 | Grayscale-ready portrait file in `src/lib/assets/` (name `portrait.jpg`) | Neutral placeholder tile |
 | H8 Résumé PDF | M5-3 | File at `static/resume.pdf` | Button hidden |
-| H9 Real About me, projects, posts | Launch | Text for `about.ts`; content via the dashboard | Fixtures marked `[PLACEHOLDER]` |
+| H9 (done; real projects and posts are added over time) Real About me, projects, posts | Launch | Text for `about.ts`; content via the dashboard | Fixtures marked `[PLACEHOLDER]` |
 
 Never invent credentials. `.env.example` holds names only.
 
@@ -319,15 +319,12 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 (agents append `- Mx-y: what is needed`)
 
-- M3-4 (partial): the real GitHub sign-in round trip cannot be verified until H1-H4 are done (GitHub OAuth app, numeric GitHub id, Supabase GitHub provider credentials). Everything around it is tested with the local stack: login states, denied/error notices, redirects, 401s, rate limits, callback error path. Manual check needed: sign in with your account, then with a second account to see the denied state and the signed-out result.
+- M3-4: the real GitHub sign-in works on the deployed site (checked by the owner). Still worth a manual check with a second account to see the denied state.
 
 - M7-1 (partial): on-demand revalidation on Vercel (D9) is implemented as `revalidatePublic` (HEAD with `x-prerender-revalidate` when `VERCEL_ISR_BYPASS_TOKEN` and `ORIGIN` are set) but the ISR route config (`export const config = { isr: ... }` with the bypass token on the public routes) is NOT enabled because it cannot be verified without a Vercel deployment. The tested fallback (s-maxage=45 + stale-while-revalidate=10, so at most 55s stale, plus the dashboard note) already meets PR-6. Needs: after H5, enable ISR on the public routes per the adapter-vercel docs, set the token, and re-run the freshness e2e against the preview deployment.
 
-- M9-2 BLOCKED: needs H1 (hosted Supabase project and keys), H2 (GitHub OAuth app), H3/H4 (numeric GitHub id in env). Steps are in README "Deploying".
-- M9-3 BLOCKED: needs H5 (Vercel project and env vars) and H6 (is-a.dev registration). Then tick the deployment checklist in section 10.
-- H7: portrait photo not provided (hero shows a muted tile; the OG images use a tile too). Needs `src/lib/assets/portrait.jpg`; the grayscale OG photo slot also needs a pre-converted grayscale copy (not automated).
+- M9-3 BLOCKED: needs H6 (is-a.dev registration). The Vercel project and env vars are in place. Then tick the deployment checklist in section 10.
 - H8: résumé not provided (button hidden until `static/resume.pdf` exists).
-- H9: real About me text (`src/lib/content/about.ts`), real GitHub and LinkedIn URLs (`src/lib/site.ts`, currently github.com and linkedin.com), and real projects and posts. The sample content in the dev database is marked `[SAMPLE]` and must not be seeded in production (the seed script refuses `NODE_ENV=production`).
 - Verify on Vercel after deploy: native `@resvg/resvg-js` for OG images (D8), spoof-proof `getClientAddress()` (SR-14), adapter-vercel build.
 
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
@@ -409,3 +406,5 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 project cards (Home featured, Projects list) no longer have a Case study button; the whole card already links to the project page, and the Live site and Source buttons stay (shown only when the project has those links).
 - 2026-11-01 Home: removed the 'More projects are on the way.' line under the featured project (PRODUCT 4.7, SOFTWARE FR-29 and the launch-state e2e updated).
 - 2026-11-01 header order: on post and project pages the tags now sit under the info line and above the header border; on the project page the facts card moves into the header below the tags (PRODUCT 4.6, SOFTWARE FR-27; e2e `header-order`). Project editor: the Featured switch moves to the editor header next to the status badge (its note is read out as the switch's description); the idle 'All changes saved' text is gone from the editor bar because every save already shows a toast (Saved, Draft saved, Published); the bar still shows Saving, Unsaved changes and Not saved.
+- 2026-11-01 plan status: M9-2 ticked (hosted Supabase, GitHub provider and admin id are set up and sign-in works on the deployed site); M9-3 now waits only on the domain (H6); H1 to H5 marked done.
+- 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
