@@ -175,10 +175,8 @@
 		</div>
 	{/if}
 
-	<div
-		class="mx-auto grid max-w-[1360px] gap-8 p-4 min-[720px]:p-8 min-[1100px]:grid-cols-[1fr_320px]"
-	>
-		<div class="flex min-w-0 flex-col gap-6">
+	<div class="mx-auto flex max-w-[1000px] flex-col gap-6 p-4 min-[720px]:p-8">
+		<div class="contents">
 			<Field id="title" label="Title" error={editor.errors.title}>
 				{#snippet children({ describedby, invalid })}
 					<!-- A textarea that grows with its content, so a long title wraps instead of being cut off. -->
@@ -200,20 +198,8 @@
 			<MarkdownEditor id="body" label="Markdown" bind:value={editor.data.body} />
 		</div>
 
-		<aside class="flex flex-col gap-5 self-start rounded-lg border border-line bg-paper p-5">
-			<Field id="status" label="Status" hint="Use Publish or Unpublish above to change this.">
-				{#snippet children({ describedby })}
-					<input
-						id="status"
-						type="text"
-						readonly
-						value={status === 'published' ? 'Published' : 'Draft'}
-						aria-describedby={describedby}
-						class={cn(input, 'bg-paper-soft')}
-					/>
-				{/snippet}
-			</Field>
-
+		<!-- The post details sit below the editor as plain fields, not in a card. -->
+		<div class="flex flex-col gap-5">
 			<Field
 				id="slug"
 				label="Slug"
@@ -310,7 +296,7 @@
 					>
 				</div>
 			{/if}
-		</aside>
+		</div>
 	</div>
 </div>
 
