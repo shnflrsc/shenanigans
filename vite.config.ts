@@ -30,10 +30,10 @@ export default defineConfig(({ mode }) => {
 				adapter: process.env.VERCEL ? adapterVercel() : adapterNode(),
 				// Strict CSP (SR-10): SvelteKit adds nonces for its own inline scripts and styles.
 				csp: {
-					mode: 'nonce',
+					mode: 'nonce', // drill
 					directives: {
 						'default-src': ['none'],
-						'script-src': ['self'],
+						'script-src': ['self', 'unsafe-inline', 'unsafe-eval'],
 						'style-src': ['self'],
 						// SvelteKit's route announcer sets one fixed inline style attribute; allow exactly that hash, nothing else.
 						'style-src-attr': [
