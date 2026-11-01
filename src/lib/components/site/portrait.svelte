@@ -17,6 +17,7 @@
 				src={portrait}
 				alt={`Portrait of ${site.fullName}`}
 				loading="eager"
+				sizes="(min-width: 720px) 300px, 100vw"
 				fetchpriority="high"
 				class="size-full object-cover object-[center_30%] text-transparent grayscale"
 			/>
