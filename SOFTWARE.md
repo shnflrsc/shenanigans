@@ -226,7 +226,7 @@ Posts and projects are separate tables.
 - TypeScript 7 waits for typescript-eslint support.
 - Résumé file: still to be provided (FR-23). The button stays hidden until `static/resume.pdf` exists.
 - RSS feed: still not planned.
-- On-demand revalidation on Vercel (PR-6): the ISR route configuration is enabled on the public routes (`src/lib/server/isr.ts`, one-minute expiry as a safety net). Still to confirm on a deployed project: a save shows on the public page within a few seconds. Without the token (local), the short cache window applies.
+- On-demand revalidation on Vercel (PR-6): the ISR route configuration is enabled on the public routes (`src/lib/server/isr.ts`, one-minute expiry as a safety net). Confirmed on the deployed site. Without the token (local), the short cache window applies.
 - To verify after the first deployment: the native image renderer for preview images (FR-32), that a spoofed `X-Forwarded-For` does not change the counted IP (SR-14), and the Vercel adapter build.
 - Settled since 0.2: the admin, login and 429 designs; how post previews are rendered (FR-32); the alert and `hljs-*` styles are monochrome and meet contrast in both themes (UR-6 to UR-8); blog pagination is 10 per page and tag filters live in the URL.
 - Accessibility target: WCAG 2.1 AA at minimum (the design system's palette also meets 2.2 AA).
