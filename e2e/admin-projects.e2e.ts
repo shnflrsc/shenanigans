@@ -83,6 +83,23 @@ test.describe('Project editor', () => {
 		await expect(page.getByText('The problem')).toBeVisible();
 	});
 
+	test('the details are plain fields below the case study: no side card, no Status field, no hints', async ({
+		page
+	}) => {
+		await page.goto('/admin/projects/new');
+		await expect(page.locator('main aside')).toHaveCount(0);
+		await expect(page.getByLabel('Status')).toHaveCount(0);
+		// Everything after the title and the case study sits lower on the page, in one column.
+		const body = await page.locator('#body').boundingBox();
+		for (const label of ['Summary', 'Slug', 'Year', 'Role', 'Team', 'Live URL', 'Repository URL']) {
+			const box = await page.getByLabel(label).boundingBox();
+			expect(box!.y, label).toBeGreaterThan(body!.y + body!.height);
+		}
+		await expect(page.getByText('Shown on cards')).toHaveCount(0);
+		await expect(page.getByText('Made from the title')).toHaveCount(0);
+		await expect(page.getByText('For example Solo')).toHaveCount(0);
+	});
+
 	test('rejects an unsafe link and keeps the text', async ({ page }) => {
 		await page.goto('/admin/projects/new');
 		await page.getByLabel('Title').fill('E2E Bad Link');
