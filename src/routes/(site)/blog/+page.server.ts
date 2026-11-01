@@ -1,3 +1,4 @@
+import { isrFiltered } from '#lib/server/isr.js';
 import { z } from 'zod';
 import { readTimeMinutes } from '#lib/markdown/render.js';
 import { content } from '#lib/server/content/index.js';
@@ -47,3 +48,5 @@ export const load: PageServerLoad = async ({ url }) => {
 		posts: posts.map(({ body, ...post }) => ({ ...post, readTime: readTimeMinutes(body) }))
 	};
 };
+
+export const config = isrFiltered;

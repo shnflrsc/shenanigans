@@ -1,3 +1,4 @@
+import { isr } from '#lib/server/isr.js';
 import { content } from '#lib/server/content/index.js';
 import { readTimeMinutes } from '#lib/markdown/render.js';
 import type { PageServerLoad } from './$types';
@@ -17,3 +18,5 @@ export const load: PageServerLoad = async () => {
 		}))
 	};
 };
+
+export const config = isr;

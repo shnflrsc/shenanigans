@@ -1,3 +1,4 @@
+import { isr } from '#lib/server/isr.js';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { formatDate, formatReadTime } from '#lib/format.js';
@@ -48,3 +49,5 @@ export const GET: RequestHandler = async ({ params }) => {
 		);
 	return new Response(png as BodyInit, { headers });
 };
+
+export const config = isr;

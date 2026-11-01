@@ -1,3 +1,4 @@
+import { isr } from '#lib/server/isr.js';
 import { content } from '#lib/server/content/index.js';
 import { site } from '#lib/site.js';
 import type { RequestHandler } from './$types';
@@ -33,3 +34,5 @@ export const GET: RequestHandler = async () => {
 		}
 	);
 };
+
+export const config = isr;

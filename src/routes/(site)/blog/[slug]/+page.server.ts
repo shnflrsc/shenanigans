@@ -1,3 +1,4 @@
+import { isr } from '#lib/server/isr.js';
 import { error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { renderMarkdown, readTimeMinutes } from '#lib/markdown/render.js';
@@ -23,3 +24,5 @@ export const load: PageServerLoad = async ({ params: raw }) => {
 		newer
 	};
 };
+
+export const config = isr;
