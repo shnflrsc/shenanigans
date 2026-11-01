@@ -116,10 +116,11 @@ test.describe('Project editor', () => {
 		await page.getByLabel('Summary').fill('x');
 		await page.getByRole('button', { name: 'Save draft' }).click();
 		await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/);
-		await expect(
-			page.getByText('Turning this on removes the flag from Sample: Handbook assistant.')
-		).toBeVisible();
-		await page.getByRole('switch', { name: 'Featured' }).click();
+		const featuredSwitch = page.getByRole('switch', { name: 'Featured' });
+		await expect(featuredSwitch).toHaveAccessibleDescription(
+			'Turning this on removes the flag from Sample: Handbook assistant.'
+		);
+		await featuredSwitch.click();
 		await expect
 			.poll(
 				async () =>

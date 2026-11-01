@@ -196,6 +196,29 @@
 				<Button disabled={busy} onclick={() => save('publish')}>Publish</Button>
 			{/if}
 		{/snippet}
+		{#snippet extra()}
+			<div
+				class="flex items-center gap-2"
+				title={!id ? 'Save the project first, then you can feature it.' : undefined}
+			>
+				<label for="featured" class="text-ui">Featured</label>
+				<Switch
+					id="featured"
+					checked={featured}
+					disabled={!id}
+					aria-describedby="featured-note"
+					onCheckedChange={setFeatured}
+				/>
+				<!-- Only said when it matters: before the first save, or when turning it on would take the flag from another project. -->
+				<span id="featured-note" class="sr-only">
+					{#if !id}
+						Save the project first, then you can feature it.
+					{:else if data.otherFeatured && !featured}
+						Turning this on removes the flag from {data.otherFeatured}.
+					{/if}
+				</span>
+			</div>
+		{/snippet}
 	</EditorBar>
 
 	{#if editor.status === 'failed' && editor.message}
@@ -350,27 +373,6 @@
 					oncreate={createTag}
 				/>
 			</Field>
-
-			<div class="flex flex-col gap-1.5">
-				<div class="flex items-center justify-between">
-					<label for="featured" class="text-ui">Featured</label>
-					<Switch
-						id="featured"
-						checked={featured}
-						disabled={!id}
-						aria-describedby="featured-note"
-						onCheckedChange={setFeatured}
-					/>
-				</div>
-				<!-- Only said when it matters: before the first save, or when turning it on would take the flag from another project. -->
-				<p id="featured-note" class="text-[12px] leading-4 text-ink-subtle">
-					{#if !id}
-						Save the project first, then you can feature it.
-					{:else if data.otherFeatured && !featured}
-						Turning this on removes the flag from {data.otherFeatured}.
-					{/if}
-				</p>
-			</div>
 
 			<div class="flex flex-col gap-1.5">
 				<span class="text-ui">Cover image</span>

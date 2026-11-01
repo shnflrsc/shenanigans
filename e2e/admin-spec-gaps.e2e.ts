@@ -127,7 +127,7 @@ test.describe('Phone editor: sticky action bar', () => {
 		await expect(page.getByText('Unsaved changes')).toBeVisible();
 		await page.getByRole('button', { name: 'Save draft' }).click();
 		await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
-		await expect(page.getByText('All changes saved')).toBeVisible();
+		await expect(page.getByText('Draft saved.')).toBeVisible();
 	});
 
 	test('the saved toast sits above the bottom bar', async ({ page }) => {
@@ -229,7 +229,7 @@ test.describe('Edit and Preview switch (one pane at a time)', () => {
 	test('editing does not count as unsaved when only switching tabs', async ({ page }) => {
 		await page.goto('/admin/posts/new');
 		await page.getByRole('tab', { name: 'Preview' }).click();
-		await expect(page.getByText('All changes saved')).toBeVisible();
+		await expect(page.getByText('Unsaved changes')).toHaveCount(0);
 	});
 
 	test('on a phone the switch stays in the toolbar', async ({ page }) => {

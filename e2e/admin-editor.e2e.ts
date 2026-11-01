@@ -30,13 +30,11 @@ test.describe('Post editor', () => {
 		page
 	}) => {
 		await page.goto('/admin/posts/new');
-		await expect(page.getByText('All changes saved')).toBeVisible();
 		await fillBasics(page, 'E2E First Post');
 		await expect(page.getByLabel('Slug')).toHaveValue('e2e-first-post');
 		await expect(page.getByText('Unsaved changes')).toBeVisible();
 		await page.getByRole('button', { name: 'Save draft' }).click();
 		await expect(page).toHaveURL(/\/admin\/posts\/[0-9a-f-]{36}$/);
-		await expect(page.getByText('All changes saved')).toBeVisible();
 		await expect(page.getByText('Draft saved.')).toBeVisible();
 		await expect(page.getByText('up to a minute')).toHaveCount(0);
 		const [row] = await sql<{ status: string; body: string }>(
@@ -298,7 +296,7 @@ test.describe('Image cleanup (D3)', () => {
 			.setInputFiles({ name: 'b.png', mimeType: 'image/png', buffer: PNG });
 		await expect(page.getByText('Unsaved changes')).toBeVisible();
 		await page.getByRole('button', { name: 'Save draft' }).click();
-		await expect(page.getByText('All changes saved')).toBeVisible();
+		await expect(page.getByText('Draft saved.')).toBeVisible();
 		const [second] = await sql<{ cover_image: string }>(
 			`select cover_image from posts where slug = 'e2e-cleanup'`
 		);

@@ -82,7 +82,7 @@ test.describe('Journey C: the owner publishes', () => {
 		// Fix the typo: edit and save, the slug stays.
 		await page.getByLabel('Excerpt').fill('A the typo fixed in the excerpt');
 		await page.getByRole('button', { name: 'Save', exact: true }).click();
-		await expect(page.getByText('All changes saved')).toBeVisible();
+		await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
 		await expect(page.getByLabel('Slug')).toHaveValue('e2e-journey-post');
 		await expect
 			.poll(
