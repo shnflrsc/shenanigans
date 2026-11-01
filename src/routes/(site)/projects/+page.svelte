@@ -24,7 +24,7 @@
 		<SectionTitle tag="h1" soft="Things I have built.">Projects.</SectionTitle>
 
 		{#if data.total === 0}
-			<EmptyCard variant="soft" title="No projects yet" />
+			<EmptyCard variant="soft" title="No projects yet" level={2} />
 		{:else}
 			{#if showFilters}
 				<FilterTags

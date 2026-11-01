@@ -1,5 +1,5 @@
 import { expect, signInAsAdmin, test } from './auth';
-import { resetRateLimits, sql } from './db';
+import { resetRateLimits, snapshotPublished, sql } from './db';
 
 test.beforeEach(async ({ context }) => {
 	await resetRateLimits();
@@ -49,4 +49,25 @@ test('Projects and Blog card titles are h2 under the h1, with no skipped level',
 			expect(found[i] - found[i - 1], `${path} heading ${i}`).toBeLessThanOrEqual(1);
 		}
 	}
+});
+
+test.describe('empty states', () => {
+	let restore: () => Promise<void>;
+	test.beforeEach(async () => {
+		restore = await snapshotPublished();
+	});
+	test.afterEach(async () => restore());
+
+	test('the Projects and Blog empty cards are h2 under the h1', async ({ page }) => {
+		await sql(`update posts set status = 'draft'`);
+		await sql(`update projects set status = 'draft', featured = false`);
+		for (const [path, title] of [
+			['/projects', 'No projects yet'],
+			['/blog', 'Nothing here yet']
+		]) {
+			await page.goto(path);
+			await expect(page.getByRole('heading', { level: 2, name: title })).toBeVisible();
+			expect(await levels(page), path).toEqual([1, 2]);
+		}
+	});
 });
