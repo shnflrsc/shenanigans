@@ -1,0 +1,176 @@
+name: Security
+
+# SOFTWARE.md SR-16. No repository secrets are used; the build runs on throwaway values.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Mondays 06:00 UTC: new advisories appear without any code change.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  BUN_VERSION: '1.4.4'
+  # Public values of the local Supabase stack and throwaway strings. None of these is a secret.
+  CI_BUILD_ENV: |
+    DATABASE_URL=postgresql://ci:ci@127.0.0.1:5432/ci
+    PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+    PUBLIC_SUPABASE_ANON_KEY=ci-dummy-anon-key
+    SUPABASE_SERVICE_ROLE_KEY=ci-dummy-service-role-key-7f3a9c
+    ADMIN_GITHUB_ID=9876543
+    RATE_LIMIT_SECRET=ci-dummy-rate-limit-secret-4b1d8e2f6a
+
+jobs:
+  secrets:
+    name: Secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Scans every commit, not only the latest, so a key that was committed and later deleted is still found.
+      - name: gitleaks
+        run: >
+          docker run --rm -v "$PWD:/repo"
+          zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          detect --source /repo --redact --no-banner --verbose
+
+  dependencies:
+    name: Dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - name: Known vulnerabilities (high and critical fail the run)
+        run: bun audit --audit-level=high
+      - name: Review added or changed packages
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+
+  code-analysis:
+    name: Code analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          category: /language:javascript-typescript
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      # CodeQL does not read .svelte templates; these ESLint rules (svelte/no-at-html-tags) cover that.
+      - run: bun run lint
+      - run: bun run check
+
+  build-and-bundle:
+    name: Build and bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - name: Build with throwaway values
+        run: |
+          printf '%s\n' "$CI_BUILD_ENV" > .env
+          bun run build
+      # SR-5: server-only names and values must not reach the browser.
+      - name: Server values are not in the client build
+        run: |
+          fail=0
+          for needle in SUPABASE_SERVICE_ROLE_KEY RATE_LIMIT_SECRET ci-dummy-service-role-key-7f3a9c ci-dummy-rate-limit-secret-4b1d8e2f6a postgresql://ci:ci 9876543; do
+            if grep -rFl -- "$needle" .svelte-kit/output/client; then
+              echo "::error::'$needle' found in the client build"
+              fail=1
+            fi
+          done
+          exit $fail
+
+  security-tests:
+    name: Security tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
+        with:
+          version: 2.122.0
+      - name: Start the local Supabase stack
+        run: |
+          # The stack only needs these to start; GitHub sign-in itself is not exercised in CI.
+          printf 'SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID=ci-placeholder\nSUPABASE_AUTH_EXTERNAL_GITHUB_SECRET=ci-placeholder\n' > supabase/.env
+          bun run db:start
+      - name: Write .env from the local stack
+        run: |
+          eval "$(supabase status -o env)"
+          {
+            echo "DATABASE_URL=$DB_URL"
+            echo "PUBLIC_SUPABASE_URL=$API_URL"
+            echo "PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "ADMIN_GITHUB_ID=9876543"
+            echo "RATE_LIMIT_SECRET=ci-rate-limit-secret-$(openssl rand -hex 16)"
+          } > .env
+      - run: bun run db:migrate
+      - name: Database, authorization, sanitizer, upload and rate-limit tests
+        run: >
+          bunx vitest --run --project server
+          src/lib/server/db src/lib/server/rate-limit src/lib/server/auth
+          src/lib/server/uploads.spec.ts src/lib/server/revalidate.spec.ts
+          src/lib/server/content/admin.spec.ts src/lib/markdown/render.spec.ts
+      - run: bunx playwright install --with-deps chromium
+      - name: Headers, login, admin access and error-page tests
+        run: >
+          bunx playwright test
+          e2e/security.e2e.ts e2e/login.e2e.ts e2e/admin-auth.e2e.ts
+          e2e/errors.e2e.ts e2e/external-links.e2e.ts
+      - name: Keep the report when something fails
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: test-results
+          retention-days: 7
+      - name: Stop the stack
+        if: always()
+        run: supabase stop --no-backup

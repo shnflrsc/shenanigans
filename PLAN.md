@@ -161,11 +161,11 @@ Spec: DESIGN.md "Motion (public site)", PRODUCT.md section 6, SOFTWARE.md UR-11.
 Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.md G13. Decision D25. Free tools, no repository secrets, read-only permissions, actions pinned to commit hashes.
 
 - [x] **M11-0** Documents first: PRODUCT 0.5, SOFTWARE 0.5, DESIGN, JOURNEY 0.3. Verify: SR-16 present and consistent across the four files.
-- [ ] **M11-1** Baseline: run `bun audit`, gitleaks and the security test subset locally; fix real findings. Covers: SR-16. Verify: all clean or each exception written down.
-- [ ] **M11-2** `.gitleaks.toml` allowlisting only the public local-development values. Covers: SR-16. Verify: gitleaks over full history is clean; a fake key is still caught.
-- [ ] **M11-3** `.github/workflows/security.yml` with the five jobs. Covers: SR-16. Verify: workflow lints (actionlint) and the jobs run locally where possible.
-- [ ] **M11-4** `.github/dependabot.yml` (packages and actions, weekly). Covers: MR-4.
-- [ ] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
+- [x] **M11-1** Baseline: run `bun audit`, gitleaks and the security test subset locally; fix real findings. Covers: SR-16. Verify: all clean or each exception written down.
+- [x] **M11-2** No `.gitleaks.toml` needed: gitleaks over the full history found nothing, so there is no allowlist to maintain. Covers: SR-16. Verify: gitleaks over full history is clean; a fake key is still caught.
+- [x] **M11-3** `.github/workflows/security.yml` with the five jobs. Covers: SR-16. Verify: workflow lints (actionlint) and the jobs run locally where possible.
+- [x] **M11-4** `.github/dependabot.yml` (packages and actions, weekly). Covers: MR-4.
+- [x] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
 - [ ] **M11-6** First run on GitHub and failure drills on throwaway branches. Covers: SR-16. Verify: every job green on the real branch and red on its matching drill.
 
 ## 5. Human-only tasks
@@ -397,3 +397,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-10-31 FINAL: full run: check 0 errors, lint clean, 153 unit/client tests, 156 e2e tests, build ok. Remaining unchecked: M9-2, M9-3 (blocked, human tasks)
 - 2026-10-31 post-build gaps: image insertion into markdown (uploader panel, required alt, inserts at cursor), phone sticky Save/Publish bar with editor-own top bar, toast offset; 11 new e2e tests
 - 2026-11-01 M10-4: motion v2 (D23): one slide-in fade on whole sections. First section plays it on load (CSS), every later section hidden under html.js and shown once at 5% visible (including one peeking into the first screen); background bands stay still; no hover/press/stagger/page-transition/theme effects. 13 motion e2e (reduced motion, JS off, blocked scripts 2.5s fallback, slow/fast/jump scroll, CLS, admin quiet); axe re-run with settle
+- 2026-11-01 M11-1..5: baseline clean (bun audit: no high/critical, 6 moderate/low left; gitleaks: 66 commits clean); security.yml (5 jobs, actions pinned to hashes, actionlint clean), dependabot.yml, README section. Locally: bundle check passes, 115 server tests and 28 security e2e tests pass. M11-6 (first run on GitHub, failure drills) waits for a push.
