@@ -34,7 +34,7 @@
 		<SectionTitle tag="h1" soft="What I learn while building.">Blog.</SectionTitle>
 
 		{#if data.totalAll === 0}
-			<EmptyCard variant="soft" title="Nothing here yet" />
+			<EmptyCard variant="soft" title="Nothing here yet" level={2} />
 		{:else}
 			{#if showFilters}
 				<FilterTags
