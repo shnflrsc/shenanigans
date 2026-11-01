@@ -34,12 +34,12 @@ export const about = {
 			detail: 'LearnPossible2 AI Hackathon Challenge'
 		},
 		{ when: '2026', title: '1st Runner Up', detail: 'RAITE Quiz Bee Challenge' },
+		{ when: '2026', title: 'BetterMeycauayan', detail: 'BetterGov' },
 		{
 			when: '2025 – now',
 			title: 'BS Information Technology',
 			detail: 'Bulacan State University'
-		},
-		{ when: '2026', title: 'BetterMeycauayan', detail: 'BetterGov' }
+		}
 	]
 };
 
