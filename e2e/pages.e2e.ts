@@ -53,7 +53,7 @@ test.describe('Projects', () => {
 		const response = await page.goto('/projects/sample-handbook-assistant');
 		expect(response!.status()).toBe(200);
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sample: Handbook assistant');
-		await expect(page.getByText('Case study', { exact: true })).toBeVisible();
+		await expect(page.getByText('Case study', { exact: true })).toHaveCount(0);
 		const facts = page.locator('dl');
 		await expect(facts).toContainText('Year');
 		await expect(facts).toContainText('2026');

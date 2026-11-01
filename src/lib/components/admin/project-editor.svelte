@@ -379,6 +379,7 @@
 					bind:path={editor.data.coverImage}
 					bind:alt={editor.data.coverAlt}
 					altError={err('coverAlt')}
+					note="Recommended: 1600 × 1000 px (16:10). It is shown at 16:10 on project cards and the project page, and anything outside that shape is cropped."
 				/>
 			</div>
 
