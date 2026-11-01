@@ -7,7 +7,7 @@ import ButtonProbe from './button-probe.svelte';
 describe('Button variants', () => {
 	it('primary uses ink fill and secondary a strong-line border', async () => {
 		document.documentElement.dataset.theme = 'light';
-		render(ButtonProbe);
+		await render(ButtonProbe);
 		const primary = page.getByRole('button', { name: 'Primary' }).element();
 		const secondary = page.getByRole('button', { name: 'Secondary' }).element();
 		expect(getComputedStyle(primary).backgroundColor).toBe('rgb(55, 53, 47)');
@@ -17,7 +17,7 @@ describe('Button variants', () => {
 	});
 
 	it('shows the focus ring token on keyboard focus', async () => {
-		render(ButtonProbe);
+		await render(ButtonProbe);
 		await page.getByRole('button', { name: 'Primary' }).element().focus();
 		await expect.element(page.getByRole('button', { name: 'Primary' })).toHaveFocus();
 	});
