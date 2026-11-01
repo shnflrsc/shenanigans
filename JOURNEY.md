@@ -152,7 +152,7 @@ There is no process yet. This is the first version of the workflow.
 | G10 | A: Learn about me | About me content lives in the site's code, so changing it means a redeploy. | Accept for now; move it into the dashboard later if it changes often | Low |
 | G11 | A: Share, B: Arrive | The way per-post preview images are rendered and cached is not chosen (FR-32). | Choose when building | Low to Medium |
 | G12 | C and D | Admin screens, the login screen and the 429 page are not designed yet. | Run the admin design prompt | Medium |
-| G13 | C: Keeping it safe | Nothing warns the owner of a leaked key, a vulnerable dependency or a weakened security rule. | **Decided:** automated checks on every change and weekly (SR-16); GitHub emails the owner and, once branch protection is on, blocks the merge. | Medium |
+| G13 | C: Keeping it safe | Nothing warns the owner of a leaked key, a vulnerable dependency or a weakened security rule. | **Decided:** automated checks on every change and weekly (SR-16); GitHub emails the owner and, blocks the merge through the ruleset on `main` until the checks pass. | Medium |
 
 ---
 
