@@ -16,7 +16,8 @@
 			{/if}
 		</div>
 
-		<div class="grid items-start gap-12 min-[900px]:grid-cols-2">
+		<!-- Two rows: the catchphrase and bio, then the quick-facts card. -->
+		<div class="flex flex-col gap-12">
 			<div class="flex max-w-[560px] flex-col gap-4">
 				<p class="text-prose-h2">
 					{about.catchphrase} <span class="text-ink-subtle">{about.catchphraseSoft}</span>
@@ -26,7 +27,7 @@
 				{/each}
 			</div>
 			<Frame>
-				<dl class="grid grid-cols-2 gap-x-6 gap-y-5">
+				<dl class="grid grid-cols-2 gap-x-6 gap-y-5 min-[720px]:grid-cols-3">
 					{#each about.facts as fact (fact.label)}
 						<div class="flex flex-col gap-1">
 							<dt class="text-caption text-ink-subtle">{fact.label}</dt>
