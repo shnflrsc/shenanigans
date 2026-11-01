@@ -75,6 +75,12 @@ test('the project page has no Case study label and Live site and Source sit in s
 		.toBe(200);
 	await visitor.goto('/projects/e2e-page-layout');
 	await expect(visitor.getByText('Case study', { exact: true })).toHaveCount(0);
+
+	// Project cards have no Case study button either; the card itself links to the project.
+	await visitor.goto('/projects');
+	await expect(visitor.getByRole('link', { name: 'E2E Page Layout' })).toBeVisible();
+	await expect(visitor.getByRole('link', { name: 'Case study' })).toHaveCount(0);
+	await visitor.goto('/projects/e2e-page-layout');
 	const live = await visitor.getByRole('link', { name: 'Live site' }).boundingBox();
 	const source = await visitor.getByRole('link', { name: 'Source' }).boundingBox();
 	// Same row, different columns: the second starts to the right of where the first ends.
