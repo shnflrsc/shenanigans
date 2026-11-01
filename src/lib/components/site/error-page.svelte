@@ -40,11 +40,11 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<div class="site-motion flex min-h-dvh flex-col">
+<div class="flex min-h-dvh flex-col">
 	<SiteNav />
 	<main class="flex-1">
 		<Section>
-			<div data-enter class="mx-auto flex max-w-[560px] flex-col items-center gap-6 text-center">
+			<div class="mx-auto flex max-w-[560px] flex-col items-center gap-6 text-center">
 				<Eyebrow>{copy.eyebrow}</Eyebrow>
 				<h1 class="text-hero">
 					{copy.title}<br /><span class="text-ink-subtle">{copy.soft}</span>

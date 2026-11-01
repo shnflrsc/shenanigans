@@ -6,10 +6,10 @@
 	let { children }: LayoutProps = $props();
 </script>
 
-<div class="site-motion flex min-h-dvh flex-col">
+<div class="flex min-h-dvh flex-col">
 	<SiteNav />
 	<!-- The footer sits at the bottom of the viewport on short pages (FR-26). -->
-	<main class="vt-main flex-1">
+	<main class="flex-1">
 		{@render children()}
 	</main>
 	<SiteFooter />

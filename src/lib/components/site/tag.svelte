@@ -16,7 +16,7 @@
 	const filter = $derived(href !== undefined);
 	const classes = $derived(
 		cn(
-			'press inline-flex items-center gap-1.5 rounded-sm text-[12px] leading-4 font-medium transition-colors duration-150',
+			'inline-flex items-center gap-1.5 rounded-sm text-[12px] leading-4 font-medium transition-colors duration-150',
 			filter
 				? cn(
 						'h-[30px] border px-3',

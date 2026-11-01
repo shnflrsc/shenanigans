@@ -45,7 +45,7 @@
 					base="/(site)/blog"
 				/>
 			{/if}
-			<div data-reveal-group class="flex flex-col border-t border-line">
+			<div class="flex flex-col border-t border-line">
 				{#each data.posts as post (post.slug)}
 					<PostCard {post} readTime={post.readTime} />
 				{/each}

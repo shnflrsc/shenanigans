@@ -31,7 +31,7 @@
 			alt={alt ?? ''}
 			loading={eager ? 'eager' : 'lazy'}
 			decoding="async"
-			class="size-full object-cover text-transparent transition-transform duration-200 ease-out group-hover/card:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
+			class="size-full object-cover text-transparent transition-transform duration-200 ease-out group-hover/card:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
 			onerror={() => (failed = true)}
 		/>
 	{/if}

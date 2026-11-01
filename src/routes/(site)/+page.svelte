@@ -58,7 +58,7 @@
 			{/if}
 		</div>
 		{#if data.posts.length}
-			<div data-reveal-group class="flex flex-col">
+			<div class="flex flex-col">
 				{#each data.posts as post (post.slug)}
 					<PostCard {post} readTime={post.readTime} />
 				{/each}

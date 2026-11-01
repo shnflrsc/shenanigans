@@ -1,5 +1,4 @@
 import { browser } from '$app/env';
-import { withViewTransition } from '#lib/motion/view-transition.js';
 
 export type ThemeChoice = 'light' | 'dark';
 
@@ -44,8 +43,7 @@ class Theme {
 
 	toggle() {
 		const next: ThemeChoice = this.current === 'dark' ? 'light' : 'dark';
-		// The whole page cross-fades; browsers without view transitions switch instantly.
-		void withViewTransition(() => this.apply(next), { theme: true });
+		this.apply(next);
 		try {
 			localStorage.setItem(STORAGE_KEY, next);
 		} catch {

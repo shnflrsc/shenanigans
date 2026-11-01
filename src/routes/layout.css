@@ -8,7 +8,6 @@
 
 @import '../lib/styles/tokens.css';
 @import '../lib/styles/prose.css';
-@import '../lib/styles/motion.css';
 
 /* Tokens stay the source of truth; Tailwind utilities read them at runtime so both themes work. */
 @theme inline {

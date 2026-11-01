@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { revealChildren } from '#lib/motion/reveal.js';
 	import { cn } from '#lib/utils.js';
 
 	type Props = {
@@ -35,10 +34,7 @@
 		className
 	)}
 >
-	<div
-		use:revealChildren
-		class={cn('mx-auto w-full px-6 min-[1024px]:px-16', widths[width], innerClass)}
-	>
+	<div class={cn('mx-auto w-full px-6 min-[1024px]:px-16', widths[width], innerClass)}>
 		{@render children()}
 	</div>
 </section>
