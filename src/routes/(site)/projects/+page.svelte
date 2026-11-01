@@ -36,11 +36,11 @@
 				/>
 			{/if}
 			{#if data.total === 1}
-				<ProjectCard project={data.projects[0]} featured />
+				<ProjectCard project={data.projects[0]} featured level={2} />
 			{:else}
 				<ul class="grid gap-6 min-[720px]:grid-cols-2">
 					{#each data.projects as project (project.slug)}
-						<li class="flex"><div class="w-full"><ProjectCard {project} /></div></li>
+						<li class="flex"><div class="w-full"><ProjectCard {project} level={2} /></div></li>
 					{/each}
 				</ul>
 			{/if}

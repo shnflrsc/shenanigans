@@ -12,9 +12,11 @@
 			tags: { slug: string; name: string }[];
 		};
 		readTime: number;
+		/** Heading level of the title: 3 under a section heading (Home), 2 directly under the page title (Blog). */
+		level?: 2 | 3;
 	};
 
-	let { post, readTime }: Props = $props();
+	let { post, readTime, level = 3 }: Props = $props();
 </script>
 
 <!-- Row layout: mono date column, title, excerpt, tags and read time, hairline below (DESIGN.md PostCard). -->
@@ -25,11 +27,11 @@
 		{post.publishedAt ? formatDate(post.publishedAt) : ''}
 	</span>
 	<div class="flex flex-col gap-2">
-		<h3 class="text-card-title">
+		<svelte:element this={`h${level}`} class="text-card-title">
 			<a href={resolve('/(site)/blog/[slug]', { slug: post.slug })} class="stretched-link"
 				>{post.title}</a
 			>
-		</h3>
+		</svelte:element>
 		<p class="text-small text-ink-muted">{post.excerpt}</p>
 		<div class="flex flex-wrap items-center gap-2">
 			{#each post.tags as tag (tag.slug)}<Tag label={tag.name} />{/each}

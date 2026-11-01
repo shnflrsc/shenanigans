@@ -23,9 +23,11 @@
 		};
 		/** Image left, body right, larger title. One per page. */
 		featured?: boolean;
+		/** Heading level of the title: 3 under a section heading (Home), 2 directly under the page title (Projects). */
+		level?: 2 | 3;
 	};
 
-	let { project, featured = false }: Props = $props();
+	let { project, featured = false, level = 3 }: Props = $props();
 	const caption = $derived([project.year, project.role].filter(Boolean).join(' · '));
 	const href = $derived(resolve('/(site)/projects/[slug]', { slug: project.slug }));
 </script>
@@ -43,14 +45,15 @@
 	/>
 	<div class={cn('flex flex-col gap-3 p-6', featured && 'justify-center')}>
 		{#if caption}<span class="text-caption text-ink-subtle">{caption}</span>{/if}
-		<h3
+		<svelte:element
+			this={`h${level}`}
 			class={featured
 				? 'text-[24px] leading-8 font-semibold tracking-[-0.02em]'
 				: 'text-card-title'}
 		>
 			<!-- The whole card is clickable through this stretched link. -->
 			<a {href} class="stretched-link">{project.title}</a>
-		</h3>
+		</svelte:element>
 		<p class="text-small text-ink-muted">{project.summary}</p>
 		{#if project.tags.length}
 			<ul class="flex flex-wrap gap-2" aria-label="Tags">
