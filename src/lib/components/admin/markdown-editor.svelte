@@ -67,33 +67,50 @@
 	// True until the first render for the current text has come back.
 	let waiting = $state(true);
 
-	// The preview is rendered by the same function as the public pages (SR-13), only while it is showing.
-	// Switching to it renders at once; later changes are debounced.
+	// The preview is rendered by the same function as the public pages (SR-13). To keep switching to it quick, the
+	// text is rendered in the background a moment after typing pauses, so the result is usually waiting by the time
+	// you press Preview; if it is not, it is rendered right away.
 	let renderedFor: string | null = null;
 	$effect(() => {
-		if (mode !== 'preview') return;
 		const markdown = value;
-		untrack(() => (waiting = markdown !== renderedFor));
-		const delay = renderedFor === null || renderedFor === markdown ? 0 : 250;
-		const timer = setTimeout(async () => {
-			try {
-				const response = await fetch('/admin/preview', {
-					method: 'POST',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({ markdown })
-				});
-				if (!response.ok) throw new Error(String(response.status));
-				const result = (await response.json()) as { html: string };
-				untrack(() => {
-					html = result.html;
-					previewFailed = false;
-					renderedFor = markdown;
-					waiting = false;
-				});
-			} catch {
-				untrack(() => (previewFailed = true));
-			}
-		}, delay);
+		const showing = mode === 'preview';
+		if (renderedFor === markdown) {
+			untrack(() => (waiting = false));
+			return;
+		}
+		untrack(() => (waiting = true));
+		if (markdown.trim() === '') {
+			untrack(() => {
+				html = '';
+				renderedFor = markdown;
+				waiting = false;
+			});
+			return;
+		}
+		const timer = setTimeout(
+			async () => {
+				try {
+					const response = await fetch('/admin/preview', {
+						method: 'POST',
+						headers: { 'content-type': 'application/json' },
+						body: JSON.stringify({ markdown })
+					});
+					if (!response.ok) throw new Error(String(response.status));
+					const result = (await response.json()) as { html: string };
+					untrack(() => {
+						// Ignore an answer for text that has changed since.
+						if (markdown !== value) return;
+						html = result.html;
+						previewFailed = false;
+						renderedFor = markdown;
+						waiting = false;
+					});
+				} catch {
+					untrack(() => (previewFailed = true));
+				}
+			},
+			showing ? 0 : 600
+		);
 		return () => clearTimeout(timer);
 	});
 
@@ -209,11 +226,9 @@
 		hidden={mode !== 'edit'}
 		class="flex flex-col"
 	>
-		<label for={id} class="border-b border-line px-4 py-2 text-caption text-ink-subtle"
-			>{label}</label
-		>
 		<textarea
 			{id}
+			aria-label={label}
 			bind:this={textarea}
 			bind:value
 			spellcheck="true"
