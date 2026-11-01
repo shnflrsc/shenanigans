@@ -166,7 +166,7 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 - [x] **M11-3** `.github/workflows/security.yml` with the five jobs. Covers: SR-16. Verify: workflow lints (actionlint) and the jobs run locally where possible.
 - [x] **M11-4** `.github/dependabot.yml` (packages and actions, weekly). Covers: MR-4.
 - [x] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
-- [ ] **M11-6** First run on GitHub and failure drills on throwaway branches. Covers: SR-16. Verify: every job green on the real branch and red on its matching drill.
+- [x] **M11-6** First run on GitHub and failure drills on throwaway PRs (closed unmerged). Covers: SR-16. Result: secrets (push protection blocked a vendor-pattern key; gitleaks failed a generic one), dependencies (lodash 4.17.20), bundle and the CSP removal were caught. Two gaps found and closed: `eval` (now ESLint `no-eval`, `no-implied-eval`, `no-new-func`) and a single removed `requireAdmin(` call in a file with several handlers (the route inventory now counts one guard per handler).
 
 ## 5. Human-only tasks
 
