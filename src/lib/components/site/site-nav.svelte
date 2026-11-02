@@ -6,7 +6,6 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import ThemeToggle from '#lib/components/theme-toggle.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import SocialLinks from './social-links.svelte';
 	import { nav, site } from '#lib/site.js';
 
 	let open = $state(false);
@@ -22,6 +21,17 @@
 			await tick();
 			menuButton?.focus();
 		}
+	}
+
+	// Every contact box has id="contact". Where the page has one, scroll to it; elsewhere go to the one on Home.
+	const contactHref = `${resolve('/(site)')}#contact`;
+	function goToContact(event: MouseEvent) {
+		const box = document.getElementById('contact');
+		if (!box) return;
+		event.preventDefault();
+		close(false);
+		const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		box.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' });
 	}
 
 	// A resized or navigated page should not keep the panel open.
@@ -53,7 +63,13 @@
 
 		<div class="ml-auto flex items-center gap-2">
 			<ThemeToggle />
-			<SocialLinks class="max-[640px]:hidden" />
+			<Button
+				variant="default"
+				size="sm"
+				href={contactHref}
+				class="max-[640px]:hidden"
+				onclick={goToContact}>Get in touch</Button
+			>
 			<Button
 				bind:ref={menuButton}
 				variant="secondary"
@@ -90,7 +106,9 @@
 				{/each}
 			</nav>
 			<div class="mt-2 border-t border-line pt-4">
-				<SocialLinks large />
+				<Button variant="default" size="lg" href={contactHref} class="w-full" onclick={goToContact}
+					>Get in touch</Button
+				>
 			</div>
 		</div>
 	{/if}

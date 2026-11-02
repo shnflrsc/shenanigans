@@ -29,7 +29,7 @@ test.describe('Journey A: recruiter', () => {
 		await expect(page).toHaveURL(/\/projects\/sample-handbook-assistant$/);
 		await expect(page.getByText('My role')).toBeVisible();
 
-		const contact = page.getByRole('link', { name: 'Get in touch' }).first();
+		const contact = page.locator('#contact').getByRole('link', { name: 'Email' });
 		await expect(contact).toHaveAttribute('href', 'mailto:floresca.shanegarcia@gmail.com');
 		expect(problems).toEqual([]);
 	});

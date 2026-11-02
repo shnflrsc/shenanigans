@@ -3,17 +3,19 @@ import { expect, test } from '@playwright/test';
 test.describe('phone menu (640px and narrower)', () => {
 	test.use({ viewport: { width: 375, height: 812 } });
 
-	test('collapses the links and the icon links into a menu', async ({ page }) => {
+	test('collapses the links and Get in touch into a menu', async ({ page }) => {
 		await page.goto('/');
 		const header = page.locator('header');
 		await expect(header.getByRole('link', { name: 'Shenanigans' })).toBeVisible();
 		await expect(header.getByRole('button', { name: /Switch to/ })).toBeVisible();
 		await expect(header.getByRole('button', { name: 'Open menu' })).toBeVisible();
 		await expect(header.getByRole('navigation', { name: 'Main' })).toBeHidden();
-		await expect(header.getByRole('link', { name: 'GitHub' })).toBeHidden();
+		await expect(header.getByRole('link', { name: 'Get in touch' })).toBeHidden();
 	});
 
-	test('opens, sets aria-expanded, and has tall tap rows and the icon links', async ({ page }) => {
+	test('opens, sets aria-expanded, and has tall tap rows and a full-width Get in touch', async ({
+		page
+	}) => {
 		await page.goto('/projects');
 		const button = page.getByRole('button', { name: 'Open menu' });
 		await expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -34,11 +36,9 @@ test.describe('phone menu (640px and narrower)', () => {
 			'aria-current',
 			'page'
 		);
-		for (const name of ['Email', 'GitHub', 'LinkedIn']) {
-			const box = await panel.getByRole('link', { name }).boundingBox();
-			expect(box!.width).toBeGreaterThanOrEqual(44);
-			expect(box!.height).toBeGreaterThanOrEqual(44);
-		}
+		const cta = await panel.getByRole('link', { name: 'Get in touch' }).boundingBox();
+		const panelBox = await panel.boundingBox();
+		expect(cta!.width).toBeGreaterThan(panelBox!.width - 60);
 	});
 
 	test('closes on Escape and returns focus to the menu button', async ({ page }) => {
@@ -86,5 +86,32 @@ test.describe('footer', () => {
 		await page.goto('/blog');
 		const footer = await page.locator('footer').boundingBox();
 		expect(footer!.height).toBeLessThan(80);
+	});
+});
+
+test.describe('Get in touch', () => {
+	test('scrolls to the contact box on Home, and goes to it from other pages', async ({ page }) => {
+		await page.goto('/');
+		await page.getByRole('banner').getByRole('link', { name: 'Get in touch' }).click();
+		await expect(page.locator('#contact')).toBeInViewport();
+		expect(new URL(page.url()).pathname).toBe('/');
+
+		await page.goto('/projects');
+		await expect(page.locator('#contact')).toHaveCount(0);
+		await page.getByRole('banner').getByRole('link', { name: 'Get in touch' }).click();
+		await expect(page).toHaveURL(/\/#contact$/);
+		await expect(page.locator('#contact')).toBeInViewport();
+	});
+
+	test('blog posts end with the contact box', async ({ page }) => {
+		await page.goto('/blog/sample-first-post');
+		const box = page.locator('#contact');
+		await expect(box.getByRole('heading', { name: /Got something in mind/ })).toBeVisible();
+		await page.getByRole('banner').getByRole('link', { name: 'Get in touch' }).click();
+		await expect(box).toBeInViewport();
+		await expect(box.getByRole('link', { name: 'Email' })).toHaveAttribute(
+			'href',
+			'mailto:floresca.shanegarcia@gmail.com'
+		);
 	});
 });

@@ -54,7 +54,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 - Contact is an email link (floresca.shanegarcia@gmail.com). There is no contact form.
 - Social links: GitHub and LinkedIn.
-- Where contact appears: icon links (no labels) for Email, GitHub and LinkedIn in the header, the contact box at the end of Home ("Got something in mind? Let's talk." with Get in touch, GitHub and LinkedIn), and Email, GitHub and LinkedIn icon links (no labels) in the footer.
+- Where contact appears: a "Get in touch" button in the header that scrolls to the contact box, the contact box ("Got something in mind? Let's talk." with Email, GitHub and LinkedIn) at the end of Home, project pages and blog posts, and Email, GitHub and LinkedIn icon links (no labels) in the footer.
 
 ### 4.4 Home page
 
@@ -72,8 +72,8 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 ### 4.5 Navigation and footer
 
-- **Header on desktop:** brand "Shenanigans", links Home, Projects and Blog, then on the right a subtle theme toggle (icon button, no border) and icon links for Email, GitHub and LinkedIn (no labels; each has an accessible name). The header stays fixed at the top while scrolling.
-- **Header on phones (640px and narrower):** the links and the Email, GitHub and LinkedIn icons collapse into a menu. The bar shows the brand, the theme toggle and a menu button. The menu opens a panel with Home, Projects and Blog (large tap rows, current page highlighted) and a row with the three icons.
+- **Header on desktop:** brand "Shenanigans", links Home, Projects and Blog, then on the right a subtle theme toggle (icon button, no border) and a primary "Get in touch" button. On a page with a contact box (Home, project pages, blog posts) it scrolls down to the box; on other pages it goes to the box on Home. The header stays fixed at the top while scrolling.
+- **Header on phones (640px and narrower):** the links and the Get in touch button collapse into a menu. The bar shows the brand, the theme toggle and a menu button. The menu opens a panel with Home, Projects and Blog (large tap rows, current page highlighted) and a full-width Get in touch button.
 - **Footer:** one compact row on every page. Left: "© 2026 Darl Shanen Floresca" (the year updates automatically; the site address is not repeated). Right: Email, GitHub and LinkedIn as small icon links with no labels. No brand block, link columns or tagline. On short pages the footer sits at the bottom of the screen.
 
 ### 4.6 Project and post pages
@@ -81,6 +81,8 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 - **Projects and Blog pages:** titles keep a soft second half ("Projects. *Things I have built.*" and "Blog. *What I learn while building.*") with no subtitles. Tag filter chips with counts stay.
 - **Project case study:** a back link; a header with title, summary, author and read time, then the tags, then the facts card (Year, My role and Team in one row; Live site and Source in a second row, each a label with its link as the value), all above the header border; a 16:10 cover; the markdown body; previous and next project links; and a contact box. Suggested sections for writing a case study (a guide, not enforced): intro, The problem, What I did, The result, What I'd change.
 - **Post:** header, body, then "The project this post is about" (a featured-style project card, shown only when the post is linked to a published project) and previous and next post links. No reactions, comments or newsletter.
+- **Project case study:** a back link; a header with title, summary, author and read time, then the tags, then the facts card (Year, My role, Team, and the live site and source links, each in its own column), all above the header border; a 16:10 cover; the markdown body; previous and next project links; and a contact box. Suggested sections for writing a case study (a guide, not enforced): intro, The problem, What I did, The result, What I'd change.
+- **Post:** header, body, then "The project this post is about" (a featured-style project card, shown only when the post is linked to a published project) and previous and next post links, then the contact box. No reactions, comments or newsletter.
 - **Code blocks** in posts and case studies have a header bar with the language label and a "Copy" button that changes to "Copied" with a check for about two seconds.
 
 ### 4.7 Empty and error states
@@ -140,7 +142,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | About | A section on Home, right after the hero | A separate About page |
 | Hero | Photo, name and caption; buttons View projects and Read the blog | A status line; a Get in touch button in the hero |
 | Featured | Shows only the one featured project | A featured project plus a grid of other projects |
-| Header | Email, GitHub and LinkedIn icons (no labels) and theme toggle; sticky; a menu on phones | A "Get in touch" button |
+| Header | Get in touch button (scrolls to the contact box) and theme toggle; sticky; a menu on phones | A button that opened an email; icon links in the header |
 | Footer | One compact row: copyright with my full name, plus Email, GitHub and LinkedIn as icons only, with their logos | Brand block, link columns, tagline and the site address |
 | Section subtitles | Removed from Featured, Latest posts, Projects and Blog | |
 | Code blocks | Language label and a Copy button | |
