@@ -189,9 +189,9 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 
 | Component | Anatomy | Rules |
 | --- | --- | --- |
-| NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), socials + one small primary button right | Current page = `ink` on `fill-hover` with `aria-current="page"`. Optional sticky. No logo image ships: set the name in type. |
+| NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), Email, GitHub and LinkedIn icon buttons (no labels) right, next to the theme toggle | Current page = `ink` on `fill-hover` with `aria-current="page"`. Sticky (`position: sticky`, top 0). No logo image ships: set the name in type. |
 | SocialLinks | Row of 32px ghost icon buttons, 16px line icons in `ink-subtle`, `ink` on hover | Every link has an accessible label. Generic glyphs only. |
-| Footer | `paper-soft` with top hairline, one compact row: mono `caption` copyright with the full name on the left, ghost links with an icon and label (Email, GitHub, LinkedIn, using the real brand logos) on the right. No brand block, link columns, tagline or site address | Never a dark band. Sits at the bottom of the viewport on short pages. |
+| Footer | `paper-soft` with top hairline, one compact row: mono `caption` copyright with the full name on the left, ghost icon links with no labels (Email, GitHub, LinkedIn, using the real brand logos) on the right. No brand block, link columns, tagline or site address | Never a dark band. Sits at the bottom of the viewport on short pages. |
 | PostNav | Two outline Frames side by side: mono "Previous" / "Next" caption + `card-title` | A missing side leaves its slot empty. |
 
 ### Typography and layout

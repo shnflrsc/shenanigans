@@ -424,4 +424,5 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
 - 2026-11-02 plan status: ISR confirmed on the live site (a dashboard edit shows on the public page at once); résumé added (H8 done). Left: domain (H6) and the client-address spoof check on Vercel.
 - 2026-11-02 plan: added M12 SEO as a future backlog (final domain, Search Console, JSON-LD, sitemap detail, list canonicals, cover as preview image, RSS, editor hints, measuring). Nothing started.
+- 2026-11-02 header and footer: Email, GitHub and LinkedIn are icon links with no visible labels (accessible names kept); the header Get in touch button is gone (it stays in the Home contact box); the header is sticky. On phones the three icons sit in the menu.
 - 2026-11-02 M11-8/9 added for later: stricter RLS and write-endpoint tests, an optional ZAP baseline job, and a manual review of hosted Supabase and Vercel settings.
