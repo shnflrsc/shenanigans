@@ -54,7 +54,7 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 - Contact is an email link (floresca.shanegarcia@gmail.com). There is no contact form.
 - Social links: GitHub and LinkedIn.
-- Where contact appears: a "Get in touch" button in the header, the contact box at the end of Home ("Got something in mind? Let's talk." with Get in touch, GitHub and LinkedIn), and Email, GitHub and LinkedIn links in the footer.
+- Where contact appears: icon links (no labels) for Email, GitHub and LinkedIn in the header, the contact box at the end of Home ("Got something in mind? Let's talk." with Get in touch, GitHub and LinkedIn), and Email, GitHub and LinkedIn icon links (no labels) in the footer.
 
 ### 4.4 Home page
 
@@ -72,9 +72,9 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 ### 4.5 Navigation and footer
 
-- **Header on desktop:** brand "Shenanigans", links Home, Projects and Blog, then on the right a subtle theme toggle (icon button, no border) and a primary "Get in touch" button that opens an email.
-- **Header on phones (640px and narrower):** the links and the Get in touch button collapse into a menu. The bar shows the brand, the theme toggle and a menu button. The menu opens a panel with Home, Projects and Blog (large tap rows, current page highlighted) and a full-width Get in touch button.
-- **Footer:** one compact row on every page. Left: "© 2026 Darl Shanen Floresca" (the year updates automatically; the site address is not repeated). Right: Email, GitHub and LinkedIn as small links with an icon and a label. No brand block, link columns or tagline. On short pages the footer sits at the bottom of the screen.
+- **Header on desktop:** brand "Shenanigans", links Home, Projects and Blog, then on the right a subtle theme toggle (icon button, no border) and icon links for Email, GitHub and LinkedIn (no labels; each has an accessible name). The header stays fixed at the top while scrolling.
+- **Header on phones (640px and narrower):** the links and the Email, GitHub and LinkedIn icons collapse into a menu. The bar shows the brand, the theme toggle and a menu button. The menu opens a panel with Home, Projects and Blog (large tap rows, current page highlighted) and a row with the three icons.
+- **Footer:** one compact row on every page. Left: "© 2026 Darl Shanen Floresca" (the year updates automatically; the site address is not repeated). Right: Email, GitHub and LinkedIn as small icon links with no labels. No brand block, link columns or tagline. On short pages the footer sits at the bottom of the screen.
 
 ### 4.6 Project and post pages
 
@@ -140,8 +140,8 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 | About | A section on Home, right after the hero | A separate About page |
 | Hero | Photo, name and caption; buttons View projects and Read the blog | A status line; a Get in touch button in the hero |
 | Featured | Shows only the one featured project | A featured project plus a grid of other projects |
-| Header | Get in touch button and theme toggle; a menu on phones | |
-| Footer | One compact row: copyright with my full name, plus Email, GitHub and LinkedIn with their logos | Brand block, link columns, tagline and the site address |
+| Header | Email, GitHub and LinkedIn icons (no labels) and theme toggle; sticky; a menu on phones | A "Get in touch" button |
+| Footer | One compact row: copyright with my full name, plus Email, GitHub and LinkedIn as icons only, with their logos | Brand block, link columns, tagline and the site address |
 | Section subtitles | Removed from Featured, Latest posts, Projects and Blog | |
 | Code blocks | Language label and a Copy button | |
 | Post and project | A post can link to the project it is about | |

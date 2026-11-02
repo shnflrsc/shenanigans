@@ -26,7 +26,7 @@ test.describe('Projects', () => {
 	test('lists published projects in showcase order with tag chips and counts', async ({ page }) => {
 		await page.goto('/projects');
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Projects.');
-		const titles = await page.locator('article h3').allTextContents();
+		const titles = await page.locator('article h2').allTextContents();
 		expect(titles.map((t) => t.trim())).toEqual([
 			'Sample: Handbook assistant',
 			'Sample: Shenanigans'
@@ -110,7 +110,7 @@ test.describe('Blog', () => {
 
 	test('lists published posts newest first with tag chips and counts', async ({ page }) => {
 		await page.goto('/blog');
-		const titles = await page.locator('article h3').allTextContents();
+		const titles = await page.locator('article h2').allTextContents();
 		expect(titles.map((t) => t.trim())).toEqual([
 			'Sample: What I learned building a handbook assistant',
 			'Sample: Notes on Svelte 5 runes',

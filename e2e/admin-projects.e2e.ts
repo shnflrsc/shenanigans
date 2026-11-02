@@ -40,7 +40,7 @@ test.describe('Projects list', () => {
 		await page.getByRole('button', { name: 'Move Sample: Shenanigans up' }).click();
 		await expect(page.locator('tbody tr').first()).toContainText('Sample: Shenanigans');
 		await page.goto('/projects');
-		await expect(page.locator('article h3').first()).toContainText('Sample: Shenanigans');
+		await expect(page.locator('article h2').first()).toContainText('Sample: Shenanigans');
 		await page.goto('/admin/projects');
 		await page.getByRole('button', { name: 'Move Sample: Shenanigans down' }).click();
 		await expect(page.locator('tbody tr').first()).toContainText('Sample: Handbook assistant');
