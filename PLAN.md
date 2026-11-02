@@ -428,3 +428,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-02 M11-8/9 added for later: stricter RLS and write-endpoint tests, an optional ZAP baseline job, and a manual review of hosted Supabase and Vercel settings.
 - 2026-11-02 project page facts card: Year, My role and Team in one row; Live site and Source in a second row as label and value (the link shown without its protocol) instead of buttons.
 - 2026-11-02 contact: header Get in touch is back and scrolls to the contact box (Home, project pages, blog posts), going to Home's box from other pages; the box's Get in touch button became Email with a mail icon; the box is added to the bottom of blog posts; header icon links removed (footer keeps icons only).
+- 2026-11-03 About me: added 'Technical Community Officer, Edukasyon.ph' (2026) to Experience and highlights, above BS Information Technology.
