@@ -426,3 +426,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-02 plan: added M12 SEO as a future backlog (final domain, Search Console, JSON-LD, sitemap detail, list canonicals, cover as preview image, RSS, editor hints, measuring). Nothing started.
 - 2026-11-02 header and footer: Email, GitHub and LinkedIn are icon links with no visible labels (accessible names kept); the header Get in touch button is gone (it stays in the Home contact box); the header is sticky. On phones the three icons sit in the menu.
 - 2026-11-02 M11-8/9 added for later: stricter RLS and write-endpoint tests, an optional ZAP baseline job, and a manual review of hosted Supabase and Vercel settings.
+- 2026-11-02 project page facts card: Year, My role and Team in one row; Live site and Source in a second row as label and value (the link shown without its protocol) instead of buttons.
