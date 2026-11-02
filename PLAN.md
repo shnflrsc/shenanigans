@@ -168,6 +168,8 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 - [x] **M11-5** README "Security checks" section with the manual GitHub settings. Covers: SR-16.
 - [x] **M11-6** First run on GitHub and failure drills on throwaway PRs (closed unmerged). Covers: SR-16. Result: secrets (push protection blocked a vendor-pattern key; gitleaks failed a generic one), dependencies (lodash 4.17.20), bundle and the CSP removal were caught. Two gaps found and closed: `eval` (now ESLint `no-eval`, `no-implied-eval`, `no-new-func`) and a single removed `requireAdmin(` call in a file with several handlers (the route inventory now counts one guard per handler).
 - [x] **M11-7** Follow-ups: vitest 5 family upgraded together (PR 15; `render` is async in three component specs), Dependabot told to skip major versions, documents brought in line (SOFTWARE 0.6). Covers: SR-16, MR-4.
+- [ ] **M11-8** LATER, security test gaps: (a) the RLS test fails for any table without row-level security, by listing every table in the schema, so a new table cannot ship open; (b) the route guard inventory also covers every public `+server.ts` and form action that writes data, so a new write endpoint must be on a list of known public writes; (c) optional: a ZAP baseline (passive) scan against a local build as a sixth CI job. Covers: SR-16. Verify: removing RLS from a throwaway table, or adding an unguarded write endpoint, fails CI.
+- [ ] **M11-9** LATER, hosted settings check (manual, no tool covers it): Supabase auth settings and storage bucket policies, and the Vercel Firewall rules, reviewed once after launch and after any change. Covers: SR-16.
 
 ## 5. Human-only tasks
 
@@ -407,3 +409,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 plan status: M9-2 ticked (hosted Supabase, GitHub provider and admin id are set up and sign-in works on the deployed site); M9-3 now waits only on the domain (H6); H1 to H5 marked done.
 - 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
 - 2026-11-02 plan status: ISR confirmed on the live site (a dashboard edit shows on the public page at once); résumé added (H8 done). Left: domain (H6) and the client-address spoof check on Vercel.
+- 2026-11-02 M11-8/9 added for later: stricter RLS and write-endpoint tests, an optional ZAP baseline job, and a manual review of hosted Supabase and Vercel settings.
