@@ -51,7 +51,7 @@ test('editing a published project and pressing Save stores every change', async 
 	await expect(page.getByLabel('Summary')).toHaveValue('Second summary');
 });
 
-test('the project page has no Case study label and Live site and Source sit in separate columns', async ({
+test('the project page has no Case study label and Live site and Source are label and value rows in the facts card', async ({
 	page,
 	browser
 }) => {
@@ -81,11 +81,21 @@ test('the project page has no Case study label and Live site and Source sit in s
 	await expect(visitor.getByRole('link', { name: 'E2E Page Layout' })).toBeVisible();
 	await expect(visitor.getByRole('link', { name: 'Case study' })).toHaveCount(0);
 	await visitor.goto('/projects/e2e-page-layout');
-	const live = await visitor.getByRole('link', { name: 'Live site' }).boundingBox();
-	const source = await visitor.getByRole('link', { name: 'Source' }).boundingBox();
-	// Same row, different columns: the second starts to the right of where the first ends.
-	expect(Math.abs(live!.y - source!.y)).toBeLessThan(4);
-	expect(source!.x).toBeGreaterThan(live!.x + live!.width + 16);
+	// Year, role and team share the first row; Live site and Source the second, each as a label and its link.
+	const rows = visitor.locator('main header dl');
+	await expect(rows).toHaveCount(2);
+	await expect(rows.nth(0)).toContainText('Year');
+	await expect(rows.nth(0)).toContainText('My role');
+	await expect(rows.nth(0)).not.toContainText('Live site');
+	await expect(rows.nth(1)).toContainText('Live site');
+	await expect(rows.nth(1)).toContainText('Source');
+	await expect(rows.nth(1).locator('a[href="https://example.com/live"]')).toHaveText(
+		'example.com/live'
+	);
+	expect((await rows.nth(1).boundingBox())!.y).toBeGreaterThan(
+		(await rows.nth(0).boundingBox())!.y
+	);
+	await expect(visitor.getByRole('button', { name: 'Live site' })).toHaveCount(0);
 });
 
 test('the cover image field says which size to upload', async ({ page }) => {

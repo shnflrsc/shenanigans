@@ -1,6 +1,5 @@
 <script lang="ts">
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
-	import ExternalLinkIcon from '@lucide/svelte/icons/external-link';
 	import { resolve } from '$app/paths';
 	import ContactBox from '#lib/components/site/contact-box.svelte';
 	import Cover from '#lib/components/site/cover.svelte';
@@ -10,7 +9,6 @@
 	import Section from '#lib/components/site/section.svelte';
 	import Seo from '#lib/components/site/seo.svelte';
 	import Tag from '#lib/components/site/tag.svelte';
-	import { Button } from '#lib/components/ui/button/index.js';
 	import { formatReadTime } from '#lib/format.js';
 	import { site } from '#lib/site.js';
 	import type { PageProps } from './$types';
@@ -26,7 +24,14 @@
 			{ label: 'Team', value: project.team }
 		].filter((f): f is { label: string; value: string } => Boolean(f.value))
 	);
-	const hasLinks = $derived(Boolean(project.liveUrl || project.repoUrl));
+	const links = $derived(
+		[
+			{ label: 'Live site', href: project.liveUrl },
+			{ label: 'Source', href: project.repoUrl }
+		].filter((l): l is { label: string; href: string } => Boolean(l.href))
+	);
+	/** The address without the protocol and a trailing slash, for display. */
+	const shortUrl = (url: string) => url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
 	const link = (slug: string, title: string) => ({
 		href: resolve('/(site)/projects/[slug]', { slug }),
 		title
@@ -58,31 +63,38 @@
 					{#each project.tags as tag (tag.slug)}<li><Tag label={tag.name} /></li>{/each}
 				</ul>
 			{/if}
-			{#if facts.length || hasLinks}
+			{#if facts.length || links.length}
 				<Frame>
-					<div class="flex flex-wrap items-center gap-x-10 gap-y-5">
-						<dl class="contents">
-							{#each facts as fact (fact.label)}
-								<div class="flex flex-col gap-1">
-									<dt class="text-caption text-ink-subtle">{fact.label}</dt>
-									<dd class="text-small">{fact.value}</dd>
-								</div>
-							{/each}
-						</dl>
-						<!-- Each link has its own column. -->
-						{#if project.liveUrl}
-							<div class="flex items-center">
-								<Button variant="secondary" size="sm" href={project.liveUrl}
-									>Live site<ExternalLinkIcon aria-hidden="true" /></Button
-								>
-							</div>
+					<div class="flex flex-col gap-5">
+						<!-- Year, role and team in one row; the links in a second row, in the same label and value format. -->
+						{#if facts.length}
+							<dl class="flex flex-wrap gap-x-10 gap-y-5">
+								{#each facts as fact (fact.label)}
+									<div class="flex flex-col gap-1">
+										<dt class="text-caption text-ink-subtle">{fact.label}</dt>
+										<dd class="text-small">{fact.value}</dd>
+									</div>
+								{/each}
+							</dl>
 						{/if}
-						{#if project.repoUrl}
-							<div class="flex items-center">
-								<Button variant="secondary" size="sm" href={project.repoUrl}
-									>Source<ExternalLinkIcon aria-hidden="true" /></Button
-								>
-							</div>
+						{#if links.length}
+							<dl class="flex flex-wrap gap-x-10 gap-y-5">
+								{#each links as item (item.label)}
+									<div class="flex min-w-0 flex-col gap-1">
+										<dt class="text-caption text-ink-subtle">{item.label}</dt>
+										<dd class="min-w-0 text-small">
+											<!-- eslint-disable svelte/no-navigation-without-resolve -- external project links -->
+											<a
+												href={item.href}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="block truncate rounded-sm underline underline-offset-4 hover:text-ink-muted"
+												>{shortUrl(item.href)}</a
+											>
+										</dd>
+									</div>
+								{/each}
+							</dl>
 						{/if}
 					</div>
 				</Frame>

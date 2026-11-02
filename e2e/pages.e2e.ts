@@ -54,13 +54,17 @@ test.describe('Projects', () => {
 		expect(response!.status()).toBe(200);
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sample: Handbook assistant');
 		await expect(page.getByText('Case study', { exact: true })).toHaveCount(0);
-		const facts = page.locator('dl');
+		const facts = page.locator('main header');
 		await expect(facts).toContainText('Year');
 		await expect(facts).toContainText('2026');
 		await expect(facts).toContainText('My role');
 		await expect(facts).toContainText('Team');
-		await expect(page.getByRole('link', { name: 'Live site' })).toBeVisible();
-		await expect(page.getByRole('link', { name: 'Source' })).toBeVisible();
+		await expect(facts).toContainText('Live site');
+		await expect(facts).toContainText('Source');
+		await expect(facts.locator('a[href="https://example.com"]')).toHaveText('example.com');
+		await expect(facts.locator('a[href="https://github.com/example/sample"]')).toHaveText(
+			'github.com/example/sample'
+		);
 		const nav = page.getByRole('navigation', { name: 'More projects' });
 		await expect(nav.getByText('Previous')).toHaveCount(0);
 		await expect(nav.getByRole('link', { name: /Next\s*Sample: Shenanigans/ })).toBeVisible();
@@ -69,9 +73,9 @@ test.describe('Projects', () => {
 
 	test('leaves empty fact rows out', async ({ page }) => {
 		await page.goto('/projects/sample-shenanigans');
-		const facts = page.locator('dl');
+		const facts = page.locator('main header');
 		await expect(facts).toContainText('Design and build');
-		await expect(page.getByRole('link', { name: 'Live site' })).toHaveCount(0);
+		await expect(facts).not.toContainText('Live site');
 	});
 
 	test('unknown and unpublished projects return a real 404', async ({ request }) => {
