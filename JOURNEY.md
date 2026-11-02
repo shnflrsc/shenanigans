@@ -34,7 +34,7 @@ Version 0.3 · 2026-11-01 · Companion to PRODUCT.md and SOFTWARE.md. Updated fo
 | Learn about me | Scrolls to About me | Home, About me | "Who is this person, and are they at the level we need?" | Interested | Catchphrase, bio, quick facts, skills, experience, résumé download (FR-23). This replaces the dropped About page (gap G6) | Can a stranger say who you are, where you study and what you are open to? |
 | Skim | Looks at the featured project | Home, Featured | "Is any of this relevant to us?" | Interested | The one featured project (FR-24, FR-16); the full list is one click away on Projects | Can a stranger name what the featured project is? |
 | Deep dive | Opens one case study | Project page | "What did they do, and is it good?" | Confident | Facts card (year, role, team, links) and the case-study body (FR-27) | Can a stranger say what the person did? |
-| Decide and contact | Clicks Get in touch, email, GitHub or LinkedIn | Header, contact box, footer | "I'll reach out." | Decisive | Get in touch in the header, a contact box on Home and case studies, and footer links (FR-6, FR-25, FR-26) | Contact found in under 10 seconds |
+| Decide and contact | Clicks Get in touch, email, GitHub or LinkedIn | Header, contact box, footer | "I'll reach out." | Decisive | Email, GitHub and LinkedIn icons in the header, a contact box on Home and case studies, and footer links (FR-6, FR-25, FR-26) | Contact found in under 10 seconds |
 | Share | Forwards the link to a colleague | Link preview | "Take a look at this." | Satisfied | Page title, description and preview image (FR-31, FR-32) | Link pasted into chat shows a sensible preview |
 
 **Duration target (assumed):** under 3 minutes from arrival to a contact decision.
@@ -106,7 +106,7 @@ There is no process yet. This is the first version of the workflow.
 | Visitor opens a link to an unpublished or deleted page | Follows an old link | Real 404 status and a friendly page with ways back (FR-4, FR-30) | Mildly disappointed | Resolved (G4) |
 | Launch with one project and one post | Visits Home, Projects, Blog | Designed empty and launch states (FR-29) | Reassured | Resolved (G4) |
 | The server hits an unexpected error | Loads any page | 500 page with Try again, Go home and an email link; no technical details (FR-30) | Annoyed, not lost | Resolved (G4) |
-| Visitor on a phone | Opens the menu | Menu panel with Home, Projects, Blog and Get in touch; closes on Escape or link tap (FR-25) | Comfortable | Good as specified |
+| Visitor on a phone | Opens the menu | Menu panel with Home, Projects, Blog and the Email, GitHub and LinkedIn icons; closes on Escape or link tap (FR-25) | Comfortable | Good as specified |
 | Résumé file not provided yet | Looks for Download résumé | Button hidden until the file exists (FR-23) | Neutral | Résumé still to come (G9) |
 | Owner loses connection or session while writing | Keeps typing, then saves | Save fails, typed content stays on screen with an error (FR-22); leaving with unsaved changes triggers a warning (FR-21) | Annoyed, not angry | Resolved (G2) |
 | GitHub sign-in is down | Tries to log in | Cannot sign in | Stuck | Wait; acceptable for a solo site |

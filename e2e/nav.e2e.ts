@@ -3,19 +3,17 @@ import { expect, test } from '@playwright/test';
 test.describe('phone menu (640px and narrower)', () => {
 	test.use({ viewport: { width: 375, height: 812 } });
 
-	test('collapses the links and Get in touch into a menu', async ({ page }) => {
+	test('collapses the links and the icon links into a menu', async ({ page }) => {
 		await page.goto('/');
 		const header = page.locator('header');
 		await expect(header.getByRole('link', { name: 'Shenanigans' })).toBeVisible();
 		await expect(header.getByRole('button', { name: /Switch to/ })).toBeVisible();
 		await expect(header.getByRole('button', { name: 'Open menu' })).toBeVisible();
 		await expect(header.getByRole('navigation', { name: 'Main' })).toBeHidden();
-		await expect(header.getByRole('link', { name: 'Get in touch' })).toBeHidden();
+		await expect(header.getByRole('link', { name: 'GitHub' })).toBeHidden();
 	});
 
-	test('opens, sets aria-expanded, and has tall tap rows and a full-width Get in touch', async ({
-		page
-	}) => {
+	test('opens, sets aria-expanded, and has tall tap rows and the icon links', async ({ page }) => {
 		await page.goto('/projects');
 		const button = page.getByRole('button', { name: 'Open menu' });
 		await expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -36,9 +34,11 @@ test.describe('phone menu (640px and narrower)', () => {
 			'aria-current',
 			'page'
 		);
-		const cta = await panel.getByRole('link', { name: 'Get in touch' }).boundingBox();
-		const panelBox = await panel.boundingBox();
-		expect(cta!.width).toBeGreaterThan(panelBox!.width - 60);
+		for (const name of ['Email', 'GitHub', 'LinkedIn']) {
+			const box = await panel.getByRole('link', { name }).boundingBox();
+			expect(box!.width).toBeGreaterThanOrEqual(44);
+			expect(box!.height).toBeGreaterThanOrEqual(44);
+		}
 	});
 
 	test('closes on Escape and returns focus to the menu button', async ({ page }) => {

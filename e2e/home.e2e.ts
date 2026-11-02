@@ -35,10 +35,12 @@ test.describe('Home', () => {
 		await expect(featured.getByRole('link', { name: 'Sample: Handbook assistant' })).toBeVisible();
 	});
 
-	test('never shows drafts or the unfinished résumé button', async ({ page }) => {
+	test('never shows drafts, and shows the résumé button now that the file exists', async ({
+		page
+	}) => {
 		await page.goto('/');
 		await expect(page.getByText('Sample: Draft')).toHaveCount(0);
-		await expect(page.getByRole('link', { name: 'Download résumé' })).toHaveCount(0);
+		await expect(page.getByRole('link', { name: 'Download résumé' })).toBeVisible();
 	});
 
 	test('has the contact box with email, GitHub and LinkedIn, and a single-row footer', async ({
@@ -56,10 +58,13 @@ test.describe('Home', () => {
 		await expect(box.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
 		const footer = page.locator('footer');
 		await expect(footer).toContainText(`© ${new Date().getFullYear()} Darl Shanen Floresca`);
-		await expect(footer.getByRole('link')).toHaveText(['Email', 'GitHub', 'LinkedIn']);
+		await expect(footer.getByRole('link')).toHaveText(['', '', '']);
+		await expect(footer.getByRole('link')).toHaveCount(3);
+		for (const name of ['Email', 'GitHub', 'LinkedIn'])
+			await expect(footer.getByRole('link', { name })).toBeVisible();
 	});
 
-	test('header: brand, links, theme toggle and Get in touch on desktop', async ({ page }) => {
+	test('header: brand, links, theme toggle and icon links on desktop, sticky', async ({ page }) => {
 		await page.goto('/');
 		const header = page.locator('header');
 		await expect(header.getByRole('link', { name: 'Shenanigans' })).toBeVisible();
@@ -72,9 +77,17 @@ test.describe('Home', () => {
 			'aria-current',
 			'page'
 		);
-		await expect(header.getByRole('link', { name: 'Get in touch' })).toBeVisible();
+		for (const name of ['Email', 'GitHub', 'LinkedIn']) {
+			const link = header.getByRole('link', { name });
+			await expect(link).toBeVisible();
+			await expect(link).toHaveText('');
+		}
+		await expect(header.getByRole('link', { name: 'Get in touch' })).toHaveCount(0);
 		await expect(header.getByRole('button', { name: /Switch to/ })).toBeVisible();
 		await expect(header.getByRole('button', { name: 'Open menu' })).toBeHidden();
+		// The header stays at the top of the viewport while the page scrolls.
+		await page.evaluate(() => window.scrollTo(0, 600));
+		expect((await header.boundingBox())!.y).toBe(0);
 	});
 });
 

@@ -407,3 +407,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 plan status: M9-2 ticked (hosted Supabase, GitHub provider and admin id are set up and sign-in works on the deployed site); M9-3 now waits only on the domain (H6); H1 to H5 marked done.
 - 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
 - 2026-11-02 plan status: ISR confirmed on the live site (a dashboard edit shows on the public page at once); résumé added (H8 done). Left: domain (H6) and the client-address spoof check on Vercel.
+- 2026-11-02 header and footer: Email, GitHub and LinkedIn are icon links with no visible labels (accessible names kept); the header Get in touch button is gone (it stays in the Home contact box); the header is sticky. On phones the three icons sit in the menu.

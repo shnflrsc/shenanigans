@@ -6,7 +6,8 @@
 	import XIcon from '@lucide/svelte/icons/x';
 	import ThemeToggle from '#lib/components/theme-toggle.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import { mailto, nav, site } from '#lib/site.js';
+	import SocialLinks from './social-links.svelte';
+	import { nav, site } from '#lib/site.js';
 
 	let open = $state(false);
 	let menuButton = $state<HTMLButtonElement | null>(null);
@@ -32,7 +33,7 @@
 
 <svelte:window onkeydown={(event) => event.key === 'Escape' && close()} />
 
-<header class="relative z-30 border-b border-line bg-paper">
+<header class="sticky top-0 z-30 border-b border-line bg-paper">
 	<div class="mx-auto flex h-14 max-w-[1080px] items-center gap-6 px-6 min-[1024px]:px-16">
 		<a
 			href={resolve('/(site)')}
@@ -52,9 +53,7 @@
 
 		<div class="ml-auto flex items-center gap-2">
 			<ThemeToggle />
-			<Button variant="default" size="sm" href={mailto} class="max-[640px]:hidden"
-				>Get in touch</Button
-			>
+			<SocialLinks class="max-[640px]:hidden" />
 			<Button
 				bind:ref={menuButton}
 				variant="secondary"
@@ -91,7 +90,7 @@
 				{/each}
 			</nav>
 			<div class="mt-2 border-t border-line pt-4">
-				<Button variant="default" size="lg" href={mailto} class="w-full">Get in touch</Button>
+				<SocialLinks large />
 			</div>
 		</div>
 	{/if}
