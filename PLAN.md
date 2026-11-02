@@ -169,6 +169,20 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 - [x] **M11-6** First run on GitHub and failure drills on throwaway PRs (closed unmerged). Covers: SR-16. Result: secrets (push protection blocked a vendor-pattern key; gitleaks failed a generic one), dependencies (lodash 4.17.20), bundle and the CSP removal were caught. Two gaps found and closed: `eval` (now ESLint `no-eval`, `no-implied-eval`, `no-new-func`) and a single removed `requireAdmin(` call in a file with several handlers (the route inventory now counts one guard per handler).
 - [x] **M11-7** Follow-ups: vitest 5 family upgraded together (PR 15; `render` is async in three component specs), Dependabot told to skip major versions, documents brought in line (SOFTWARE 0.6). Covers: SR-16, MR-4.
 
+### M12 SEO (future, not started)
+
+Backlog only: do not start any task here until the owner says so. Today's baseline (FR-31): a unique title, description, canonical URL, Open Graph and Twitter tags and a preview image on every page, `sitemap.xml` (published only), `robots.txt`, and `/admin` noindex. Most tasks wait for the real domain (H6).
+
+- [ ] **M12-1** Final domain as the canonical address: set `site.origin` and `ORIGIN`, redirect `shenanigans-steel.vercel.app` to the domain, resubmit the sitemap. Deps: H6 (M9-3).
+- [ ] **M12-2** Search Console and Bing Webmaster Tools: verify the domain, submit the sitemap, watch coverage and Core Web Vitals. Human task. Deps: M12-1.
+- [ ] **M12-3** Structured data (JSON-LD): `Person` and `WebSite` on Home, `BlogPosting` on posts, `CreativeWork` or `SoftwareSourceCode` on projects, `BreadcrumbList` on detail pages. Verify: Google Rich Results Test passes, no errors in the e2e console audit.
+- [ ] **M12-4** Sitemap detail: `lastmod` from each item's last edit, and a `Sitemap:` line in `robots.txt`. Verify: sitemap e2e checks both.
+- [ ] **M12-5** Filtered and paged lists: canonical points to the unfiltered list, `?tag=` pages stay shareable but are not indexed separately, noindex beyond page 1 or `rel=prev/next`. Decide first (spec change request).
+- [ ] **M12-6** Link previews: use a post's or project's cover image as the preview image when it has one (fallback: the generated card), with alt text. Spec change: PRODUCT 4.8 and SOFTWARE FR-32 say posts get a generated card today.
+- [ ] **M12-7** RSS feed with an autodiscovery `<link>`; reverses the deferral in D10 and journey gap G1, so the owner must confirm first.
+- [ ] **M12-8** Writing aids in the editors: excerpt and summary length hint (about 120 to 160 characters), alt text required when a cover is set. Covers: better search snippets.
+- [ ] **M12-9** Measure: Lighthouse SEO category at 100 on every page type, noted in the progress log after each deploy; internal links between posts and projects checked for dead ends.
+
 ## 5. Human-only tasks
 
 | ID | Needed by | What I need from you | Until then |
@@ -407,3 +421,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-01 plan status: M9-2 ticked (hosted Supabase, GitHub provider and admin id are set up and sign-in works on the deployed site); M9-3 now waits only on the domain (H6); H1 to H5 marked done.
 - 2026-11-01 plan status: H7 (portrait) and H9 (About me text, GitHub and LinkedIn URLs) confirmed done; real projects and posts will be added in the dashboard over the project's lifetime.
 - 2026-11-02 plan status: ISR confirmed on the live site (a dashboard edit shows on the public page at once); résumé added (H8 done). Left: domain (H6) and the client-address spoof check on Vercel.
+- 2026-11-02 plan: added M12 SEO as a future backlog (final domain, Search Console, JSON-LD, sitemap detail, list canonicals, cover as preview image, RSS, editor hints, measuring). Nothing started.
