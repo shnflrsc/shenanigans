@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ContactBox from '#lib/components/site/contact-box.svelte';
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
 	import { resolve } from '$app/paths';
 	import Cover from '#lib/components/site/cover.svelte';
@@ -91,3 +92,5 @@
 		next={data.newer ? link(data.newer.slug, data.newer.title) : null}
 	/>
 </Section>
+
+<ContactBox />

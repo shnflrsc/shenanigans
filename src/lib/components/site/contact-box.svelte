@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MailIcon from '@lucide/svelte/icons/mail';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { mailto, site } from '#lib/site.js';
 	import BrandIcon from './brand-icons.svelte';
@@ -6,7 +7,7 @@
 	import Section from './section.svelte';
 </script>
 
-<Section class="py-16">
+<Section id="contact" class="py-16">
 	<Frame variant="soft" padding="lg" class="rounded-xl text-center">
 		<h2 class="text-title">
 			Got something in mind? <span class="text-ink-subtle">Let’s talk.</span>
@@ -16,7 +17,7 @@
 			me.
 		</p>
 		<div class="mt-6 flex flex-wrap justify-center gap-2">
-			<Button href={mailto}>Get in touch</Button>
+			<Button href={mailto}><MailIcon aria-hidden="true" />Email</Button>
 			<Button variant="secondary" href={site.github}
 				><BrandIcon brand="github" class="size-4" />GitHub</Button
 			>

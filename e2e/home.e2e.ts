@@ -50,7 +50,7 @@ test.describe('Home', () => {
 		const box = page.locator('section', {
 			has: page.getByRole('heading', { name: /Got something/ })
 		});
-		await expect(box.getByRole('link', { name: 'Get in touch' })).toHaveAttribute(
+		await expect(box.getByRole('link', { name: 'Email' })).toHaveAttribute(
 			'href',
 			/^mailto:floresca\.shanegarcia@gmail\.com$/
 		);
@@ -64,7 +64,9 @@ test.describe('Home', () => {
 			await expect(footer.getByRole('link', { name })).toBeVisible();
 	});
 
-	test('header: brand, links, theme toggle and icon links on desktop, sticky', async ({ page }) => {
+	test('header: brand, links, theme toggle and Get in touch on desktop, sticky', async ({
+		page
+	}) => {
 		await page.goto('/');
 		const header = page.locator('header');
 		await expect(header.getByRole('link', { name: 'Shenanigans' })).toBeVisible();
@@ -77,12 +79,9 @@ test.describe('Home', () => {
 			'aria-current',
 			'page'
 		);
-		for (const name of ['Email', 'GitHub', 'LinkedIn']) {
-			const link = header.getByRole('link', { name });
-			await expect(link).toBeVisible();
-			await expect(link).toHaveText('');
-		}
-		await expect(header.getByRole('link', { name: 'Get in touch' })).toHaveCount(0);
+		await expect(header.getByRole('link', { name: 'Get in touch' })).toBeVisible();
+		for (const name of ['Email', 'GitHub', 'LinkedIn'])
+			await expect(header.getByRole('link', { name })).toHaveCount(0);
 		await expect(header.getByRole('button', { name: /Switch to/ })).toBeVisible();
 		await expect(header.getByRole('button', { name: 'Open menu' })).toBeHidden();
 		// The header stays at the top of the viewport while the page scrolls.
