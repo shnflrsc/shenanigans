@@ -35,6 +35,7 @@ export const about = {
 		},
 		{ when: '2026', title: '1st Runner Up', detail: 'RAITE Quiz Bee Challenge' },
 		{ when: '2026', title: 'BetterMeycauayan', detail: 'BetterGov' },
+		{ when: '2026', title: 'Technical Community Officer', detail: 'Edukasyon.ph' },
 		{
 			when: '2025 – now',
 			title: 'BS Information Technology',
