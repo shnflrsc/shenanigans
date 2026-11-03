@@ -103,7 +103,7 @@ test.describe('sitemap and robots', () => {
 		const hrefs = await page
 			.locator('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]')
 			.evaluateAll((links) => links.map((l) => l.getAttribute('href')));
-		expect(hrefs).toHaveLength(4);
+		expect(hrefs).toHaveLength(5);
 		const manifest = await (await request.get('/site.webmanifest')).json();
 		for (const href of [...hrefs, ...manifest.icons.map((i: { src: string }) => i.src)]) {
 			const response = await request.get(href!);
