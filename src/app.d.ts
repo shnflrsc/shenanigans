@@ -4,6 +4,8 @@ import type { ServerSupabase } from '#lib/server/auth/supabase.js';
 declare global {
 	/** Build-time flag: static/resume.pdf exists (vite.config.ts). */
 	const __HAS_RESUME__: boolean;
+	/** Build-time flag: on Vercel, cover images go through its image optimizer (vite.config.ts). */
+	const __OPTIMIZE_IMAGES__: boolean;
 
 	namespace App {
 		interface Error {
