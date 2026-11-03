@@ -40,7 +40,9 @@
 			{:else}
 				<ul class="grid gap-6 min-[720px]:grid-cols-2">
 					{#each data.projects as project (project.slug)}
-						<li class="flex"><div class="w-full"><ProjectCard {project} level={2} /></div></li>
+						<li class="flex">
+							<div class="h-full w-full"><ProjectCard {project} level={2} /></div>
+						</li>
 					{/each}
 				</ul>
 			{/if}

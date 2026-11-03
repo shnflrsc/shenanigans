@@ -32,8 +32,8 @@
 
 <article
 	class={cn(
-		'group/card relative overflow-hidden rounded-lg border border-line bg-paper transition-[background-color,box-shadow] duration-150 ease-out hover:bg-paper-raised hover:shadow-md',
-		featured && 'grid min-[720px]:grid-cols-[1.3fr_1fr]'
+		'group/card relative h-full overflow-hidden rounded-lg border border-line bg-paper transition-[background-color,box-shadow] duration-150 ease-out hover:bg-paper-raised hover:shadow-md',
+		featured ? 'grid min-[720px]:grid-cols-[1.3fr_1fr]' : 'flex flex-col'
 	)}
 >
 	<Cover
@@ -41,7 +41,7 @@
 		alt={project.coverAlt}
 		class={featured ? 'h-full min-h-[240px]' : ''}
 	/>
-	<div class={cn('flex flex-col gap-3 p-6', featured && 'justify-center')}>
+	<div class={cn('flex flex-1 flex-col gap-3 p-6', featured && 'justify-center')}>
 		{#if caption}<span class="text-caption text-ink-subtle">{caption}</span>{/if}
 		<svelte:element
 			this={`h${level}`}
@@ -59,7 +59,7 @@
 			</ul>
 		{/if}
 		{#if project.liveUrl || project.repoUrl}
-			<div class="relative z-10 -ml-3 flex flex-wrap gap-1">
+			<div class="relative z-10 mt-auto -ml-3 flex flex-wrap gap-1">
 				{#if project.liveUrl}
 					<Button variant="ghost" size="sm" href={project.liveUrl}
 						>Live site<ExternalLinkIcon aria-hidden="true" /></Button
