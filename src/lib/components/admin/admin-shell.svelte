@@ -3,7 +3,6 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
-	import Eyebrow from '#lib/components/site/eyebrow.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { cn } from '#lib/utils.js';
 
@@ -33,13 +32,21 @@
 
 <div class="min-h-dvh bg-paper min-[720px]:grid min-[720px]:grid-cols-[232px_1fr]">
 	<!-- Desktop sidebar -->
-	<aside
-		class="hidden flex-col justify-between border-r border-line bg-paper-soft p-4 min-[720px]:flex"
-	>
+	<aside class="hidden flex-col border-r border-line bg-paper-soft p-4 min-[720px]:flex">
 		<div class="flex flex-col gap-6">
 			<div class="flex items-center justify-between px-2 pt-2">
 				<span class="text-[15px] font-semibold tracking-[-0.01em]">Shenanigans</span>
-				<Eyebrow>Admin</Eyebrow>
+				<form method="POST" action={resolve('/admin/(app)/signout')}>
+					<Button
+						type="submit"
+						variant="ghost"
+						size="icon"
+						aria-label="Sign out"
+						class="text-ink-subtle"
+					>
+						<LogOutIcon aria-hidden="true" />
+					</Button>
+				</form>
 			</div>
 			<nav aria-label="Admin" class="flex flex-col gap-1">
 				{#each sections as item (item.path)}
@@ -54,20 +61,13 @@
 				{/each}
 			</nav>
 		</div>
-		<form method="POST" action={resolve('/admin/(app)/signout')}>
-			<Button type="submit" variant="ghost" class="w-full justify-start text-ink-subtle">
-				<LogOutIcon aria-hidden="true" />Sign out
-			</Button>
-		</form>
 	</aside>
 
 	<!-- Phone top bar and section switcher -->
 	<div class={cn('min-[720px]:hidden', inEditor && 'hidden')}>
 		<div class="flex h-14 items-center justify-between border-b border-line bg-paper px-4">
-			<span class="flex items-center gap-2">
-				<span class="text-[15px] font-semibold tracking-[-0.01em]">Shenanigans</span>
-				<Eyebrow>Admin</Eyebrow>
-			</span>
+			<span class="text-[15px] font-semibold tracking-[-0.01em]">Shenanigans</span>
+
 			<form method="POST" action={resolve('/admin/(app)/signout')}>
 				<Button type="submit" variant="ghost" size="icon" aria-label="Sign out">
 					<LogOutIcon aria-hidden="true" />

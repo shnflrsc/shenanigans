@@ -96,5 +96,6 @@ test.describe('Posts list', () => {
 				.getByRole('button', { name: /Actions for/ })
 		).toBeVisible();
 		await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
+		await expect(page.getByText('Admin', { exact: true })).toHaveCount(0);
 	});
 });
