@@ -101,13 +101,15 @@
 			{/if}
 		</header>
 
-		<Cover
-			path={project.coverImage}
-			alt={project.coverAlt}
-			ratio="16/10"
-			eager
-			class="rounded-lg border border-line"
-		/>
+		{#if project.coverImage}
+			<Cover
+				path={project.coverImage}
+				alt={project.coverAlt}
+				ratio="16/10"
+				eager
+				class="rounded-lg border border-line"
+			/>
+		{/if}
 
 		{#if data.project.hasBody}
 			<Prose html={data.html} />

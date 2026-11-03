@@ -96,6 +96,8 @@ test('the project page has no Case study label and Live site and Source are labe
 		(await rows.nth(0).boundingBox())!.y
 	);
 	await expect(visitor.getByRole('button', { name: 'Live site' })).toHaveCount(0);
+	// No cover was uploaded, so there is no grey cover box on the page.
+	await expect(visitor.locator('main [class*="16/10"]')).toHaveCount(0);
 });
 
 test('the cover image field says which size to upload', async ({ page }) => {

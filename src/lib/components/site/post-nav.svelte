@@ -11,10 +11,10 @@
 		{#if previous}
 			<a
 				href={previous.href}
-				class="group flex flex-col gap-1 rounded-lg border border-line p-6 transition-colors duration-150 hover:bg-fill-hover"
+				class="group flex min-w-0 flex-col gap-1 rounded-lg border border-line p-6 transition-colors duration-150 hover:bg-fill-hover"
 			>
 				<span class="text-caption text-ink-subtle">Previous</span>
-				<span class="text-card-title">{previous.title}</span>
+				<span class="text-card-title [overflow-wrap:anywhere]">{previous.title}</span>
 			</a>
 		{:else}
 			<span class="max-[719px]:hidden"></span>
@@ -22,10 +22,10 @@
 		{#if next}
 			<a
 				href={next.href}
-				class="group flex flex-col gap-1 rounded-lg border border-line p-6 transition-colors duration-150 hover:bg-fill-hover min-[720px]:text-right"
+				class="group flex min-w-0 flex-col gap-1 rounded-lg border border-line p-6 transition-colors duration-150 hover:bg-fill-hover min-[720px]:text-right"
 			>
 				<span class="text-caption text-ink-subtle">Next</span>
-				<span class="text-card-title">{next.title}</span>
+				<span class="text-card-title [overflow-wrap:anywhere]">{next.title}</span>
 			</a>
 		{/if}
 	</nav>
