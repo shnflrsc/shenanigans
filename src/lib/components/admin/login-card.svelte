@@ -5,7 +5,6 @@
 	import LoaderIcon from '@lucide/svelte/icons/loader-circle';
 	import { Alert } from '#lib/components/ui/alert/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import Eyebrow from '#lib/components/site/eyebrow.svelte';
 
 	export type LoginState = 'default' | 'denied' | 'rate-limited' | 'error';
 
@@ -16,14 +15,7 @@
 
 <main class="grid min-h-dvh place-items-center bg-paper-soft p-6" aria-labelledby="login-title">
 	<div class="flex w-full max-w-[400px] flex-col gap-4 rounded-lg border border-line bg-paper p-8">
-		<div class="flex items-center justify-between">
-			<span class="text-[15px] font-semibold tracking-[-0.01em]">Shenanigans</span>
-			<Eyebrow>Admin</Eyebrow>
-		</div>
-		<div>
-			<h1 id="login-title" class="text-prose-h3">Sign in</h1>
-			<p class="mt-1.5 text-small text-ink-muted">Only the owner of this site can sign in.</p>
-		</div>
+		<h1 id="login-title" class="text-prose-h3">Sign in</h1>
 
 		{#if status === 'denied'}
 			<Alert>

@@ -69,7 +69,7 @@ A server-rendered SvelteKit application deployed on Vercel, backed by Supabase (
 - FR-32: There are two preview image designs at 1200×630: a site preview (hero headline, name, site address, grayscale photo) and a post preview ("Blog", date, read time, post title, small photo and name, site address). Home, the index pages and project pages use the site preview. Each published post gets its own post preview, generated from its title, date and read time. Generated images are cached, post titles are drawn as text (never interpreted as markup), and the image refreshes within the freshness window in PR-6 when a post is edited. Rendering uses `satori` with `@resvg/resvg-js` on request; images are cached per instance, keyed on the post's last edit, with the same short shared cache as pages. The grayscale photo comes from a generated `portrait-og.png` (`bun run og:portrait`).
 
 **Admin**
-- FR-8: `/admin` presents a login screen to unauthenticated visitors. No public page links to it.
+- FR-8: `/admin` presents a login screen to unauthenticated visitors. The card holds only the "Sign in" heading and the "Continue with GitHub" button (plus the denied, error and rate-limited notices); it has no brand name, "Admin" label or description. No public page links to it.
 - FR-9: Login uses Supabase Auth with the GitHub provider only.
 - FR-10: After login, the server compares the GitHub account ID with the allowlist. A non-matching account is signed out immediately and denied.
 - FR-11: The admin can create, edit, delete, publish and unpublish posts.
@@ -82,7 +82,7 @@ A server-rendered SvelteKit application deployed on Vercel, backed by Supabase (
 - FR-18: The post and project editors let the admin pick existing tags or create new ones inline (see tag rules in section 3.2).
 - FR-19: A slug is generated from the title and editable until first publish; after that it is locked.
 - FR-20: Destructive actions (delete post, delete project, delete tag) ask for confirmation.
-- FR-21: The post and project editors warn before the admin leaves with unsaved changes, whether by refreshing, closing the tab, going back, or clicking a link inside the dashboard. The editor shows when there are unsaved changes. There is no autosave.
+- FR-21: The post and project editors warn before the admin leaves with unsaved changes, whether by refreshing, closing the tab, going back, or clicking a link inside the dashboard. The editor shows the unsaved state in its status chip (the same chip that says Draft or Published, which switches to Unsaved changes, Saving… and Not saved as needed), so nothing else appears or moves when a change is made; there is no autosave.
 - FR-22: A failed save (including an expired session or lost connection) keeps everything typed in the editor on screen and shows a clear error, so nothing is lost and the admin can retry after signing in again.
 - FR-33: The post editor has an optional "project this post is about" selector listing the projects, and it can be cleared.
 

@@ -8,7 +8,8 @@ test.describe('admin login', () => {
 	test('shows the sign-in card with GitHub only', async ({ page }) => {
 		await page.goto('/admin');
 		await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
-		await expect(page.getByText('Only the owner of this site can sign in.')).toBeVisible();
+		await expect(page.getByText('Shenanigans')).toHaveCount(0);
+		await expect(page.getByText('Admin', { exact: true })).toHaveCount(0);
 		await expect(page.getByRole('button', { name: 'Continue with GitHub' })).toBeEnabled();
 		await expect(page.getByRole('link')).toHaveCount(0);
 		await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
