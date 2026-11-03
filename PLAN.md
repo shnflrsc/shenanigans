@@ -185,6 +185,13 @@ Backlog only: do not start any task here until the owner says so. Today's baseli
 - [ ] **M12-8** Writing aids in the editors: excerpt and summary length hint (about 120 to 160 characters), alt text required when a cover is set. Covers: better search snippets.
 - [ ] **M12-9** Measure: Lighthouse SEO category at 100 on every page type, noted in the progress log after each deploy; internal links between posts and projects checked for dead ends.
 
+### M13 Branding (future, not started)
+
+Backlog only: do not start any task here until the owner says so.
+
+- [ ] **M13-1** Logo and favicon: design a logo for Shenanigans and replace the current placeholder favicon (`src/lib/assets/favicon.svg`). Cover the set a site needs: SVG favicon, a 32 px and a 180 px (Apple touch) PNG, and the site-manifest icons if added; check legibility at 16 px in light and dark tab bars. Decide first: logo only as a mark or with the wordmark, and whether the header brand text "Shenanigans" is replaced or sits beside it (DESIGN.md NavBar says no logo image ships and the name is set in type). Spec change: DESIGN.md (NavBar, brand), PRODUCT.md 4.5 if the header changes. Verify: favicon shows in the browser tab in both themes; e2e checks the icon links exist and return 200.
+- [ ] **M13-2** Home page title: change the Home page title (today "Shenanigans: Darl’s portfolio and blog", from `seo.svelte`) to the owner's new wording, which the owner has yet to give. Applies to the browser title, `og:title` and `twitter:title`; also check the site preview image text (PRODUCT 4.8) still matches. Spec change: SOFTWARE FR-31 and PRODUCT 4.8 if the wording is stated there. Verify: e2e title check on Home.
+
 ## 5. Human-only tasks
 
 | ID | Needed by | What I need from you | Until then |
@@ -431,6 +438,7 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-03 fixes: long project and post titles wrap inside the previous and next cards; the Switch was unstyled (it keyed off data-checked but the library sets data-state), so the Featured switch now has a visible track and a thumb that moves; markdown editor shortcuts (bold, italic, code, link, lists, quote), list continuation, Tab nesting and link paste (FR-12).
 - 2026-11-03 project page: the cover box is left out when no cover was uploaded (the project and post cards keep their placeholder). Also removed duplicated FR-27/FR-28 and case-study lines left by an earlier merge in SOFTWARE and PRODUCT.
 - 2026-11-03 admin: the login card is only 'Sign in' and the Continue with GitHub button (brand, Admin label and the owner note removed); in the post and project editors the status chip (Draft or Published) is also the save state: Unsaved changes, Saving… or Not saved, and the separate save indicator is gone.
+- 2026-11-03 plan: added backlog M13-1 (logo and favicon) and M13-2 (new Home page title; wording to come from the owner).
 - 2026-11-03 domain: shenanigans.is-a.dev points at the live site (H6 done); the owner confirmed sign-in lands on the new domain and a dashboard edit shows on the public page within seconds. Ticked: env vars, migrations, redirect URLs, allowlist id, domain live.
 - 2026-11-03 prod checks (owner): only the GitHub provider is enabled; sitemap, robots and the preview image work; Supabase's public API refuses anonymous reads and writes on the tables (permission denied, 42501) and RLS is enabled on every table by the migration; no CSP violations from the site itself (clean browser: no console messages, all inline scripts nonced; the ones seen came from a browser extension). Deployment checklist ticked except the SR-14 spoof check.
 - 2026-11-03 SR-14 on Vercel (owner, from a browser that had passed the bot challenge): 12 requests to /admin with a different fake X-Forwarded-For each returned 200 for the first 10 and 429 with Retry-After (597 s) for the 11th and 12th, so the limiter counts the real client address. M9-3 closed; every task in the plan is now done or backlog.
