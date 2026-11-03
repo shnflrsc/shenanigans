@@ -15,6 +15,15 @@
 
 	let { path, alt, ratio = '16/10', eager = false, class: className }: Props = $props();
 	let failed = $state(false);
+
+	// An `onerror` attribute would be rendered into the page as an inline handler, which the strict CSP blocks (SR-10).
+	// This runs in the browser instead, and also catches an image that failed before the page was ready.
+	function watchForFailure(img: HTMLImageElement) {
+		const fail = () => (failed = true);
+		if (img.complete && img.naturalWidth === 0) fail();
+		img.addEventListener('error', fail);
+		return () => img.removeEventListener('error', fail);
+	}
 </script>
 
 <!-- A missing or broken cover falls back to the muted placeholder, so content is never blocked on an image. -->
@@ -32,7 +41,7 @@
 			loading={eager ? 'eager' : 'lazy'}
 			decoding="async"
 			class="size-full object-cover text-transparent transition-transform duration-200 ease-out group-hover/card:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover/card:scale-100"
-			onerror={() => (failed = true)}
+			{@attach watchForFailure}
 		/>
 	{/if}
 	<div aria-hidden="true" class="absolute inset-0 bg-image-overlay"></div>
