@@ -145,7 +145,7 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 - [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
 - [x] **M9-2** Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
-- [ ] **M9-3** Domain and launch checklist (section 9). Domain is live; the rest of the checklist in section 10 is still being ticked. Deps: H6.
+- [ ] **M9-3** Domain and launch checklist (section 9). Domain is live and the checklist is ticked except the SR-14 spoof check. Deps: H6.
 
 ### M10 Motion (public site)
 
@@ -329,7 +329,7 @@ Project: every checkbox ticked or blocked with a recorded reason; e2e passes; SO
 SOFTWARE.md section 4 checklist (tick as verified, with task):
 - [x] Auth (M3-2/3) - [x] Visibility (M2-5) - [x] Projects admin (M6-8/3) - [x] Editor safety (M6-5/6) - [x] Freshness (M7-1, fallback path verified; ISR path blocked) - [x] Rendering (M4-1) - [x] Themes (M8-3) - [x] Home and navigation (M5-1/3) - [x] Pages and states (M5-*) - [x] Metadata (M5-9/10) - [x] Code blocks (M4-2) - [x] Markdown styling (M4-3) - [x] Rate limiting (M3-5)
 
-Deployment checklist: [x] env vars set on Vercel [x] migrations applied to prod [ ] RLS verified on prod [ ] only GitHub provider enabled [x] Supabase redirect URLs correct [x] allowlist id set [ ] CSP clean in prod [ ] sitemap and robots live [ ] preview image tested in a chat paste [x] domain live [ ] Supabase free-tier pause risk checked (below).
+Deployment checklist: [x] env vars set on Vercel [x] migrations applied to prod [x] RLS verified on prod [x] only GitHub provider enabled [x] Supabase redirect URLs correct [x] allowlist id set [x] CSP clean in prod [x] sitemap and robots live [x] preview image tested in a chat paste [x] domain live [x] Supabase free-tier pause risk checked (below).
 
 ## Blockers
 
@@ -337,7 +337,7 @@ Deployment checklist: [x] env vars set on Vercel [x] migrations applied to prod 
 
 - M3-4: the real GitHub sign-in works on the deployed site (checked by the owner). Still worth a manual check with a second account to see the denied state.
 
-- M9-3: the domain is live and sign-in and instant updates work on it. Still to tick in the section 10 deployment checklist: RLS verified on prod, only GitHub provider enabled, CSP clean in prod, sitemap and robots live, preview image tested in a chat paste, free-tier pause risk. Also the client-address spoof check (SR-14).
+- M9-3: the deployment checklist in section 10 is done except the client-address spoof check on Vercel (SR-14), which the owner will run.
 - Verify on Vercel after deploy: native `@resvg/resvg-js` for OG images (D8), spoof-proof `getClientAddress()` (SR-14), adapter-vercel build.
 
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
@@ -433,3 +433,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-03 project page: the cover box is left out when no cover was uploaded (the project and post cards keep their placeholder). Also removed duplicated FR-27/FR-28 and case-study lines left by an earlier merge in SOFTWARE and PRODUCT.
 - 2026-11-03 admin: the login card is only 'Sign in' and the Continue with GitHub button (brand, Admin label and the owner note removed); in the post and project editors the status chip (Draft or Published) is also the save state: Unsaved changes, Saving… or Not saved, and the separate save indicator is gone.
 - 2026-11-03 domain: shenanigans.is-a.dev points at the live site (H6 done); the owner confirmed sign-in lands on the new domain and a dashboard edit shows on the public page within seconds. Ticked: env vars, migrations, redirect URLs, allowlist id, domain live.
+- 2026-11-03 prod checks (owner): only the GitHub provider is enabled; sitemap, robots and the preview image work; Supabase's public API refuses anonymous reads and writes on the tables (permission denied, 42501) and RLS is enabled on every table by the migration; no CSP violations from the site itself (clean browser: no console messages, all inline scripts nonced; the ones seen came from a browser extension). Deployment checklist ticked except the SR-14 spoof check.
