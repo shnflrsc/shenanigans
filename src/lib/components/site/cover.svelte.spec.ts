@@ -33,3 +33,11 @@ describe('Cover (PR-3)', () => {
 		expect(post.container.firstElementChild?.className).toContain('aspect-video');
 	});
 });
+
+describe('Cover failing to load', () => {
+	it('falls back to the placeholder when the image cannot be loaded', async () => {
+		const { container } = await render(Cover, { path: 'covers/does-not-exist.jpg', alt: 'Gone' });
+		await expect.poll(() => container.querySelector('img')).toBeNull();
+		expect(container.firstElementChild?.className).toContain('bg-fill-muted');
+	});
+});
