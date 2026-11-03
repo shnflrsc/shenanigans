@@ -50,7 +50,9 @@
 		</a>
 
 		<header class="flex flex-col gap-4 border-b border-line pb-8">
-			<h1 class="text-post-title max-[719px]:text-[32px] max-[719px]:leading-10">
+			<h1
+				class="text-post-title [overflow-wrap:anywhere] max-[719px]:text-[32px] max-[719px]:leading-10"
+			>
 				{project.title}
 			</h1>
 			<p class="text-lead text-ink-muted">{project.summary}</p>
