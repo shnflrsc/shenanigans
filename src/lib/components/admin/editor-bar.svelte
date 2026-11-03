@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import AlertCircleIcon from '@lucide/svelte/icons/circle-alert';
-	import LoaderIcon from '@lucide/svelte/icons/loader-circle';
 	import { resolve } from '$app/paths';
 	import type { IndicatorState } from '#lib/admin/editor.svelte.js';
 	import StatusBadge from './status-badge.svelte';
@@ -32,25 +30,8 @@
 		<span aria-hidden="true" class="text-ink-subtle">/</span>
 		<span class="truncate font-semibold">{title || 'Untitled'}</span>
 	</nav>
-	<StatusBadge {status} />
+	<StatusBadge {status} {state} />
 	{@render extra?.()}
-
-	<!-- Save indicator: an unsaved dot or a spinner, always with words. A finished save is a toast. -->
-	<p class="flex items-center gap-1.5 text-[13px] leading-5" role="status" aria-live="polite">
-		{#if state === 'saving'}
-			<LoaderIcon class="size-4 animate-spin text-ink-subtle" aria-hidden="true" /><span
-				class="text-ink-subtle">Saving…</span
-			>
-		{:else if state === 'unsaved'}
-			<span aria-hidden="true" class="size-[7px] rounded-full bg-ink"></span><span
-				class="font-medium text-ink">Unsaved changes</span
-			>
-		{:else if state === 'failed' || state === 'expired'}
-			<AlertCircleIcon class="size-4" aria-hidden="true" /><span class="font-medium text-ink"
-				>Not saved</span
-			>
-		{/if}
-	</p>
 
 	<!-- On desktop the actions sit in this bar; on phones they move to a sticky bar at the bottom. -->
 	<div class="ml-auto flex items-center gap-2 max-[719px]:hidden">{@render actions()}</div>
