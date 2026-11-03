@@ -145,7 +145,7 @@ Format: **ID** goal. Touches / Covers / Design / Deps / Accept / Verify.
 
 - [x] **M9-1** Vercel config: env var list documented, `ORIGIN`, trusted proxy/IP handling so `getClientAddress()` cannot be spoofed (verify when implementing), build on Vercel. Covers: SR-14. Deps: H5.
 - [x] **M9-2** Production Supabase: run migrations, RLS check, GitHub provider only, redirect URLs, storage bucket policy. Deps: H1-H4.
-- [ ] **M9-3** BLOCKED on H6: Domain and launch checklist (section 9). Deps: H6.
+- [x] **M9-3** Domain and launch checklist (section 9). Domain is live and the whole deployment checklist is ticked, including the SR-14 spoof check (2026-11-03). Deps: H6.
 
 ### M10 Motion (public site)
 
@@ -201,7 +201,7 @@ Backlog only: do not start any task here until the owner says so.
 | H3 (done) Find numeric GitHub ID | M3-2 real login | `gh api user --jq .id` or github.com/users/NAME API | Tests use a fixture id |
 | H4 (done) Add ID to env | M3 | `ADMIN_GITHUB_ID` | `.env.example` placeholder |
 | H5 (done) Create Vercel project, set env vars | M9-1 | Project linked to repo; vars from `.env.example` | Local build only |
-| H6 Register `shenanigans.is-a.dev` | M9-3 | PR to is-a.dev register pointing to Vercel | Use `*.vercel.app` URL |
+| H6 (done) Register `shenanigans.is-a.dev` | M9-3 | PR to is-a.dev register pointing to Vercel | Use `*.vercel.app` URL |
 | H7 (done) Photo | M5-3 | Grayscale-ready portrait file in `src/lib/assets/` (name `portrait.jpg`) | Neutral placeholder tile |
 | H8 (done) Résumé PDF | M5-3 | File at `static/resume.pdf` | Button hidden |
 | H9 (done; real projects and posts are added over time) Real About me, projects, posts | Launch | Text for `about.ts`; content via the dashboard | Fixtures marked `[PLACEHOLDER]` |
@@ -334,9 +334,9 @@ Per milestone: all listed requirement IDs verified, check, lint, unit tests and 
 Project: every checkbox ticked or blocked with a recorded reason; e2e passes; SOFTWARE.md section 4 checklist ticked (below); deployment checklist done.
 
 SOFTWARE.md section 4 checklist (tick as verified, with task):
-- [x] Auth (M3-2/3) - [x] Visibility (M2-5) - [x] Projects admin (M6-8/3) - [x] Editor safety (M6-5/6) - [x] Freshness (M7-1, fallback path verified; ISR path blocked) - [x] Rendering (M4-1) - [x] Themes (M8-3) - [x] Home and navigation (M5-1/3) - [x] Pages and states (M5-*) - [x] Metadata (M5-9/10) - [x] Code blocks (M4-2) - [x] Markdown styling (M4-3) - [x] Rate limiting (M3-5)
+- [x] Auth (M3-2/3) - [x] Visibility (M2-5) - [x] Projects admin (M6-8/3) - [x] Editor safety (M6-5/6) - [x] Freshness (M7-1, fallback path verified; ISR path confirmed on Vercel) - [x] Rendering (M4-1) - [x] Themes (M8-3) - [x] Home and navigation (M5-1/3) - [x] Pages and states (M5-*) - [x] Metadata (M5-9/10) - [x] Code blocks (M4-2) - [x] Markdown styling (M4-3) - [x] Rate limiting (M3-5)
 
-Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod [ ] RLS verified on prod [ ] only GitHub provider enabled [ ] Supabase redirect URLs correct [ ] allowlist id set [ ] CSP clean in prod [ ] sitemap and robots live [ ] preview image tested in a chat paste [ ] domain live [ ] Supabase free-tier pause risk checked (below).
+Deployment checklist: [x] env vars set on Vercel [x] migrations applied to prod [x] RLS verified on prod [x] only GitHub provider enabled [x] Supabase redirect URLs correct [x] allowlist id set [x] CSP clean in prod [x] sitemap and robots live [x] preview image tested in a chat paste [x] domain live [x] Supabase free-tier pause risk checked (below).
 
 ## Blockers
 
@@ -344,8 +344,7 @@ Deployment checklist: [ ] env vars set on Vercel [ ] migrations applied to prod 
 
 - M3-4: the real GitHub sign-in works on the deployed site (checked by the owner). Still worth a manual check with a second account to see the denied state.
 
-- M9-3 BLOCKED: needs H6 (is-a.dev registration). The Vercel project and env vars are in place. Then tick the deployment checklist in section 10.
-- Verify on Vercel after deploy: native `@resvg/resvg-js` for OG images (D8), spoof-proof `getClientAddress()` (SR-14), adapter-vercel build.
+- Verified on Vercel (2026-11-03): OG images render (preview image works), `getClientAddress()` cannot be spoofed with `X-Forwarded-For` (SR-14), and the adapter-vercel build runs.
 
 ## Decisions and discrepancies (recommended defaults, marked for your approval)
 
@@ -440,3 +439,6 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-03 project page: the cover box is left out when no cover was uploaded (the project and post cards keep their placeholder). Also removed duplicated FR-27/FR-28 and case-study lines left by an earlier merge in SOFTWARE and PRODUCT.
 - 2026-11-03 admin: the login card is only 'Sign in' and the Continue with GitHub button (brand, Admin label and the owner note removed); in the post and project editors the status chip (Draft or Published) is also the save state: Unsaved changes, Saving… or Not saved, and the separate save indicator is gone.
 - 2026-11-03 plan: added backlog M13-1 (logo and favicon) and M13-2 (new Home page title; wording to come from the owner).
+- 2026-11-03 domain: shenanigans.is-a.dev points at the live site (H6 done); the owner confirmed sign-in lands on the new domain and a dashboard edit shows on the public page within seconds. Ticked: env vars, migrations, redirect URLs, allowlist id, domain live.
+- 2026-11-03 prod checks (owner): only the GitHub provider is enabled; sitemap, robots and the preview image work; Supabase's public API refuses anonymous reads and writes on the tables (permission denied, 42501) and RLS is enabled on every table by the migration; no CSP violations from the site itself (clean browser: no console messages, all inline scripts nonced; the ones seen came from a browser extension). Deployment checklist ticked except the SR-14 spoof check.
+- 2026-11-03 SR-14 on Vercel (owner, from a browser that had passed the bot challenge): 12 requests to /admin with a different fake X-Forwarded-For each returned 200 for the first 10 and 429 with Retry-After (597 s) for the 11th and 12th, so the limiter counts the real client address. M9-3 closed; every task in the plan is now done or backlog.
