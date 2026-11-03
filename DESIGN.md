@@ -189,7 +189,7 @@ Twenty-five components cover the whole site. Build pages only from these; each s
 
 | Component | Anatomy | Rules |
 | --- | --- | --- |
-| NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), theme toggle and one small primary "Get in touch" button right | Current page = `ink` on `fill-hover` with `aria-current="page"`. Sticky (`position: sticky`, top 0). No logo image ships: set the name in type. |
+| NavBar | 56px tall on `paper`, 1px `line` underneath, 1080px container: wordmark left, link pills (32px, `radius-md`, `ink-subtle`), theme toggle and one small primary "Get in touch" button right | Current page = `ink` on `fill-hover` with `aria-current="page"`. Sticky (`position: sticky`, top 0). The name is set in type; the logo (two concentric circles, `#37352f` and `#6e6d69`) is the favicon and app icon only, not in the header. |
 | SocialLinks | Row of 32px ghost icon buttons, 16px line icons in `ink-subtle`, `ink` on hover | Every link has an accessible label. Generic glyphs only. |
 | Footer | `paper-soft` with top hairline, one compact row: mono `caption` copyright with the full name on the left, ghost icon links with no labels (Email, GitHub, LinkedIn, using the real brand logos) on the right. No brand block, link columns, tagline or site address | Never a dark band. Sits at the bottom of the viewport on short pages. |
 | PostNav | Two outline Frames side by side: mono "Previous" / "Next" caption + `card-title` | A missing side leaves its slot empty. |

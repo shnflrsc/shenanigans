@@ -98,8 +98,17 @@ test.describe('sitemap and robots', () => {
 		expect(text).toContain('Disallow: /admin');
 	});
 
-	test('favicon is linked', async ({ page }) => {
+	test('the logo icons are linked and each one loads', async ({ page, request }) => {
 		await page.goto('/');
-		await expect(page.locator('link[rel="icon"]')).toHaveCount(1);
+		const hrefs = await page
+			.locator('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]')
+			.evaluateAll((links) => links.map((l) => l.getAttribute('href')));
+		expect(hrefs).toHaveLength(4);
+		const manifest = await (await request.get('/site.webmanifest')).json();
+		for (const href of [...hrefs, ...manifest.icons.map((i: { src: string }) => i.src)]) {
+			const response = await request.get(href!);
+			expect(response.status(), href!).toBe(200);
+			expect(response.headers()['content-type'], href!).toMatch(/image\/|manifest|json/);
+		}
 	});
 });
