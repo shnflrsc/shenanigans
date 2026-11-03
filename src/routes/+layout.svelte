@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import { onMount } from 'svelte';
-	import favicon from '#lib/assets/favicon.svg';
+	import { asset } from '$app/paths';
 	import { installCopyButtons } from '#lib/markdown/copy-button.js';
 	import { Toaster } from '#lib/components/ui/sonner/index.js';
 	import type { LayoutProps } from './$types';
@@ -12,7 +12,17 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+	<link rel="icon" href={asset('favicon-32.png')} type="image/png" sizes="32x32" />
+	<link
+		rel="icon"
+		href={asset('favicon-32-dark.png')}
+		type="image/png"
+		sizes="32x32"
+		media="(prefers-color-scheme: dark)"
+	/>
+	<link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+	<link rel="manifest" href={asset('site.webmanifest')} />
 </svelte:head>
 
 {@render children()}
