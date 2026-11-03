@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import adapterVercel from '@sveltejs/adapter-vercel';
 import adapterNode from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { IMAGE_WIDTHS } from './src/lib/format.js';
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), '');
@@ -16,7 +17,11 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		// The résumé button only shows when the file exists, so it never links to a missing file (FR-23).
-		define: { __HAS_RESUME__: JSON.stringify(existsSync('static/resume.pdf')) },
+		define: {
+			__HAS_RESUME__: JSON.stringify(existsSync('static/resume.pdf')),
+			// Vercel resizes and recompresses uploaded images on request; elsewhere they are served as uploaded.
+			__OPTIMIZE_IMAGES__: JSON.stringify(Boolean(process.env.VERCEL))
+		},
 		plugins: [
 			enhancedImages(),
 			tailwindcss(),
@@ -27,7 +32,16 @@ export default defineConfig(({ mode }) => {
 						filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 				},
 				// adapter-vercel needs symlinks (fails on Windows without developer mode), so use it only on Vercel
-				adapter: process.env.VERCEL ? adapterVercel() : adapterNode(),
+				adapter: process.env.VERCEL
+					? adapterVercel({
+							images: {
+								sizes: IMAGE_WIDTHS,
+								domains: supabaseOrigin ? [new URL(supabaseOrigin).hostname] : [],
+								formats: ['image/avif', 'image/webp'],
+								minimumCacheTTL: 60 * 60 * 24 * 365
+							}
+						})
+					: adapterNode(),
 				// Strict CSP (SR-10): SvelteKit adds nonces for its own inline scripts and styles.
 				csp: {
 					mode: 'nonce',

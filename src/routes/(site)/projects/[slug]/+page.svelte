@@ -109,6 +109,7 @@
 				alt={project.coverAlt}
 				ratio="16/10"
 				eager
+				sizes="(min-width: 768px) 720px, 100vw"
 				class="rounded-lg border border-line"
 			/>
 		{/if}

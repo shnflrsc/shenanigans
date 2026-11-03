@@ -115,7 +115,7 @@ Posts and projects are separate tables.
   - status (draft or published)
   - created_at, updated_at
   - Tech and topics use the shared tags below.
-- A missing cover falls back to the design system's muted placeholder, so content is never blocked on an image. Project covers are shown at 16:10 and post covers at 16:9.
+- A missing cover falls back to the design system's muted placeholder, so content is never blocked on an image. Project covers are shown at 16:10 and post covers at 16:9. On Vercel, cover images are served through its image optimizer (resized to the displayed width, WebP or AVIF, cached for a year); GIFs and local runs use the uploaded file.
 - Not in the database: the About me content, the hero photo (a static asset with alt text) and the résumé file are part of the site's code and static assets (FR-23).
 - Tags are shared across posts and projects:
   - `tags`: id, slug (unique), name. One row per tag, so "Svelte" exists once.
@@ -144,7 +144,7 @@ Posts and projects are separate tables.
 - SR-7: All form and endpoint input is validated with Zod on the server.
 - SR-8: Rendered markdown is sanitized before output so post content cannot execute scripts. Raw HTML in markdown is disabled, `rehype-sanitize` runs before the alerts and syntax-highlighting plugins, and those plugins must only emit fixed markup, never copy raw user strings into attributes. A test post with script and event-handler payloads must render inert.
 - SR-9: Storage uploads are restricted by file type and size, and writable only by the admin. Allowed: JPEG, PNG, WebP, GIF and AVIF, up to 5 MB, checked from the file's own bytes (not its name or declared type); SVG is refused; object names are random. A cover image is removed from storage when it is replaced or its post or project is deleted (images pasted inside markdown are not tracked).
-- SR-10: Security headers and a Content Security Policy are configured through SvelteKit; SvelteKit's same-origin form protection stays enabled. Components never use `onerror`, `onload` or other event attributes on elements that are server-rendered; the browser attaches listeners instead (an inline handler is blocked by the CSP).
+- SR-10: Security headers and a Content Security Policy are configured through SvelteKit; SvelteKit's same-origin form protection stays enabled. Components never use `onerror`, `onload` or other event attributes on elements that are server-rendered; the browser attaches listeners instead (an inline handler is blocked by the CSP). The CSP needs no change for optimized images: they are served from the site itself.
 - SR-11: `/admin` is `noindex` and disallowed in `robots.txt`.
 - SR-12: Only the GitHub provider is enabled in Supabase Auth.
 - SR-13: One shared render function is used by the public pages and the admin live preview, so what is previewed is what is published (FR-12).

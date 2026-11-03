@@ -16,3 +16,10 @@ const bucket = 'images';
 export function imageUrl(origin: string, path: string) {
 	return `${origin.replace(/\/$/, '')}/storage/v1/object/public/${bucket}/${path}`;
 }
+
+/** Widths Vercel's image optimizer may resize to (vite.config.ts allows exactly these). */
+export const IMAGE_WIDTHS = [320, 480, 640, 800, 1024, 1280];
+
+/** A resized, recompressed copy of an uploaded image, served through Vercel's optimizer. */
+export const optimizedUrl = (url: string, width: number) =>
+	`/_vercel/image?url=${encodeURIComponent(url)}&w=${width}&q=75`;

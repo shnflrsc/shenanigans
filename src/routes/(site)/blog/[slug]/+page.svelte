@@ -72,6 +72,7 @@
 				alt={post.coverAlt}
 				ratio="16/9"
 				eager
+				sizes="(min-width: 768px) 720px, 100vw"
 				class="rounded-lg border border-line"
 			/>
 		{/if}
