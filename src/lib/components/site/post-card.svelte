@@ -27,7 +27,7 @@
 		{post.publishedAt ? formatDate(post.publishedAt) : ''}
 	</span>
 	<div class="flex flex-col gap-2">
-		<svelte:element this={`h${level}`} class="text-card-title">
+		<svelte:element this={`h${level}`} class="text-card-title [overflow-wrap:anywhere]">
 			<a href={resolve('/(site)/blog/[slug]', { slug: post.slug })} class="stretched-link"
 				>{post.title}</a
 			>

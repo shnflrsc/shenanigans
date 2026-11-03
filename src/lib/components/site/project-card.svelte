@@ -46,8 +46,8 @@
 		<svelte:element
 			this={`h${level}`}
 			class={featured
-				? 'text-[24px] leading-8 font-semibold tracking-[-0.02em]'
-				: 'text-card-title'}
+				? 'text-[24px] leading-8 font-semibold tracking-[-0.02em] [overflow-wrap:anywhere]'
+				: 'text-card-title [overflow-wrap:anywhere]'}
 		>
 			<!-- The whole card is clickable through this stretched link. -->
 			<a {href} class="stretched-link">{project.title}</a>
