@@ -139,7 +139,7 @@ Posts and projects are separate tables.
 - SR-2: Every `/admin` route, form action and endpoint enforces authorization itself, not only the layout.
 - SR-3: Authorization uses the stable numeric GitHub ID in an environment variable, never username or email.
 - SR-4: Row Level Security is enabled on every table: public can read only published rows; writes only for the admin's user ID. Because Drizzle bypasses RLS, SR-1 to SR-3 are the primary control.
-- SR-5: The service role key and database URL are server-only (`$env/static/private`).
+- SR-5: The service role key and database URL are server-only (`$env/static/private`). The server connects to the hosted database over SSL (Supabase enforces it); only the local stack connects without it.
 - SR-6: Session cookies are managed with `@supabase/ssr`: httpOnly, Secure, SameSite=Lax.
 - SR-7: All form and endpoint input is validated with Zod on the server.
 - SR-8: Rendered markdown is sanitized before output so post content cannot execute scripts. Raw HTML in markdown is disabled, `rehype-sanitize` runs before the alerts and syntax-highlighting plugins, and those plugins must only emit fixed markup, never copy raw user strings into attributes. A test post with script and event-handler payloads must render inert.
