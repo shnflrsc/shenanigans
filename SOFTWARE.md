@@ -138,7 +138,7 @@ Posts and projects are separate tables.
 - SR-1: Identity is verified on the server with `getUser()` (validated by Supabase), not `getSession()`, in `hooks.server.ts`.
 - SR-2: Every `/admin` route, form action and endpoint enforces authorization itself, not only the layout.
 - SR-3: Authorization uses the stable numeric GitHub ID in an environment variable, never username or email.
-- SR-4: Row Level Security is enabled on every table: public can read only published rows; writes only for the admin's user ID. Because Drizzle bypasses RLS, SR-1 to SR-3 are the primary control.
+- SR-4: Row Level Security is enabled on every table: public can read only published rows; writes only for the admin's user ID. Because Drizzle bypasses RLS, SR-1 to SR-3 are the primary control. A test lists every table in the schema and fails for any without row-level security, and another fails for any server file outside the admin area that writes data (a form action, a POST, PUT, PATCH or DELETE handler, or a database write) unless it is on a short list of known public writes (the sign-in form and the OAuth callback).
 - SR-5: The service role key and database URL are server-only (`$env/static/private`). The server connects to the hosted database over SSL (Supabase enforces it); only the local stack connects without it.
 - SR-6: Session cookies are managed with `@supabase/ssr`: httpOnly, Secure, SameSite=Lax.
 - SR-7: All form and endpoint input is validated with Zod on the server.

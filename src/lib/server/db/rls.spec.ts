@@ -50,7 +50,32 @@ async function createUser(tx: TestTx, id: string, githubId: string) {
 	);
 }
 
+/** Tables in the public schema that have row level security switched off. */
+async function tablesWithoutRls(tx: TestTx) {
+	const rows = await tx.execute(sql`
+		select c.relname as name
+		from pg_class c
+		join pg_namespace n on n.oid = c.relnamespace
+		where n.nspname = 'public' and c.relkind in ('r', 'p') and not c.relrowsecurity
+		order by c.relname
+	`);
+	return [...rows].map((row) => String(row.name));
+}
+
 describe('row level security', () => {
+	it('is on for every table in the schema, so a new table cannot ship open', async () => {
+		await withRollback(async (tx) => {
+			expect(await tablesWithoutRls(tx)).toEqual([]);
+		});
+	});
+
+	it('notices a table that was added without it', async () => {
+		await withRollback(async (tx) => {
+			await tx.execute(sql`create table throwaway_open_table (id int)`);
+			expect(await tablesWithoutRls(tx)).toEqual(['throwaway_open_table']);
+		});
+	});
+
 	it('lets the public read only published rows and tags used by published content', async () => {
 		await withRollback(async (tx) => {
 			await seed(tx);
