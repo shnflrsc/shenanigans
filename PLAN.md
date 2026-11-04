@@ -1,6 +1,6 @@
 # PLAN.md: Build Shenanigans
 
-Written 2026-10-31. Sources: PRODUCT.md, SOFTWARE.md, JOURNEY.md, DESIGN.md (all present in repo root), and the two design canvases (public: claude.ai/artifact/1o6D5bF6KP81fTvtCuxao9, admin: claude.ai/artifact/5bEZAgoknqAVGzw4kPnVYD). The canvases were readable; their board lists and handoff notes are folded in below. The original prompt that asked for this plan is kept in `PLAN.prompt.md`.
+Written 2026-10-31. Sources: PRODUCT.md, SOFTWARE.md, JOURNEY.md, DESIGN.md (all present in repo root), and the two design canvases (public: claude.ai/artifact/1o6D5bF6KP81fTvtCuxao9, admin: claude.ai/artifact/5bEZAgoknqAVGzw4kPnVYD). The canvases were readable; their board lists and handoff notes are folded in below.
 
 DESIGN.md exists, so there is no "import DESIGN.md" task. DESIGN.md still says "Astro + Svelte islands" and mentions reactions, comments and a newsletter; those parts are stale (see Decisions D1).
 
