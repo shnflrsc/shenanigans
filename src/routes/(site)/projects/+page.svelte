@@ -17,6 +17,7 @@
 	title="Projects"
 	description="Things I have built: case studies of my projects, what I did and what I would change."
 	path="/projects"
+	noindex={data.tag !== null}
 />
 
 <Section enter>
