@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { lengthHint } from '#lib/admin/length-hint.js';
 	import AlertCircleIcon from '@lucide/svelte/icons/circle-alert';
 	import LockIcon from '@lucide/svelte/icons/lock';
 	import { deserialize } from '$app/forms';
@@ -226,7 +227,12 @@
 				{/snippet}
 			</Field>
 
-			<Field id="excerpt" label="Excerpt" error={editor.errors.excerpt}>
+			<Field
+				id="excerpt"
+				label="Excerpt"
+				hint={lengthHint(editor.data.excerpt)}
+				error={editor.errors.excerpt}
+			>
 				{#snippet children({ describedby, invalid })}
 					<textarea
 						id="excerpt"

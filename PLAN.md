@@ -177,12 +177,12 @@ Backlog only: do not start any task here until the owner says so. Today's baseli
 
 - [x] **M12-1** Final domain as the canonical address: set `site.origin` and `ORIGIN`, redirect `shenanigans-steel.vercel.app` to the domain (`vercel.json`, added; verify live), resubmit the sitemap. Deps: H6 (M9-3).
 - [ ] **M12-2** Search Console and Bing Webmaster Tools: verify the domain, submit the sitemap, watch coverage and Core Web Vitals. Human task. Deps: M12-1.
-- [ ] **M12-3** Structured data (JSON-LD): `Person` and `WebSite` on Home, `BlogPosting` on posts, `CreativeWork` or `SoftwareSourceCode` on projects, `BreadcrumbList` on detail pages. Verify: Google Rich Results Test passes, no errors in the e2e console audit.
-- [ ] **M12-4** Sitemap detail: `lastmod` from each item's last edit, and a `Sitemap:` line in `robots.txt`. Verify: sitemap e2e checks both.
+- [x] **M12-3** Structured data (JSON-LD): `Person` and `WebSite` on Home, `BlogPosting` on posts, `CreativeWork` or `SoftwareSourceCode` on projects, `BreadcrumbList` on detail pages. Verify: Google Rich Results Test passes, no errors in the e2e console audit.
+- [x] **M12-4** Sitemap detail: `lastmod` from each item's last edit, and a `Sitemap:` line in `robots.txt`. Verify: sitemap e2e checks both.
 - [ ] **M12-5** Filtered and paged lists: canonical points to the unfiltered list, `?tag=` pages stay shareable but are not indexed separately, noindex beyond page 1 or `rel=prev/next`. Decide first (spec change request).
-- [ ] **M12-6** Link previews: use a post's or project's cover image as the preview image when it has one (fallback: the generated card), with alt text. Spec change: PRODUCT 4.8 and SOFTWARE FR-32 say posts get a generated card today.
+- [x] **M12-6** Link previews: use a post's or project's cover image as the preview image when it has one (fallback: the generated card), with alt text. Spec change: PRODUCT 4.8 and SOFTWARE FR-32 say posts get a generated card today.
 - [ ] **M12-7** RSS feed with an autodiscovery `<link>`; reverses the deferral in D10 and journey gap G1, so the owner must confirm first.
-- [ ] **M12-8** Writing aids in the editors: excerpt and summary length hint (about 120 to 160 characters), alt text required when a cover is set. Covers: better search snippets.
+- [x] **M12-8** Writing aids in the editors: excerpt and summary length hint (about 120 to 160 characters), alt text required when a cover is set. Covers: better search snippets.
 - [ ] **M12-9** Measure: Lighthouse SEO category at 100 on every page type, noted in the progress log after each deploy; internal links between posts and projects checked for dead ends.
 
 ### M13 Branding (future, not started)
@@ -190,7 +190,7 @@ Backlog only: do not start any task here until the owner says so. Today's baseli
 Backlog only: do not start any task here until the owner says so.
 
 - [x] **M13-1** Logo and favicon: design a logo for Shenanigans and replace the current placeholder favicon (`src/lib/assets/favicon.svg`). Cover the set a site needs: SVG favicon, a 32 px and a 180 px (Apple touch) PNG, and the site-manifest icons if added; check legibility at 16 px in light and dark tab bars. Decide first: logo only as a mark or with the wordmark, and whether the header brand text "Shenanigans" is replaced or sits beside it (DESIGN.md NavBar says no logo image ships and the name is set in type). Spec change: DESIGN.md (NavBar, brand), PRODUCT.md 4.5 if the header changes. Verify: favicon shows in the browser tab in both themes; e2e checks the icon links exist and return 200.
-- [ ] **M13-2** Home page title: change the Home page title (today "Shenanigans: Darl’s portfolio and blog", from `seo.svelte`) to the owner's new wording, which the owner has yet to give. Applies to the browser title, `og:title` and `twitter:title`; also check the site preview image text (PRODUCT 4.8) still matches. Spec change: SOFTWARE FR-31 and PRODUCT 4.8 if the wording is stated there. Verify: e2e title check on Home.
+- [x] **M13-2** DROPPED by the owner (no Home title change): Home page title: change the Home page title (today "Shenanigans: Darl’s portfolio and blog", from `seo.svelte`) to the owner's new wording, which the owner has yet to give. Applies to the browser title, `og:title` and `twitter:title`; also check the site preview image text (PRODUCT 4.8) still matches. Spec change: SOFTWARE FR-31 and PRODUCT 4.8 if the wording is stated there. Verify: e2e title check on Home.
 
 ## 5. Human-only tasks
 
@@ -450,3 +450,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-03 project cards: cards in the same row on the Projects page are now the same height, with the links pinned to the bottom (e2e project-cards).
 - 2026-11-04 M12-1: `vercel.json` redirects shenanigans-steel.vercel.app to shenanigans.is-a.dev (308, same path). Not testable locally; the owner checks it after deploy, then deletes the old Supabase callback and resubmits the sitemap.
 - 2026-11-04 M12-1 done (old address redirects to the domain). M11-9 done (owner): Supabase auth providers, URL list, `images` bucket (no policies; uploads go through the server) and SSL enforcement, the Vercel Firewall, environment variables (kept on Production and Preview because the build needs them; previews sit behind deployment protection) and the domain were reviewed. The database client now requires SSL for any non-local host.
+- 2026-11-04 M13-2 dropped by the owner. M12-3: JSON-LD (WebSite and Person on Home, BlogPosting on posts, SoftwareSourceCode or CreativeWork on projects, BreadcrumbList on detail pages), escaped so content cannot close the block. M12-4: sitemap lastmod on every entry (Robots already pointed at the sitemap). M12-6: a cover is the link preview when present (with alt, no fixed size), else the generated card. M12-8: excerpt and summary show a length hint (alt text for a cover was already required). Run the Rich Results Test on prod after deploy.

@@ -11,6 +11,7 @@
 	import Seo from '#lib/components/site/seo.svelte';
 	import SectionTitle from '#lib/components/site/section-title.svelte';
 	import { Button } from '#lib/components/ui/button/index.js';
+	import { homeLd } from '#lib/seo/json-ld.js';
 	import { site } from '#lib/site.js';
 	import type { PageProps } from './$types';
 
@@ -21,7 +22,7 @@
 	const morePosts = $derived(data.counts.posts >= 2);
 </script>
 
-<Seo description={site.description} path="/" />
+<Seo description={site.description} path="/" jsonLd={homeLd()} />
 
 <Hero />
 <AboutSection />

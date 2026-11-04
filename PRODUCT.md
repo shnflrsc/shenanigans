@@ -95,9 +95,9 @@ Order on Home: Hero, About me, Featured, Latest posts, contact box, Footer.
 
 ### 4.8 Link previews and metadata
 
-- Every page has a title, a description (from the post excerpt or the project summary) and a preview image.
+- Every page has a title, a description (from the post excerpt or the project summary) and a preview image. A post or project that has a cover uses it as the preview image, with its alt text; otherwise the generated card is used.
 - Two 1200×630 preview images are designed: a site preview (hero headline, name, site address, grayscale photo) and a post preview ("Blog", date, read time, post title, small photo and name, site address).
-- The site also has a favicon and a sitemap.
+- The site also has a favicon and a sitemap, and describes itself to search engines with structured data (the site and its owner, posts, projects and breadcrumbs). The editors show how long an excerpt or summary is, since search results show about 120 to 160 characters.
 
 ## 5. Content
 
