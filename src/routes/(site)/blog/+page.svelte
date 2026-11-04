@@ -27,6 +27,7 @@
 	title="Blog"
 	description="What I learn while building: guides, project write-ups and notes."
 	path="/blog"
+	noindex={data.tag !== null || data.page > 1}
 />
 
 <Section width="narrow" enter>

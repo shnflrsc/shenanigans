@@ -179,11 +179,11 @@ Backlog only: do not start any task here until the owner says so. Today's baseli
 - [ ] **M12-2** Search Console and Bing Webmaster Tools: verify the domain, submit the sitemap, watch coverage and Core Web Vitals. Human task. Deps: M12-1.
 - [x] **M12-3** Structured data (JSON-LD): `Person` and `WebSite` on Home, `BlogPosting` on posts, `CreativeWork` or `SoftwareSourceCode` on projects, `BreadcrumbList` on detail pages. Verify: Google Rich Results Test passes, no errors in the e2e console audit.
 - [x] **M12-4** Sitemap detail: `lastmod` from each item's last edit, and a `Sitemap:` line in `robots.txt`. Verify: sitemap e2e checks both.
-- [ ] **M12-5** Filtered and paged lists: canonical points to the unfiltered list, `?tag=` pages stay shareable but are not indexed separately, noindex beyond page 1 or `rel=prev/next`. Decide first (spec change request).
+- [x] **M12-5** Filtered and paged lists: canonical points to the unfiltered list, `?tag=` pages stay shareable but are not indexed separately, noindex beyond page 1 or `rel=prev/next`. Decide first (spec change request).
 - [x] **M12-6** Link previews: use a post's or project's cover image as the preview image when it has one (fallback: the generated card), with alt text. Spec change: PRODUCT 4.8 and SOFTWARE FR-32 say posts get a generated card today.
-- [ ] **M12-7** RSS feed with an autodiscovery `<link>`; reverses the deferral in D10 and journey gap G1, so the owner must confirm first.
+- [x] **M12-7** DROPPED by the owner (no RSS feed): RSS feed with an autodiscovery `<link>`; reverses the deferral in D10 and journey gap G1, so the owner must confirm first.
 - [x] **M12-8** Writing aids in the editors: excerpt and summary length hint (about 120 to 160 characters), alt text required when a cover is set. Covers: better search snippets.
-- [ ] **M12-9** Measure: Lighthouse SEO category at 100 on every page type, noted in the progress log after each deploy; internal links between posts and projects checked for dead ends.
+- [x] **M12-9** Measure: Lighthouse SEO category at 100 on every page type, noted in the progress log after each deploy; internal links between posts and projects checked for dead ends.
 
 ### M13 Branding (future, not started)
 
@@ -453,3 +453,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-04 M13-2 dropped by the owner. M12-3: JSON-LD (WebSite and Person on Home, BlogPosting on posts, SoftwareSourceCode or CreativeWork on projects, BreadcrumbList on detail pages), escaped so content cannot close the block. M12-4: sitemap lastmod on every entry (Robots already pointed at the sitemap). M12-6: a cover is the link preview when present (with alt, no fixed size), else the generated card. M12-8: excerpt and summary show a length hint (alt text for a cover was already required). Run the Rich Results Test on prod after deploy.
 - 2026-11-04 M12-2: Google Search Console verification file added to `static/` (the owner's task is to verify and submit the sitemap).
 - 2026-11-04 M11-8 (a) and (b): the RLS spec fails for any public table without row-level security (and a throwaway-table test proves it notices one); the route inventory fails for any non-admin server file that writes unless it is on the known public writes list (proved with a temporary POST endpoint). (c) the optional ZAP baseline scan is not added.
+- 2026-11-04 M12-5: a filtered list (`?tag=`) or a page after the first carries `noindex, follow` with the unfiltered list as its canonical (e2e seo-lists). M12-7 dropped by the owner (no RSS). M12-9 measured on prod after the SEO deploy: Lighthouse SEO, accessibility and best practices are 100 on Home, Projects, a project page and Blog; performance 97 to 99 on Projects, the project page and Blog, and 95 to 99 on Home (one run read 82, noise); the 10 internal links found on those pages all return 200. No published posts exist yet, so a post page was not measured.

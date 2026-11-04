@@ -17,6 +17,8 @@
 		/** Structured data (M12-3), one object or a list. */
 		jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 		type?: 'website' | 'article';
+		/** Filtered and later pages of a list: reachable and shareable, but not indexed on their own (M12-5). */
+		noindex?: boolean;
 		publishedTime?: Date | string | null;
 	};
 
@@ -28,6 +30,7 @@
 		cover,
 		jsonLd,
 		type = 'website',
+		noindex = false,
 		publishedTime
 	}: Props = $props();
 
@@ -57,6 +60,7 @@
 	<title>{fullTitle}</title>
 	<meta name="description" content={description} />
 	<link rel="canonical" href={url} />
+	{#if noindex}<meta name="robots" content="noindex, follow" />{/if}
 
 	<meta property="og:site_name" content={site.name} />
 	<meta property="og:type" content={type} />
