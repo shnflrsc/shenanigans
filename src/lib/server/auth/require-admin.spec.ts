@@ -32,6 +32,11 @@ function walk(dir: string): string[] {
 
 /** Server files under routes/admin that are allowed to run without an admin session. */
 const PUBLIC_ADMIN_ROUTES = new Set(['admin/+page.server.ts']);
+/**
+ * Public server files that may write: the sign-in form (rate limited, SR-14) and the OAuth callback (it starts the
+ * session and records a rejected account). A new public write must be added here on purpose, with a security review.
+ */
+const KNOWN_PUBLIC_WRITES = new Set(['admin/+page.server.ts', 'auth/callback/+page.server.ts']);
 const SERVER_FILES = new Set(['+page.server.ts', '+layout.server.ts', '+server.ts']);
 
 describe('route inventory (SR-2)', () => {
@@ -58,6 +63,26 @@ describe('route inventory (SR-2)', () => {
 				return (text.match(/requireAdmin\(/g) ?? []).length < (text.match(handler) ?? []).length;
 			});
 		expect(short).toEqual([]);
+	});
+
+	it('a write endpoint outside the admin area must be on the list of known public writes', () => {
+		const routes = join(process.cwd(), 'src', 'routes');
+		const writes =
+			/export const (?:actions|POST|PUT|PATCH|DELETE)\b|export (?:async )?function (?:POST|PUT|PATCH|DELETE)\b|\b(?:db|tx)\.(?:insert|update|delete)\(|\bcontent\.(?:create|update|delete|save|set|publish|unpublish)\w*\(/;
+		const unlisted = walk(routes)
+			.filter((file) => SERVER_FILES.has(basename(file)))
+			.map((file) => relative(routes, file).split(sep).join('/'))
+			.filter((rel) => !rel.startsWith('admin/(app)/'))
+			.filter((rel) => !KNOWN_PUBLIC_WRITES.has(rel))
+			.filter((rel) => writes.test(readFileSync(join(routes, rel), 'utf8')));
+		expect(unlisted).toEqual([]);
+	});
+
+	it('keeps the list of known public writes small and real', () => {
+		const routes = join(process.cwd(), 'src', 'routes');
+		for (const rel of KNOWN_PUBLIC_WRITES) {
+			expect(statSync(join(routes, rel)).isFile(), rel).toBe(true);
+		}
 	});
 
 	it('finds the guarded files it is meant to check', () => {
