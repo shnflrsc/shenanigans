@@ -10,6 +10,7 @@
 	import Seo from '#lib/components/site/seo.svelte';
 	import Tag from '#lib/components/site/tag.svelte';
 	import { formatDate, formatReadTime } from '#lib/format.js';
+	import { postLd } from '#lib/seo/json-ld.js';
 	import { site } from '#lib/site.js';
 	import type { PageProps } from './$types';
 
@@ -27,6 +28,8 @@
 	description={post.excerpt}
 	path={`/blog/${post.slug}`}
 	image={`/og/${post.slug}.png`}
+	cover={{ path: post.coverImage, alt: post.coverAlt }}
+	jsonLd={postLd({ ...post, image: `${site.origin}/og/${post.slug}.png` })}
 	type="article"
 	publishedTime={post.publishedAt}
 />

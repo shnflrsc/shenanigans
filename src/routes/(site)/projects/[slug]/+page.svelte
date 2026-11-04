@@ -9,7 +9,9 @@
 	import Section from '#lib/components/site/section.svelte';
 	import Seo from '#lib/components/site/seo.svelte';
 	import Tag from '#lib/components/site/tag.svelte';
-	import { formatReadTime } from '#lib/format.js';
+	import { PUBLIC_SUPABASE_URL } from '$app/env/public';
+	import { formatReadTime, imageUrl } from '#lib/format.js';
+	import { projectLd } from '#lib/seo/json-ld.js';
 	import { site } from '#lib/site.js';
 	import type { PageProps } from './$types';
 
@@ -38,7 +40,16 @@
 	});
 </script>
 
-<Seo title={project.title} description={project.summary} path={`/projects/${project.slug}`} />
+<Seo
+	title={project.title}
+	description={project.summary}
+	path={`/projects/${project.slug}`}
+	cover={{ path: project.coverImage, alt: project.coverAlt }}
+	jsonLd={projectLd({
+		...project,
+		image: project.coverImage ? imageUrl(PUBLIC_SUPABASE_URL, project.coverImage) : null
+	})}
+/>
 
 <Section tone="plain" width="narrow" class="pb-12" enter>
 	<div class="flex flex-col gap-8">

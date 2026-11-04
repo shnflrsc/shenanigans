@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { lengthHint } from '#lib/admin/length-hint.js';
 	import AlertCircleIcon from '@lucide/svelte/icons/circle-alert';
 	import LockIcon from '@lucide/svelte/icons/lock';
 	import { deserialize } from '$app/forms';
@@ -257,7 +258,12 @@
 
 		<!-- The project details sit below the editor as plain fields, not in a card. -->
 		<div class="flex flex-col gap-5">
-			<Field id="summary" label="Summary" error={err('summary')}>
+			<Field
+				id="summary"
+				label="Summary"
+				hint={lengthHint(editor.data.summary)}
+				error={err('summary')}
+			>
 				{#snippet children({ describedby, invalid })}
 					<textarea
 						id="summary"

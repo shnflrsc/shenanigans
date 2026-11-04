@@ -9,10 +9,13 @@ const escape = (value: string) =>
 /** Lists only published pages: Home, the indexes, each published project and post. Never admin pages (FR-31). */
 export const GET: RequestHandler = async () => {
 	const { projects, posts } = await content.listPublishedEntries();
+	const latest = (items: { updatedAt: Date }[]) =>
+		items.length ? new Date(Math.max(...items.map((i) => i.updatedAt.getTime()))) : undefined;
+	// An index page changes when any of its items does; Home shows both.
 	const entries = [
-		{ path: '/' },
-		{ path: '/projects' },
-		{ path: '/blog' },
+		{ path: '/', lastmod: latest([...projects, ...posts]) },
+		{ path: '/projects', lastmod: latest(projects) },
+		{ path: '/blog', lastmod: latest(posts) },
 		...projects.map((p) => ({ path: `/projects/${p.slug}`, lastmod: p.updatedAt })),
 		...posts.map((p) => ({ path: `/blog/${p.slug}`, lastmod: p.updatedAt }))
 	];
@@ -20,7 +23,7 @@ export const GET: RequestHandler = async () => {
 		.map(
 			(e) =>
 				`  <url><loc>${escape(site.origin + e.path)}</loc>${
-					'lastmod' in e && e.lastmod ? `<lastmod>${e.lastmod.toISOString()}</lastmod>` : ''
+					e.lastmod ? `<lastmod>${e.lastmod.toISOString()}</lastmod>` : ''
 				}</url>`
 		)
 		.join('\n');
