@@ -91,4 +91,5 @@ export const projectLd = (project: {
 ];
 
 /** JSON for a script block: `<` is escaped so no content can close the tag or open a comment. */
-export const serializeLd = (data: Json | Json[]) => JSON.stringify(data).replace(/</g, '\u003c');
+export const serializeLd = (data: Json | Json[]) =>
+	JSON.stringify(data).replace(/</g, String.raw`\u003c`);
