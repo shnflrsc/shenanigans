@@ -175,7 +175,7 @@ Spec: SOFTWARE.md SR-16, MR-4; PRODUCT.md section 8 (Security checks); JOURNEY.m
 
 Backlog only: do not start any task here until the owner says so. Today's baseline (FR-31): a unique title, description, canonical URL, Open Graph and Twitter tags and a preview image on every page, `sitemap.xml` (published only), `robots.txt`, and `/admin` noindex. Most tasks wait for the real domain (H6).
 
-- [ ] **M12-1** Final domain as the canonical address: set `site.origin` and `ORIGIN`, redirect `shenanigans-steel.vercel.app` to the domain, resubmit the sitemap. Deps: H6 (M9-3).
+- [ ] **M12-1** Final domain as the canonical address: set `site.origin` and `ORIGIN`, redirect `shenanigans-steel.vercel.app` to the domain (`vercel.json`, added; verify live), resubmit the sitemap. Deps: H6 (M9-3).
 - [ ] **M12-2** Search Console and Bing Webmaster Tools: verify the domain, submit the sitemap, watch coverage and Core Web Vitals. Human task. Deps: M12-1.
 - [ ] **M12-3** Structured data (JSON-LD): `Person` and `WebSite` on Home, `BlogPosting` on posts, `CreativeWork` or `SoftwareSourceCode` on projects, `BreadcrumbList` on detail pages. Verify: Google Rich Results Test passes, no errors in the e2e console audit.
 - [ ] **M12-4** Sitemap detail: `lastmod` from each item's last edit, and a `Sitemap:` line in `robots.txt`. Verify: sitemap e2e checks both.
@@ -448,3 +448,4 @@ Spec change requests are recorded here. Implemented defaults stay in place until
 - 2026-11-03 admin shell: the Sign out button now sits beside the Shenanigans title in the sidebar (icon button) and the Admin chip is gone on desktop and phone.
 - 2026-11-03 M13-1 logo: the owner's 800 px PNG (two concentric circles) is rebuilt as an SVG and exported to 32, 180 (Apple, on white), 192 and 512 px PNGs plus a web manifest; the header keeps the type-set name. The owner supplied a light variant (`shenanigans-logo-dark.png`), used for dark tab bars (SVG media query, and a dark 32 px PNG with `media`).
 - 2026-11-03 project cards: cards in the same row on the Projects page are now the same height, with the links pinned to the bottom (e2e project-cards).
+- 2026-11-04 M12-1: `vercel.json` redirects shenanigans-steel.vercel.app to shenanigans.is-a.dev (308, same path). Not testable locally; the owner checks it after deploy, then deletes the old Supabase callback and resubmits the sitemap.

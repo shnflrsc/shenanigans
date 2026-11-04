@@ -1,0 +1,10 @@
+{
+	"redirects": [
+		{
+			"source": "/(.*)",
+			"has": [{ "type": "host", "value": "shenanigans-steel.vercel.app" }],
+			"destination": "https://shenanigans.is-a.dev/$1",
+			"permanent": true
+		}
+	]
+}
